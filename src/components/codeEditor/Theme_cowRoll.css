@@ -1,0 +1,63 @@
+.cm-s-cowRoll {
+  background-color: #1e1e1e;  /* Fondo oscuro */
+  color: #d4d4d4;            /* Texto en color gris claro */
+  border: 1px solid #3c3c3c; /* Borde sutil para componentes */
+}
+
+/* Estilo para strings */
+.cm-s-cowRoll .cm-string {
+  color: #ec7600;            /* Naranja, común para strings en OCaml */
+}
+
+/* Estilo para palabras clave (keywords) */
+.cm-s-cowRoll .cm-keyword {
+  color: #93c763;            /* Verde claro, típico para palabras clave en OCaml */
+  font-weight: bold;
+}
+
+/* Estilo para corchetes y paréntesis */
+.cm-s-cowRoll .cm-bracket {
+  color: #dcdcaa;            /* Amarillo suave, visible contra fondo oscuro */
+}
+
+/* Estilo para variables (identifiers) */
+.cm-s-cowRoll .cm-variable {
+  color: #9cdcfe;            /* Azul celeste, mantiene un buen contraste */
+}
+
+/* Estilo para comentarios */
+.cm-s-cowRoll .cm-comment {
+  color: #808080;            /* Gris, neutro y común para comentarios */
+  font-style: italic;
+}
+
+/* Estilo para números */
+.cm-s-cowRoll .cm-number {
+  color: #b5cea8;            /* Verde claro, se distingue bien en el contexto */
+}
+
+.cm-s-cowRoll .CodeMirror-cursor {
+  border-left: 2px solid #ffffff; /* Cambiar el grosor y el color del cursor */
+}
+
+/* Cambiar el color de la barra indicadora de posición del cursor */
+.cm-s-cowRoll .CodeMirror-cursor.CodeMirror-cursor {
+  border-left: 2px solid #ffffff; /* Cambiar el grosor y el color del cursor */
+}
+
+/* Cambiar el color de la barra indicadora de posición del cursor (alternativa) */
+.cm-s-cowRoll ::-webkit-scrollbar-thumb {
+  background-color: #ffffff; /* Cambiar el color de la barra indicadora en navegadores webkit */
+}
+
+.react-codemirror2 {
+  height: 100%;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  height: 100% !important;
+  overflow: hidden;
+
+}
