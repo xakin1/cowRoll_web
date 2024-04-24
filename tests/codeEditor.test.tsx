@@ -10,7 +10,7 @@ describe('CodeEditor Component', () => {
   let store : AppStore
   beforeEach(() => {
     store = setupStore({
-      code: { code: 'hello world', output: '', error: '' }
+      code: { code: '"hello world"', output: '', error: '' }
     });
 
   });
@@ -18,15 +18,14 @@ describe('CodeEditor Component', () => {
   it('renders CodeMirror and executes code on button click', async () => {
     render(
       <Provider store={store}>
-      <CodeEditor />
-    </Provider>
+        <CodeEditor />
+      </Provider>
     );
 
     const button = screen.getByRole('button', { name: 'Ejecutar código en el editor' });
     fireEvent.click(button);
-
     await waitFor(() => {
-      expect(store.getState().code.code).toBe('hello world');
+      expect(store.getState().code.output).toBe('hello world');
     });
   });
 });
