@@ -7,7 +7,8 @@ import { setupStore, type AppStore } from './setup';
 
 
 describe('CodeEditor Component', () => {
-  let store : AppStore
+  let store: AppStore
+  
   beforeEach(() => {
     store = setupStore({
       code: { code: '"hello world"', output: '', error: '' }
