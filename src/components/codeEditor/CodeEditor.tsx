@@ -3,11 +3,16 @@ import "codemirror/theme/material.css";
 import { Resizable } from "re-resizable";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { useAppDispatch, useAppSelector } from "../../hooks/customHooks";
+import { getI18N } from "../../i18n";
+import { getLang } from "../../i18n/utils";
 import "./CowRoll_language";
 import "./Theme_cowRoll.css";
 import { addCode, addOutput } from "./codeSlide";
+// Importa la configuración de i18next
 
 const CodeEditor = () => {
+  const currentLocale = getLang();
+  const i18n = getI18N({ currentLocale });
   //el state.code el code es el nombre que le pusimos en name en el slide
   const code = useAppSelector((state) => state.code.code);
   const dispatch = useAppDispatch();
@@ -37,18 +42,18 @@ const CodeEditor = () => {
           alignItems: "center",
         }}
       >
-        <h1>Código</h1>
+        <h1>{i18n.Code.code}</h1>
         <button
           onClick={handleExecuteClick}
           aria-label="Ejecutar código en el editor"
         >
-          Ejecutar
+          {i18n.Code.run}
         </button>
       </div>
       <Resizable
         defaultSize={{
-          width: "100%", // Initial width of the viewport
-          height: "80vh", // Initial height of the viewport
+          width: "100%",
+          height: "80vh",
         }}
         enable={{ top: false, right: false, bottom: false, left: false }}
       >

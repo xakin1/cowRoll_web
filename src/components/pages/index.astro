@@ -1,0 +1,12 @@
+---
+import { getI18N } from "../../i18n";
+import ConsoleApp from "../ConsoleApp";
+
+const {currentLocale} = Astro
+const i18n = getI18N({currentLocale})
+---
+					
+<main >
+	{i18n.Code.code}
+		<ConsoleApp client:only></ConsoleApp>
+</mai>

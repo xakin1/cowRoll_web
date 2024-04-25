@@ -1,6 +1,8 @@
-import CodeEditor from "./codeEditor/CodeEditor.jsx";
+import CodeEditor from "./codeEditor/CodeEditor.js";
 
 import { useAppSelector } from "../hooks/customHooks.js";
+import { getI18N } from "../i18n/index.js";
+import { getLang } from "../i18n/utils.js";
 
 function Terminal() {
   const formatOutput = (text: string) => {
@@ -10,7 +12,9 @@ function Terminal() {
   };
   const output = String(useAppSelector((state) => state.code.output));
 
-  console.log(output);
+  const currentLocale = getLang();
+  const i18n = getI18N({ currentLocale });
+
   return (
     <main
       style={{
@@ -25,7 +29,20 @@ function Terminal() {
       <section>
         <CodeEditor></CodeEditor>
       </section>
-      <textarea value={formatOutput(output)} readOnly />
+      <section
+        style={{
+          display: "grid",
+          gridTemplateRows: "auto 1fr",
+        }}
+      >
+        <h1>{i18n.Code.output}</h1>
+        <textarea
+          aria-label="Code Output"
+          id="OutputDisplay"
+          value={formatOutput(output)}
+          readOnly
+        />
+      </section>
     </main>
   );
 }

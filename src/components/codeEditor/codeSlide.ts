@@ -9,7 +9,7 @@ export interface CodeEditor extends Code {
   error: string;
 }
 const initialState: CodeEditor = {
-  code: "Escribe aquí tu código",
+  code: "",
   error: "",
   output: "",
 };
