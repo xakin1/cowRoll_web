@@ -54,6 +54,25 @@
   height: 100%;
 }
 
+.underline-class {
+  text-decoration: underline;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 100;
+  padding: 5px;
+  background: black;
+  color: white;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.line-hover:hover .tooltip {
+  opacity: 1;
+}
+
 .CodeMirror {
   border: 1px solid #eee;
   height: auto;

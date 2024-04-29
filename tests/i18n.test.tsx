@@ -2,7 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import CodeEditor from "../src/components/codeEditor/CodeEditor";
+import CodeEditor from "../src/components/codeMirror/CodeEditor";
 import * as i18nUtils from "../src/i18n/utils"; // Import the module to mock specific functions
 import { setupStore, type AppStore } from "./setup";
 
@@ -10,7 +10,15 @@ describe("CodeEditor Localization", () => {
   let store: AppStore;
   beforeEach(() => {
     store = setupStore({
-      code: { code: '"hello world"', output: "", error: "" },
+      code: {
+        code: '"hello world"',
+        output: "",
+        error: {
+          error: "",
+          errorCode: "",
+          line: undefined,
+        },
+      },
     });
   });
 

@@ -3,7 +3,7 @@ import {
   configureStore,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import codeReducer, { type Code } from "../src/components/codeEditor/codeSlide";
+import codeReducer, { type Code } from "../src/components/codeMirror/codeSlide";
 import type store from "../src/redux/store";
 
 // beforeAll(() => server.listen());
