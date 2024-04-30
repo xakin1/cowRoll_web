@@ -1,8 +1,0 @@
-.editor-container {
-  resize: both; /* Permite el cambio de tamaño horizontal y vertical */
-  overflow: hidden; /* Esconde cualquier contenido que desborde */
-  width: 100%; /* Ancho inicial */
-  height: 80vh; /* Altura inicial */
-  min-height: 200px; /* Altura mínima */
-  min-width: 300px; /* Ancho mínimo */
-}

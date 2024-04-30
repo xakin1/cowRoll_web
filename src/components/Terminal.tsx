@@ -6,11 +6,19 @@ import type { RootState } from "../redux/store.js";
 import CodeEditor from "./monacoEditor/codeEditor.js";
 
 function Terminal() {
-  const formatOutput = (text: string) => {
-    if (typeof text == "string") {
-      return text.replace(/\\n/g, "\n");
+  const formatOutput = (data: any) => {
+    if (typeof data === "string") {
+      // Directly replace escaped new line characters with actual new line characters
+      return data.replace(/\\n/g, "\n");
+    } else if (typeof data === "object" && data !== null) {
+      // Convert object to JSON string and make it readable
+      try {
+        return JSON.stringify(data, null, 2); // pretty-print JSON with 2 spaces indentation
+      } catch (error) {
+        return "Error: Could not display object.";
+      }
     }
-    return "";
+    return "Unsupported data type";
   };
   const output = useAppSelector((state) => state.code.output);
 

@@ -5,10 +5,12 @@ import { useAppDispatch, useAppSelector } from "../../hooks/customHooks";
 import { addCode } from "../../redux/slice/codeSlide";
 import type { RootState } from "../../redux/store";
 import type { monaco } from "../../utils/types/codeEditorType";
-import { loadSuggestions } from "./config/suggestions/cowRollSuggestions";
-import defineDarkTheme from "./config/themes/cowRollDarkTheme";
-import defineLightTheme from "./config/themes/cowRollLightTheme";
-import defineCustomLanguage from "./cowRollLanguage";
+import { setupEditorCommands } from "./languages/cowRoll/config/commands";
+import { setupLanguageFeatures } from "./languages/cowRoll/config/configuration";
+import { loadSuggestions } from "./languages/cowRoll/config/suggestions";
+import defineCowRollLanguage from "./languages/cowRoll/language";
+import defineDarkTheme from "./languages/cowRoll/themes/dark";
+import defineLightTheme from "./languages/cowRoll/themes/light";
 
 const CodeEditor = () => {
   const [theme, setTheme] = useState(
@@ -26,11 +28,13 @@ const CodeEditor = () => {
   };
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
-    defineCustomLanguage(monaco);
+    defineCowRollLanguage(monaco);
     applyTheme(monaco);
     monacoRef.current = monaco;
     editorRef.current = editor;
     loadSuggestions(monaco);
+    setupEditorCommands(editor, monaco);
+    setupLanguageFeatures(monaco);
   };
 
   //Función que se encarga de poner los fallos
