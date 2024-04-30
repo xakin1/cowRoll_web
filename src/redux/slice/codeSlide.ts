@@ -1,4 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { getI18N } from "../../i18n";
+import { getLang } from "../../i18n/utils";
 
 export interface Code {
   code: string;
@@ -13,9 +15,12 @@ export interface Output {
   };
 }
 
+const currentLocale = getLang();
+const i18n = getI18N({ currentLocale });
+
 export interface CodeEditor extends Code, Output {}
 const initialState: CodeEditor = {
-  code: "",
+  code: i18n.Code.placeHolder,
   output: "",
   error: {
     error: "",
@@ -30,19 +35,18 @@ export const codeSlice = createSlice({
   initialState,
   reducers: {
     addOutput: (state, action: PayloadAction<Output>) => {
-      console.log(action.payload.output);
-      state.output = action.payload.output;
+      state.output = action.payload.output || "";
       const { error, errorCode, line } = action.payload?.error || {
-        error: null,
+        error: "",
         errorCode: null,
         line: null,
       };
-      state.error.error = error;
+      state.error.error = error || "";
       state.error.errorCode = errorCode;
       state.error.line = line;
     },
-    addCode: (state, action: PayloadAction<string>) => {
-      state.code = action.payload;
+    addCode: (state, action: PayloadAction<string | undefined>) => {
+      state.code = action.payload || "";
     },
   },
 });

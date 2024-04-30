@@ -4,9 +4,69 @@ import ConsoleApp from "../ConsoleApp";
 
 const {currentLocale} = Astro
 const i18n = getI18N({currentLocale})
+
 ---
 					
-<main >
-	{i18n.Code.code}
-		<ConsoleApp client:only></ConsoleApp>
-</mai>
+<html lang={currentLocale}>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --background-color: #fff;
+      --text-color: #333;
+    }
+    
+    [data-theme="dark"] {
+      --background-color: #333;
+      --text-color: #fff;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: var(--text-color); /* Use CSS variables */
+      background: var(--background-color);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <button id="themeToggle">
+      Cambiar tema
+    </button>
+    <ConsoleApp client:only />
+  </main>
+
+<script>
+	//Primero miramos que preferencias tiene el usuario para cargar el tema que el desea
+  function loadTheme() {
+    const userPreferredTheme = localStorage.getItem('theme');
+    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+    const themeToApply = userPreferredTheme || systemPreference;
+    document.body.setAttribute('data-theme', themeToApply);
+    localStorage.setItem('theme', themeToApply);
+    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeToApply } }));
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    loadTheme(); 
+
+    const themeToggleButton = document.getElementById('themeToggle');
+    if (themeToggleButton) {
+      themeToggleButton.onclick = function() {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+      };
+    } else {
+      console.error('Theme toggle button not found!');
+    }
+  });
+</script>
+
+</body>
+</html>

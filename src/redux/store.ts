@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import codeReducer from "../components/codeMirror/codeSlide";
+import codeReducer from "./slice/codeSlide";
 
 const store = configureStore({
   reducer: {

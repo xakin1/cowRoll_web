@@ -2,6 +2,7 @@
   "Code": {
     "code": "Código",
     "output": "Código de salida",
-    "run": "Ejecutar"
+    "run": "Ejecutar",
+    "placeHolder": "El código va aquí"
   }
 }

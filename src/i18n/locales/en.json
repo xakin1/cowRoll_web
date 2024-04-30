@@ -2,6 +2,7 @@
   "Code": {
     "code": "Code",
     "output": "Code output",
-    "run": "Run"
+    "run": "Run",
+    "placeHolder": "the code goes here"
   }
 }

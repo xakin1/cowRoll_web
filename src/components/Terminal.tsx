@@ -1,18 +1,18 @@
-import CodeEditor from "./codeMirror/CodeEditor.js";
-
 import { useAppDispatch, useAppSelector } from "../hooks/customHooks.js";
 import { getI18N } from "../i18n/index.js";
 import { getLang } from "../i18n/utils.js";
+import { addOutput } from "../redux/slice/codeSlide.js";
 import type { RootState } from "../redux/store.js";
-import { addOutput } from "./codeMirror/codeSlide.js";
+import CodeEditor from "./monacoEditor/codeEditor.js";
 
 function Terminal() {
   const formatOutput = (text: string) => {
     if (typeof text == "string") {
       return text.replace(/\\n/g, "\n");
     }
+    return "";
   };
-  const output = String(useAppSelector((state) => state.code.output));
+  const output = useAppSelector((state) => state.code.output);
 
   const { code, error } = useAppSelector((state: RootState) => state.code);
   const dispatch = useAppDispatch();

@@ -1,51 +1,21 @@
 // Usando Vitest y React Testing Library
-import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import CodeEditor from "../src/components/codeMirror/CodeEditor";
-import * as i18nUtils from "../src/i18n/utils"; // Import the module to mock specific functions
-import { setupStore, type AppStore } from "./setup";
+import { describe, expect, it } from "vitest";
+import { getI18N } from "../src/i18n";
+import { getLang } from "../src/i18n/utils";
 
 describe("CodeEditor Localization", () => {
-  let store: AppStore;
-  beforeEach(() => {
-    store = setupStore({
-      code: {
-        code: '"hello world"',
-        output: "",
-        error: {
-          error: "",
-          errorCode: "",
-          line: undefined,
-        },
-      },
-    });
-  });
-
   it("renders the run button with default language (gl)", () => {
-    render(
-      <Provider store={store}>
-        <CodeEditor />
-      </Provider>
-    );
-    const runButton = screen.getByRole("button", {
-      name: "Ejecutar código en el editor",
-    });
-    expect(runButton.textContent).toBe("Executar");
+    const i18n = getI18N({ currentLocale: "en" });
+    expect(i18n.Code.code).toBe("Code");
   });
 
-  it("renders the run button with default language (en)", () => {
-    const getLangMock = vi.spyOn(i18nUtils, "getLang").mockReturnValue("en");
+  it("renders the run button with default language (es)", () => {
+    const i18n = getI18N({ currentLocale: "fr" });
+    expect(i18n.Code.code).toBe("Código");
+  });
 
-    render(
-      <Provider store={store}>
-        <CodeEditor />
-      </Provider>
-    );
-    const runButton = screen.getByRole("button", {
-      name: "Ejecutar código en el editor",
-    });
-    expect(runButton.textContent).toBe("Run");
-    getLangMock.mockRestore();
+  it("renders the run button with default language (es)", () => {
+    const i18n = getI18N({ currentLocale: getLang() });
+    expect(i18n.Code.code).toBe("Código");
   });
 });

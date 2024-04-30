@@ -4,10 +4,10 @@ import { Resizable } from "re-resizable";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { useAppDispatch, useAppSelector } from "../../hooks/customHooks";
+import { addCode } from "../../redux/slice/codeSlide";
 import type { RootState } from "../../redux/store";
 import "./CowRoll_language";
 import "./Theme_cowRoll.css";
-import { addCode } from "./codeSlide";
 
 const CodeEditor = () => {
   const { code, error } = useAppSelector((state: RootState) => state.code);
