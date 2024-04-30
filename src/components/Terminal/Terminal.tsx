@@ -1,22 +1,27 @@
-import { useAppDispatch, useAppSelector } from "../hooks/customHooks.js";
-import { getI18N } from "../i18n/index.js";
-import { getLang } from "../i18n/utils.js";
-import { addOutput } from "../redux/slice/codeSlide.js";
-import type { RootState } from "../redux/store.js";
-import CodeEditor from "./monacoEditor/codeEditor.js";
+import { useAppDispatch, useAppSelector } from "../../hooks/customHooks.js";
+import { getI18N } from "../../i18n/index.js";
+import { getLang } from "../../i18n/utils.js";
+import { addOutput, type Error } from "../../redux/slice/codeSlide.js";
+import type { RootState } from "../../redux/store.js";
+import CodeEditor from "../monacoEditor/codeEditor.jsx";
+import "./terminal.css";
 
 function Terminal() {
-  const formatOutput = (data: any) => {
-    if (typeof data === "string") {
-      // Directly replace escaped new line characters with actual new line characters
+  const formatOutput = (data: any, error: Error) => {
+    if (error.errorCode) {
+      return <span style={{ color: "red" }}>{error.errorCode}</span>;
+    } else if (error.error && !error.errorCode) {
+      return <span style={{ color: "red" }}>{error.error}</span>;
+    } else if (typeof data === "string") {
       return data.replace(/\\n/g, "\n");
     } else if (typeof data === "object" && data !== null) {
-      // Convert object to JSON string and make it readable
       try {
-        return JSON.stringify(data, null, 2); // pretty-print JSON with 2 spaces indentation
+        return JSON.stringify(data, null, 2);
       } catch (error) {
         return "Error: Could not display object.";
       }
+    } else if (typeof data === "number") {
+      return data.toString();
     }
     return "Unsupported data type";
   };
@@ -78,12 +83,13 @@ function Terminal() {
         }}
       >
         <h1>{i18n.Code.output}</h1>
-        <textarea
+        <div
           aria-label="Code Output"
           id="OutputDisplay"
-          value={formatOutput(output)}
-          readOnly
-        />
+          className="output-area"
+        >
+          {formatOutput(output, error)}
+        </div>
       </section>
     </main>
   );

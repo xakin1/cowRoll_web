@@ -6,13 +6,16 @@ export interface Code {
   code: string;
 }
 
+export type Error = {
+  error?: string;
+  errorCode?: string;
+  line?: number;
+  lastUpdated: Number;
+};
+
 export interface Output {
   output: string;
-  error: {
-    error?: string;
-    errorCode?: string;
-    line?: number;
-  };
+  error: Error;
 }
 
 const currentLocale = getLang();
@@ -26,6 +29,7 @@ const initialState: CodeEditor = {
     error: "",
     errorCode: "",
     line: undefined,
+    lastUpdated: Date.now(),
   },
 };
 
@@ -36,14 +40,11 @@ export const codeSlice = createSlice({
   reducers: {
     addOutput: (state, action: PayloadAction<Output>) => {
       state.output = action.payload.output || "";
-      const { error, errorCode, line } = action.payload?.error || {
-        error: "",
-        errorCode: null,
-        line: null,
-      };
-      state.error.error = error || "";
-      state.error.errorCode = errorCode;
-      state.error.line = line;
+
+      state.error.error = action.payload.error?.error || "";
+      state.error.errorCode = action.payload.error?.errorCode || "";
+      state.error.line = action.payload.error?.line || undefined;
+      state.error.lastUpdated = Date.now();
     },
     addCode: (state, action: PayloadAction<string | undefined>) => {
       state.code = action.payload || "";

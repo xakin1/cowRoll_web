@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 import store from "../redux/store.js";
-import Terminal from "./Terminal.js";
+import Terminal from "./Terminal/Terminal.jsx";
 
 function ConsoleApp() {
   return (

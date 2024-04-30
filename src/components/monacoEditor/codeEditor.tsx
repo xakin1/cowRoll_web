@@ -39,20 +39,23 @@ const CodeEditor = () => {
 
   //Función que se encarga de poner los fallos
   const updateEditorMarkers = () => {
-    if (editorRef.current && monacoRef.current && error.errorCode) {
+    if (editorRef.current && monacoRef.current) {
       const model = editorRef.current.getModel();
 
       if (model) {
-        const markers = [
-          {
-            startLineNumber: error.line || 1,
-            startColumn: 1,
-            endLineNumber: error.line || 1,
-            endColumn: model.getLineLength(error.line || 1) || 1,
-            severity: monacoRef.current.MarkerSeverity.Error,
-            message: error.errorCode,
-          },
-        ];
+        // No depende exclusivamente de error.errorCode para proceder
+        const markers = error.errorCode
+          ? [
+              {
+                startLineNumber: error.line || 1,
+                startColumn: 1,
+                endLineNumber: error.line || 1,
+                endColumn: model.getLineLength(error.line || 1) || 1,
+                severity: monacoRef.current.MarkerSeverity.Error,
+                message: error.errorCode,
+              },
+            ]
+          : []; // Si no hay errores, envía una lista vacía para limpiar los marcadores
 
         monacoRef.current.editor.setModelMarkers(model, "owner", markers);
       }
