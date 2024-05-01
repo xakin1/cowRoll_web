@@ -1,6 +1,6 @@
 // editorCommands.ts
 import type { editor as EditorType } from "monaco-editor";
-import store from "../../../../../redux/store";
+import { saveCode } from "../../../../../services/codeApi";
 import type { monaco } from "../../../../../utils/types/codeEditorType";
 
 export const setupEditorCommands = (
@@ -91,27 +91,5 @@ const saveDocument = async (
   editor: EditorType.IStandaloneCodeEditor,
   monaco: monaco
 ) => {
-  let code = editor.getValue(); // Obtiene el contenido actual del editor
-
-  // Realiza la autoindentación
-  try {
-    const response = await fetch("http://localhost:4000/api/saveCode", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      store.dispatch(addCompileErrors(data));
-    } else {
-      console.error("Failed to save the document.");
-    }
-  } catch (error) {
-    console.error("Error saving document:", error);
-  }
+  saveCode(editor.getValue());
 };
-function addCompileErrors(data: any): any {
-  throw new Error("Function not implemented.");
-}

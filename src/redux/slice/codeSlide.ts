@@ -59,5 +59,5 @@ export const codeSlice = createSlice({
   },
 });
 
-export const { addOutput, addCode } = codeSlice.actions;
+export const { addOutput, addCode, addCompileErrors } = codeSlice.actions;
 export default codeSlice.reducer;
