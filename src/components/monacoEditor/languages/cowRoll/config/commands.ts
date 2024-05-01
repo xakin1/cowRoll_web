@@ -1,6 +1,5 @@
 // editorCommands.ts
 import type { editor as EditorType } from "monaco-editor";
-import { addOutput } from "../../../../../redux/slice/codeSlide";
 import store from "../../../../../redux/store";
 import type { monaco } from "../../../../../utils/types/codeEditorType";
 
@@ -105,7 +104,7 @@ const saveDocument = async (
     });
     if (response.ok) {
       const data = await response.json();
-      store.dispatch(addOutput(data));
+      store.dispatch(addCompileErrors(data));
     } else {
       console.error("Failed to save the document.");
     }
@@ -113,6 +112,6 @@ const saveDocument = async (
     console.error("Error saving document:", error);
   }
 };
-function dispatch(arg0: any) {
+function addCompileErrors(data: any): any {
   throw new Error("Function not implemented.");
 }

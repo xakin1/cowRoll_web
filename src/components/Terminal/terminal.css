@@ -13,3 +13,38 @@
   color: #333333;
   border: 1px solid #ccc;
 }
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: 80vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow: auto;
+}
+
+.editorSection {
+  overflow: hidden;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  width: 100%;
+}
+
+.header .run-button {
+  justify-self: end;
+}
+
+.header h1 {
+  justify-self: start;
+}

@@ -49,6 +49,13 @@ export const codeSlice = createSlice({
     addCode: (state, action: PayloadAction<string | undefined>) => {
       state.code = action.payload || "";
     },
+
+    addCompileErrors: (state, action: PayloadAction<Output>) => {
+      state.error.error = action.payload.error?.error || "";
+      state.error.errorCode = action.payload.error?.errorCode || "";
+      state.error.line = action.payload.error?.line || undefined;
+      state.error.lastUpdated = Date.now();
+    },
   },
 });
 

@@ -12,27 +12,37 @@ const i18n = getI18N({currentLocale})
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-  :root {
-    --background-color-light: #f0f0f0;
-    --text-color-light: #333;
-    --background-color-dark: #333;
-    --text-color-dark: #fff;
-  }
+    :root {
+      --background-color-light: #f0f0f0;
+      --text-color-light: #333;
+      --background-color-dark: #333;
+      --text-color-dark: #fff;
+    }
 
-  [data-theme="light"] {
-    --background-color: var(--background-color-light);
-    --text-color: var(--text-color-light);
-  }
+    
 
-  [data-theme="dark"] {
-    --background-color: var(--background-color-dark);
-    --text-color: var(--text-color-dark);
-  }
+    [data-theme="light"] {
+      --background-color: var(--background-color-light);
+      --text-color: var(--text-color-light);
+    }
 
-  body {
-    color: var(--text-color);
-    background-color: var(--background-color);
-  }
+    [data-theme="dark"] {
+      --background-color: var(--background-color-dark);
+      --text-color: var(--text-color-dark);
+    }
+
+    body {
+      color: var(--text-color);
+      background-color: var(--background-color);
+      height: 100vh;
+    }
+
+    html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          overflow: hidden
+      }
   
   </style>
 </head>

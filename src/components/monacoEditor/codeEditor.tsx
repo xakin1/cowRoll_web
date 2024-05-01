@@ -90,8 +90,6 @@ const CodeEditor = () => {
 
   return (
     <Editor
-      width="100%"
-      height="80vh"
       defaultLanguage="cowRoll"
       onChange={(value, event) => {
         dispatch(addCode(value));
