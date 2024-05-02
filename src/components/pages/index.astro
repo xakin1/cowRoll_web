@@ -1,6 +1,8 @@
 ---
 import { getI18N } from "../../i18n";
-import Terminal from "../Terminal/Terminal";
+import ConsoleApp from "../ConsoleApp";
+import AppTerminal from "../editor/terminal/Terminal";
+
 const {currentLocale} = Astro
 const i18n = getI18N({currentLocale})
 
@@ -51,7 +53,7 @@ const i18n = getI18N({currentLocale})
     <button id="themeToggle">
       Cambiar tema
     </button>
-    <Terminal client:only />
+    <ConsoleApp client:only/>
   </main>
 
 <script>

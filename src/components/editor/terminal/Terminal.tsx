@@ -1,12 +1,11 @@
-import { Provider } from "react-redux";
 import { useAppSelector } from "../../../hooks/customHooks.js";
 import { getI18N } from "../../../i18n/index.js";
 import { getLang } from "../../../i18n/utils.js";
 import { type Error } from "../../../redux/slice/codeSlide.js";
 import type { RootState } from "../../../redux/store.js";
-import store from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
 import CodeEditor from "../monacoEditor/codeEditor.js";
+import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
 
 function Terminal() {
@@ -52,7 +51,8 @@ function Terminal() {
   const i18n = getI18N({ currentLocale });
 
   return (
-    <Provider store={store}>
+    <div className="container-page">
+      <Sidebar></Sidebar>
       <main className="container">
         <section className="section editorSection">
           <header className="header">
@@ -80,7 +80,7 @@ function Terminal() {
           </div>
         </section>
       </main>
-    </Provider>
+    </div>
   );
 }
 

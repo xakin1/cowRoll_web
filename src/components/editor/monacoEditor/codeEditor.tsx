@@ -1,10 +1,10 @@
 import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/customHooks";
-import { addCode } from "../../redux/slice/codeSlide";
-import type { RootState } from "../../redux/store";
-import type { monaco } from "../../utils/types/codeEditorType";
+import { useAppDispatch, useAppSelector } from "../../../hooks/customHooks";
+import { addCode } from "../../../redux/slice/codeSlide";
+import type { RootState } from "../../../redux/store";
+import type { monaco } from "../../../utils/types/codeEditorType";
 import { setupEditorCommands } from "./languages/cowRoll/config/commands";
 import { setupLanguageFeatures } from "./languages/cowRoll/config/configuration";
 import { loadSuggestions } from "./languages/cowRoll/config/suggestions";

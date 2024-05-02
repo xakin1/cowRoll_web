@@ -1,4 +1,4 @@
-import type { monaco } from "../../../../utils/types/codeEditorType";
+import type { monaco } from "../../../../../utils/types/codeEditorType";
 
 function defineCowRollLanguage(monaco: monaco) {
   monaco.languages.register({ id: "cowRoll" });

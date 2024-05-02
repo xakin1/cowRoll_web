@@ -1,7 +1,7 @@
 // editorCommands.ts
 import type { editor as EditorType } from "monaco-editor";
-import { saveCode } from "../../../../../services/codeApi";
-import type { monaco } from "../../../../../utils/types/codeEditorType";
+import { saveCode } from "../../../../../../services/codeApi";
+import type { monaco } from "../../../../../../utils/types/codeEditorType";
 
 export const setupEditorCommands = (
   editor: EditorType.IStandaloneCodeEditor,
