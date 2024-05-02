@@ -1,11 +1,12 @@
 .output-area {
   background-color: var(--output-background-color, #1e1e1e);
   color: var(--output-text-color, #ffffff);
-  padding: 10px;
   border: 1px solid #c2c2c2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: auto;
   min-height: 150px;
+  flex-grow: 1; /* Permite que el área de salida crezca para llenar el espacio disponible */
+  width: 100%;
 }
 
 [data-theme="light"] .output-area {
@@ -15,28 +16,34 @@
 }
 
 .container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  display: flex;
+  padding: 1rem;
+  flex-direction: row;
+  gap: 10px;
   height: 80vh;
   width: 100%;
   box-sizing: border-box;
 }
 
 .section {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  height: 100%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
-
 .editorSection {
   overflow: hidden;
 }
 
+.section:first-child {
+  flex: 6;
+}
+
+.section:last-child {
+  flex: 4;
+}
+
 .header {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 }

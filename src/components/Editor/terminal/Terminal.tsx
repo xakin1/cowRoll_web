@@ -1,10 +1,12 @@
-import { useAppSelector } from "../../hooks/customHooks.js";
-import { getI18N } from "../../i18n/index.js";
-import { getLang } from "../../i18n/utils.js";
-import { type Error } from "../../redux/slice/codeSlide.js";
-import type { RootState } from "../../redux/store.js";
-import { executeCode } from "../../services/codeApi.js";
-import CodeEditor from "../monacoEditor/codeEditor.jsx";
+import { Provider } from "react-redux";
+import { useAppSelector } from "../../../hooks/customHooks.js";
+import { getI18N } from "../../../i18n/index.js";
+import { getLang } from "../../../i18n/utils.js";
+import { type Error } from "../../../redux/slice/codeSlide.js";
+import type { RootState } from "../../../redux/store.js";
+import store from "../../../redux/store.js";
+import { executeCode } from "../../../services/codeApi.js";
+import CodeEditor from "../monacoEditor/codeEditor.js";
 import "./terminal.css";
 
 function Terminal() {
@@ -50,33 +52,35 @@ function Terminal() {
   const i18n = getI18N({ currentLocale });
 
   return (
-    <main className="container">
-      <section className="section editorSection">
-        <header className="header">
-          <h1>{i18n.Code.code}</h1>
-          <button
-            className="run-button"
-            onClick={handleExecuteClick}
-            aria-label="Ejecutar código en el editor"
+    <Provider store={store}>
+      <main className="container">
+        <section className="section editorSection">
+          <header className="header">
+            <h1>{i18n.Code.code}</h1>
+            <button
+              className="run-button"
+              onClick={handleExecuteClick}
+              aria-label="Ejecutar código en el editor"
+            >
+              {i18n.Code.run}
+            </button>
+          </header>
+          <CodeEditor></CodeEditor>
+        </section>
+        <section className="section">
+          <header className="header">
+            <h1>{i18n.Code.output}</h1>
+          </header>
+          <div
+            aria-label="Code Output"
+            id="OutputDisplay"
+            className="output-area"
           >
-            {i18n.Code.run}
-          </button>
-        </header>
-        <CodeEditor></CodeEditor>
-      </section>
-      <section className="section">
-        <header className="header">
-          <h1>{i18n.Code.output}</h1>
-        </header>
-        <div
-          aria-label="Code Output"
-          id="OutputDisplay"
-          className="output-area"
-        >
-          {formatOutput(output, error)}
-        </div>
-      </section>
-    </main>
+            {formatOutput(output, error)}
+          </div>
+        </section>
+      </main>
+    </Provider>
   );
 }
 

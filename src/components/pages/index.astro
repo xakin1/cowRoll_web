@@ -1,8 +1,6 @@
 ---
 import { getI18N } from "../../i18n";
-import ConsoleApp from "../ConsoleApp";
-import dotenvExpand from 'dotenv-expand'
-import * as dotenv from 'dotenv'
+import Terminal from "../Terminal/Terminal";
 const {currentLocale} = Astro
 const i18n = getI18N({currentLocale})
 
@@ -53,7 +51,7 @@ const i18n = getI18N({currentLocale})
     <button id="themeToggle">
       Cambiar tema
     </button>
-    <ConsoleApp client:only />
+    <Terminal client:only />
   </main>
 
 <script>
