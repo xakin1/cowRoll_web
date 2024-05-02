@@ -1,6 +1,6 @@
 // tests/tokenizer.test.js
 import { describe, expect, it } from "vitest";
-import { tokenize } from "../mocks/tokenizer";
+import { tokenize } from "../../mocks/tokenizer";
 
 describe("Tokenizer functionality", () => {
   it("should tokenize a simple function declaration correctly", () => {

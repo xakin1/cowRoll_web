@@ -9,7 +9,11 @@ function Sidebar() {
   };
   const state_nav = isOpen ? "open" : "closed";
   return (
-    <nav className={`sidebar ${state_nav}`} onClick={toggleSidebar}>
+    <nav
+      className={`sidebar ${state_nav}`}
+      onClick={toggleSidebar}
+      data-testid="sidebar-nav"
+    >
       <div className={`svg-container ${state_nav}`}>
         <svg
           width="24"
