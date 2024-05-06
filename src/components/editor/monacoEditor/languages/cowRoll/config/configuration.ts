@@ -1,4 +1,4 @@
-import type { monaco } from "../../../../../utils/types/codeEditorType";
+import type { monaco } from "../../../../../../utils/types/codeEditorType";
 
 export const setupLanguageFeatures = (monaco: monaco) => {
   monaco.languages.setLanguageConfiguration("cowRoll", {

@@ -3,8 +3,9 @@ import {
   configureStore,
   type PayloadAction,
 } from "@reduxjs/toolkit";
-import codeReducer, { type Code } from "../src/redux/slice/codeSlide";
+import codeReducer from "../src/redux/slice/codeSlide";
 import type store from "../src/redux/store";
+import type { Code } from "../src/utils/types/ApiTypes";
 
 // beforeAll(() => server.listen());
 // afterEach(() => server.resetHandlers());

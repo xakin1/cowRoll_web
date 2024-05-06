@@ -1,19 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getDocuments } from "../../../services/codeApi";
+import type { Files } from "../../../utils/types/types";
+import FolderTree from "./FoltderTree";
 import "./sideBar.css";
 
 function Sidebar() {
+  const [items, setItems] = useState<Files[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleDoubleClick = () => {
+    setIsEditing(true);
+  };
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      const docs = await getDocuments(1);
+      setItems(docs);
+    };
+    fetchDocuments();
+  }, []);
+
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen); // Toggles the isOpen state between true and false
   };
+
   const state_nav = isOpen ? "open" : "closed";
   return (
-    <nav
-      className={`sidebar ${state_nav}`}
-      onClick={toggleSidebar}
-      data-testid="sidebar-nav"
-    >
+    <nav className={`sidebar ${state_nav}`} data-testid="sidebar-nav">
       <div className={`svg-container ${state_nav}`}>
         <svg
           width="24"
@@ -29,24 +44,7 @@ function Sidebar() {
           <path d="M14 4l-4 16" />
         </svg>
       </div>
-
-      <ul>
-        <li>
-          <a href="#">Home</a>
-        </li>
-        <li>
-          <a href="#">About</a>
-        </li>
-        <li>
-          <a href="#">Services</a>
-        </li>
-        <li>
-          <a href="#">Portfolio</a>
-        </li>
-        <li>
-          <a href="#">Contact</a>
-        </li>
-      </ul>
+      <FolderTree files={items}></FolderTree>
     </nav>
   );
 }

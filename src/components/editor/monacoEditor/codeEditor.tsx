@@ -66,6 +66,11 @@ const CodeEditor = () => {
     updateEditorMarkers();
   }, [error]);
 
+  useEffect(() => {
+    if (editorRef.current && code !== editorRef.current.getValue()) {
+      editorRef.current.setValue(code);
+    }
+  }, [code]);
   //Actualiza el tema del editor cuando se detecta un cambio en el tema
   useEffect(() => {
     if (monacoRef.current) {

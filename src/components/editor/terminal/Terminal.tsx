@@ -1,9 +1,9 @@
 import { useAppSelector } from "../../../hooks/customHooks.js";
 import { getI18N } from "../../../i18n/index.js";
 import { getLang } from "../../../i18n/utils.js";
-import { type Error } from "../../../redux/slice/codeSlide.js";
 import type { RootState } from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
+import type { CodeError } from "../../../utils/types/ApiTypes.js";
 import CodeEditor from "../monacoEditor/codeEditor.js";
 import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
@@ -27,7 +27,8 @@ function Terminal() {
   const formatError = (error: string) => {
     return <span style={{ color: "red" }}>{error}</span>;
   };
-  const formatOutput = (data: any, error: Error) => {
+
+  const formatOutput = (data: any, error: CodeError) => {
     if (error.errorCode) {
       return formatError(error.errorCode);
     } else if (error.error && !error.errorCode) {

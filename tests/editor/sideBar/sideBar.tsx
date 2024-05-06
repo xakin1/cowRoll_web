@@ -19,8 +19,8 @@ describe("Sidebar component", () => {
   it("toggles back to open when clicked again", async () => {
     render(<Sidebar />);
     const nav = screen.getByRole("navigation");
-    fireEvent.click(nav); // Closes the sidebar
-    fireEvent.click(nav); // Opens the sidebar
+    fireEvent.click(nav);
+    fireEvent.click(nav);
     expect(nav.className).toContain("sidebar open");
   });
 
@@ -29,12 +29,9 @@ describe("Sidebar component", () => {
     const nav = screen.getByTestId("sidebar-nav");
     const svgContainer = screen.getByTestId("svg-container");
 
-    // Comprobar estado inicial
     expect(svgContainer.className).toContain("open");
-    // Simular clic y comprobar cambio
     fireEvent.click(nav);
     expect(svgContainer.className).toContain("closed");
-    // Otro clic para regresar al estado original
     fireEvent.click(nav);
     expect(svgContainer.className).toContain("open");
   });

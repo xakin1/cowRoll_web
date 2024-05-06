@@ -91,5 +91,5 @@ const saveDocument = async (
   editor: EditorType.IStandaloneCodeEditor,
   monaco: monaco
 ) => {
-  saveCode(editor.getValue());
+  saveCode(editor.getValue(), "example");
 };
