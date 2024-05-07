@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { getDocuments } from "../../../services/codeApi";
-import type { Files } from "../../../utils/types/types";
+
+import { getFiles } from "../../../services/codeApi";
+import type { DirectoryProps } from "../../../utils/types/ApiTypes";
 import FolderTree from "./FoltderTree";
 import "./sideBar.css";
 
 function Sidebar() {
-  const [items, setItems] = useState<Files[]>([]);
+  const [directorySystem, setDirectorySystem] = useState<DirectoryProps>({
+    name: "Root",
+    type: "Directory",
+  });
   const [isEditing, setIsEditing] = useState(false);
 
   const handleDoubleClick = () => {
@@ -14,8 +18,13 @@ function Sidebar() {
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const docs = await getDocuments(1);
-      setItems(docs);
+      const docs = await getFiles(1);
+      setDirectorySystem(
+        docs?.message || {
+          name: "Root",
+          type: "Directory",
+        }
+      );
     };
     fetchDocuments();
   }, []);
@@ -44,7 +53,7 @@ function Sidebar() {
           <path d="M14 4l-4 16" />
         </svg>
       </div>
-      <FolderTree files={items}></FolderTree>
+      <FolderTree {...directorySystem}></FolderTree>
     </nav>
   );
 }

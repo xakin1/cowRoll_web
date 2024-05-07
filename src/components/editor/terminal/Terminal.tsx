@@ -1,6 +1,7 @@
-import { useAppSelector } from "../../../hooks/customHooks.js";
+import { useAppDispatch, useAppSelector } from "../../../hooks/customHooks.js";
 import { getI18N } from "../../../i18n/index.js";
 import { getLang } from "../../../i18n/utils.js";
+import { addOutput } from "../../../redux/slice/codeSlide.js";
 import type { RootState } from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
 import type { CodeError } from "../../../utils/types/ApiTypes.js";
@@ -9,6 +10,12 @@ import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
 
 function Terminal() {
+  const file = useAppSelector(
+    (state: RootState) => state.directorySystem.selectedFile
+  );
+
+  const dispatch = useAppDispatch();
+
   const formatJson = (data: Object) => {
     try {
       const formattedJson = JSON.stringify(data, null, 2); // Formatea el JSON
@@ -44,9 +51,14 @@ function Terminal() {
   };
   const output = useAppSelector((state) => state.code.output);
 
-  const { code, error } = useAppSelector((state: RootState) => state.code);
+  const { error } = useAppSelector((state: RootState) => state.code);
 
-  const handleExecuteClick = () => executeCode(code);
+  const handleExecuteClick = async () => {
+    const response = await executeCode(file?.content || "");
+    if (response) {
+      dispatch(addOutput(response));
+    }
+  };
 
   const currentLocale = getLang();
   const i18n = getI18N({ currentLocale });
@@ -66,7 +78,11 @@ function Terminal() {
               {i18n.Code.run}
             </button>
           </header>
-          <CodeEditor></CodeEditor>
+          {file ? (
+            <CodeEditor {...file}></CodeEditor>
+          ) : (
+            <span> Seleccione un fichero</span>
+          )}
         </section>
         <section className="section">
           <header className="header">

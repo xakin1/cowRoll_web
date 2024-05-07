@@ -8,7 +8,10 @@ import type {
   FileProps,
 } from "../utils/types/ApiTypes";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl =
+  import.meta.env.MODE === "test"
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.PUBLIC_API_URL;
 
 export async function getFiles(
   userId: number

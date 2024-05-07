@@ -2,8 +2,10 @@ import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/customHooks";
-import { addCode } from "../../../redux/slice/codeSlide";
+import { selectFile } from "../../../redux/slice/fileSlide";
 import type { RootState } from "../../../redux/store";
+import { insertContent } from "../../../services/codeApi";
+import type { FileProps } from "../../../utils/types/ApiTypes";
 import type { monaco } from "../../../utils/types/codeEditorType";
 import { setupEditorCommands } from "./languages/cowRoll/config/commands";
 import { setupLanguageFeatures } from "./languages/cowRoll/config/configuration";
@@ -12,15 +14,24 @@ import defineCowRollLanguage from "./languages/cowRoll/language";
 import defineDarkTheme from "./languages/cowRoll/themes/dark";
 import defineLightTheme from "./languages/cowRoll/themes/light";
 
-const CodeEditor = () => {
+const CodeEditor = (file: FileProps) => {
   const [theme, setTheme] = useState(
     window.localStorage.getItem("theme") || "dark"
   );
+
   const monacoRef = useRef<monaco | null>(null);
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const { code, error } = useAppSelector((state: RootState) => state.code);
+  const { error } = useAppSelector((state: RootState) => state.code);
 
   const dispatch = useAppDispatch();
+
+  const saveDocumentRef = useRef<(file: FileProps) => void>();
+
+  // Define the saveDocument function
+  saveDocumentRef.current = async (file: FileProps) => {
+    const userId = 1;
+    insertContent(userId, file);
+  };
 
   const applyTheme = (monaco: monaco) => {
     theme === "dark" ? defineDarkTheme(monaco) : defineLightTheme(monaco);
@@ -33,8 +44,8 @@ const CodeEditor = () => {
     monacoRef.current = monaco;
     editorRef.current = editor;
     loadSuggestions(monaco);
-    setupEditorCommands(editor, monaco);
     setupLanguageFeatures(monaco);
+    setupEditorCommands(editor, monaco);
   };
 
   //Función que se encarga de poner los fallos
@@ -67,10 +78,24 @@ const CodeEditor = () => {
   }, [error]);
 
   useEffect(() => {
-    if (editorRef.current && code !== editorRef.current.getValue()) {
-      editorRef.current.setValue(code);
+    if (editorRef.current) {
+      if (monacoRef.current) {
+        editorRef.current.addCommand(
+          monacoRef.current.KeyMod.CtrlCmd | monacoRef.current.KeyCode.KeyS,
+          () => {
+            if (saveDocumentRef.current && file) {
+              saveDocumentRef.current(file);
+            }
+          }
+        );
+
+        if (file.content !== editorRef.current.getValue()) {
+          editorRef.current.setValue(file.content);
+        }
+      }
     }
-  }, [code]);
+  }, [file]);
+
   //Actualiza el tema del editor cuando se detecta un cambio en el tema
   useEffect(() => {
     if (monacoRef.current) {
@@ -97,9 +122,14 @@ const CodeEditor = () => {
     <Editor
       defaultLanguage="cowRoll"
       onChange={(value, event) => {
-        dispatch(addCode(value));
+        dispatch(
+          selectFile({
+            ...file,
+            content: value || "",
+          })
+        );
       }}
-      defaultValue={code}
+      defaultValue={file.content}
       onMount={handleEditorDidMount}
     />
   );

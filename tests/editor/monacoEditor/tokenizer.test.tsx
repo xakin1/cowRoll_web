@@ -7,9 +7,6 @@ describe("Tokenizer functionality", () => {
     const code = `function generar_ficha(nombre) do`;
     const tokens = tokenize(code);
 
-    // Enhanced logging for debugging
-    console.log(JSON.stringify(tokens, null, 2));
-
     expect(tokens).toEqual([
       { type: "keyword", value: "function" },
       { type: "function_name", value: "generar_ficha" },

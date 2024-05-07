@@ -1,16 +1,14 @@
 // editorCommands.ts
 import type { editor as EditorType } from "monaco-editor";
-import { saveCode } from "../../../../../../services/codeApi";
-import type { monaco } from "../../../../../../utils/types/codeEditorType";
 
 export const setupEditorCommands = (
   editor: EditorType.IStandaloneCodeEditor,
   monaco: typeof import("monaco-editor")
 ) => {
-  // Comando para guardar el documento
-  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
-    saveDocument(editor, monaco);
-  });
+  // // Comando para guardar el documento
+  // editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
+  //   saveDocument(selectedFile, userId);
+  // });
 
   // Comando para mover líneas hacia arriba
   editor.addCommand(monaco.KeyMod.Alt | monaco.KeyCode.UpArrow, function () {
@@ -85,11 +83,4 @@ export const setupEditorCommands = (
       }
     }
   );
-};
-
-const saveDocument = async (
-  editor: EditorType.IStandaloneCodeEditor,
-  monaco: monaco
-) => {
-  saveCode(editor.getValue(), "example");
 };

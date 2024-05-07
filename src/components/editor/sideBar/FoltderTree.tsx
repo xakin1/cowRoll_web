@@ -1,98 +1,47 @@
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { useDispatch } from "react-redux";
-import { addCode } from "../../../redux/slice/codeSlide";
-import type { DirectoryProps } from "../../../utils/types/ApiTypes";
+import { selectFile } from "../../../redux/slice/fileSlide";
+import type { DirectoryProps, FileProps } from "../../../utils/types/ApiTypes";
 
-interface FolderTreeProps {
-  files: DirectoryProps[];
-}
-
-interface DirectoryNode {
-  type: "directory";
-  children: { [key: string]: DirectoryTree };
-}
-
-interface FileNode {
-  type: "file";
-  content: string;
-}
-
-type DirectoryTree = DirectoryNode | FileNode;
-
-function FolderTree({ files }: FolderTreeProps) {
+function FolderTree(directoySystem: DirectoryProps) {
   const dispatch = useDispatch();
 
-  function handleItemClick(content: string) {
-    console.log(content);
-    dispatch(addCode(content));
+  function handleItemClick(content: FileProps) {
+    dispatch(selectFile(content));
   }
 
-  // function buildFolderTree(files: Files[]): JSX.Element[] {
-  //   const root: DirectoryNode = { type: "directory", children: {} };
+  function buildTreeItems(current: DirectoryProps | FileProps): JSX.Element {
+    if (current.type === "File") {
+      return (
+        <TreeItem
+          key={current.id}
+          itemId={current.name + " " + current.directoryId}
+          label={current.name}
+          onClick={() => handleItemClick(current)}
+        />
+      );
+    } else {
+      if (current.type === "Directory") {
+        return (
+          <TreeItem
+            key={current.id}
+            itemId={current.name + " " + current.parentId}
+            label={current.name}
+          >
+            {current.children &&
+              current.children.map((child) => {
+                return buildTreeItems(child);
+              })}
+          </TreeItem>
+        );
+      } else {
+        return <></>;
+      }
+    }
+  }
 
-  //   files.forEach(({ fileName, code }) => {
-  //     const parts = fileName.split("/");
-  //     let current: DirectoryTree = root;
-  //     parts.forEach((part, index) => {
-  //       if (index === parts.length - 1) {
-  //         // Comprobamos que sea un nodo raíz
-  //         if (parts.length === 1) {
-  //           root.children[part] = { type: "file", content: code };
-  //         } else {
-  //           //Comprobamos  que es un fichero que tiene un padre (una carpeta)
-  //           (current as DirectoryNode).children[part] = {
-  //             type: "file",
-  //             content: code,
-  //           };
-  //         }
-  //       } else {
-  //         // Es un directorio
-  //         if (!(current as DirectoryNode).children[part]) {
-  //           (current as DirectoryNode).children[part] = {
-  //             type: "directory",
-  //             children: {},
-  //           };
-  //         }
-  //         current = (current as DirectoryNode).children[part];
-  //       }
-  //     });
-  //   });
-
-  //   //Construimos el arbol
-  //   return Object.entries(root.children).map(([key, childNode]) =>
-  //     buildTreeItems(childNode, key)
-  //   );
-  // }
-
-  // function buildTreeItems(current: DirectoryTree, path = ""): JSX.Element {
-  //   const label =
-  //     path.split("/").pop() ||
-  //     (current.type === "file" ? current.content : "Root");
-
-  //   if (current.type === "file") {
-  //     return (
-  //       <TreeItem
-  //         key={path}
-  //         itemId={path}
-  //         label={label}
-  //         onClick={() => handleItemClick(current.content)}
-  //       />
-  //     );
-  //   } else {
-  //     return (
-  //       <TreeItem key={path} itemId={path} label={label}>
-  //         {Object.entries((current as DirectoryNode).children).map(
-  //           ([key, childNode]) => {
-  //             const newPath = `${path}/${key}`;
-  //             return buildTreeItems(childNode, newPath);
-  //           }
-  //         )}
-  //       </TreeItem>
-  //     );
-  //   }
-  // }
-
-  return <SimpleTreeView></SimpleTreeView>;
+  return <SimpleTreeView>{buildTreeItems(directoySystem)}</SimpleTreeView>;
 }
 
 export default FolderTree;
