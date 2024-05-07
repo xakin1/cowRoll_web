@@ -4,5 +4,11 @@
     "output": "Code output",
     "run": "Run",
     "placeHolder": "the code goes here"
+  },
+  "ContextualMenu": {
+    "newFile": "New file...",
+    "newFolder": "New folder...",
+    "renameFile": "Rename...",
+    "delete": "Delete"
   }
 }

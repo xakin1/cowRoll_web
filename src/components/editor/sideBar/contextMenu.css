@@ -1,0 +1,26 @@
+[data-theme="light"].context-menu {
+  background-color: white; /* Fondo blanco para el menú */
+  border: 1px solid #ccc; /* Borde sutil */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar efecto flotante */
+  z-index: 1000; /* Asegurarse de que el menú esté sobre otros elementos */
+  padding: 10px 0; /* Padding vertical sin afectar el ancho automático */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+.context-menu {
+  background-color: #494949; /* Fondo blanco para el menú */
+  border: 1px solid #ccc; /* Borde sutil */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar efecto flotante */
+  z-index: 1000; /* Asegurarse de que el menú esté sobre otros elementos */
+  padding: 10px 0; /* Padding vertical sin afectar el ancho automático */
+  border-radius: 5px; /* Bordes redondeados */
+}
+.context-menu li {
+  padding: 8px 20px; /* Padding para los elementos li */
+  cursor: pointer; /* Cursor de mano para indicar que son clicables */
+  list-style: none; /* Remover estilos de lista */
+}
+.context-menu li:hover {
+  background-color: #a7a7a7;
+  opacity: 0.8;
+}

@@ -4,5 +4,11 @@
     "output": "Código de saída",
     "run": "Executar",
     "placeHolder": "O código vai aquí"
+  },
+  "ContextualMenu": {
+    "newFile": "Crear arquivo...",
+    "newFolder": "Crear carpeta...",
+    "renameFile": "Cambiar o nome...",
+    "delete": "Eliminar"
   }
 }

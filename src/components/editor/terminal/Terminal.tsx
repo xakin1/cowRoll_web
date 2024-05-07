@@ -97,6 +97,7 @@ function Terminal() {
           </div>
         </section>
       </main>
+      <div id="portal-root"></div>
     </div>
   );
 }
