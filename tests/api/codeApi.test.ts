@@ -179,7 +179,7 @@ describe("test Api", () => {
     }
 
     const files = await getFiles(usrId);
-    if (files && "message" in files) {
+    if (files?.message.children && "message" in files) {
       const file_test2 = files.message.children.find(
         (child) => child.type === "File" && child.name === fileName
       );
@@ -207,7 +207,6 @@ describe("test Api", () => {
       expect(response.status).toBe(204);
     }
   });
-
   it("editDirectory with no existing file /editDirectory/:id", async () => {
     const directory: DirectoryProps = {
       name: "code2",
@@ -252,7 +251,6 @@ describe("test Api", () => {
       expect(true).toBe(false);
     }
   });
-
   it("createDirectory a subdirectory /createDirectory/:id", async () => {
     const usrId = 1;
     const directoryName = "Code2";

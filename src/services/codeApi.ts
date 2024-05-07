@@ -185,7 +185,7 @@ export async function deleteDirectory(
 }
 
 export async function resetBd() {
-  await fetch(apiUrl + "api/test/reset", {
+  await fetch(apiUrl + "test/reset", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
