@@ -1,11 +1,11 @@
 import type {
-  DirectoryId,
   DirectoryProps,
   FetchError,
   FetchInsertContent,
   FetchRun,
   FetchSuccess,
   FileProps,
+  Id,
 } from "../utils/types/ApiTypes";
 
 const apiUrl =
@@ -58,8 +58,21 @@ export async function editFile(
 export async function createDirectory(
   userId: number,
   directory: DirectoryProps
-): Promise<FetchSuccess<DirectoryId> | FetchError | undefined> {
+): Promise<FetchSuccess<Id> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/createDirectory/" + userId, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(directory),
+  });
+  return await response.json();
+}
+export async function createFile(
+  userId: number,
+  directory: FileProps
+): Promise<FetchSuccess<Id> | FetchError | undefined> {
+  const response = await fetch(apiUrl + "api/createFile/" + userId, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -160,7 +173,7 @@ export async function deleteFile(
       return await response.json();
     }
   } else {
-    console.error("Failed to save the document.");
+    console.error("Failed to delete the document.");
   }
 }
 export async function deleteDirectory(

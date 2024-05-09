@@ -2,6 +2,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   createDirectory,
+  createFile,
   deleteDirectory,
   deleteFile,
   editDirectory,
@@ -15,6 +16,7 @@ import {
 import type {
   DirectoryProps,
   FileProps,
+  Id,
 } from "./../../src/utils/types/ApiTypes";
 describe("test Api", () => {
   beforeAll(async () => {
@@ -50,31 +52,24 @@ describe("test Api", () => {
   });
   it("insertContent /insertContent/:id", async () => {
     const usrId = 1;
-    const file: FileProps = { name: "Test", content: "1+1" };
-    const response = await insertContent(usrId, file);
+    const fileName = "Test";
+    const file: FileProps = { name: fileName };
 
-    expect(response).toBeDefined();
-
+    const response = await createFile(usrId, file);
     if (response && "message" in response) {
-      expect(response.message).toBe("Content saved successfully");
-    } else {
-      expect(false).toBe(true);
+      const content: FileProps = { id: response.message, content: "1+1" };
+      const responseContent = await insertContent(usrId, content);
+
+      expect(responseContent).toBeDefined();
+
+      if (responseContent && "message" in responseContent) {
+        expect(responseContent.message).toBe("Content saved successfully");
+      } else {
+        expect(false).toBe(true);
+      }
     }
   });
-  it("insertContent with an emptyName /insertContent/:id", async () => {
-    const usrId = 1;
-    const file: FileProps = { name: "", content: "1+1" };
-    const response = await insertContent(usrId, file);
 
-    // Check if the response is undefined
-    expect(response).toBeDefined();
-
-    if (response && "error" in response) {
-      expect(response.error).toBe("The name of the file can't be empty.");
-    } else {
-      expect(false).toBe(true);
-    }
-  });
   it("getFiles /file/:id", async () => {
     const usrId = 1;
     const response = await getFiles(usrId);
@@ -167,29 +162,15 @@ describe("test Api", () => {
   it("deleteFile /deleteFile", async () => {
     const usrId = 1;
     const fileName = "Test2";
-    const file: FileProps = { name: fileName, content: "1+1" };
-    const responseInsert = await insertContent(usrId, file);
+    const file: FileProps = { name: fileName };
+    const responseCreate = await createFile(usrId, file);
 
-    expect(responseInsert).toBeDefined();
-
-    if (responseInsert && "message" in responseInsert) {
-      expect(responseInsert.message).toBe("Content saved successfully");
-    } else {
-      expect(false).toBe(true);
-    }
-
-    const files = await getFiles(usrId);
-    if (files?.message.children && "message" in files) {
-      const file_test2 = files.message.children.find(
-        (child) => child.type === "File" && child.name === fileName
-      );
-      if (file_test2?.id != undefined) {
-        const response = await deleteFile(usrId, file_test2.id);
-        if (response && "message" in response) {
-          expect(response.message).toBe("File was deleted successfully");
-        } else {
-          expect(false).toBe(true);
-        }
+    if (responseCreate && "message" in responseCreate) {
+      const response = await deleteFile(usrId, responseCreate.message);
+      if (response && "message" in response) {
+        expect(response.message).toBe("File was deleted successfully");
+      } else {
+        expect(false).toBe(true);
       }
     } else {
       expect(false).toBe(true);
@@ -289,6 +270,49 @@ describe("test Api", () => {
       } else {
         expect(true).toBe(false);
       }
+    }
+  });
+  it("createFile/createFile/:id", async () => {
+    const usrId: Id = 1;
+    const fileName = "Code2";
+    const file: FileProps = { name: fileName };
+
+    const response = await createFile(usrId, file);
+
+    // Retrieve the files/directories
+    const files = await getFiles(usrId);
+
+    if (files?.message.children && "message" in files) {
+      // Find the newly created directory in the list
+      const fileTest2 = files.message.children.find(
+        (child) => child.type === "File" && child.name === fileName
+      );
+
+      // Check if the directory was created and returned properly
+      if (response && "message" in response && fileTest2?.id) {
+        expect(response.message).toBe(fileTest2.id);
+
+        // Optionally delete the directory if needed
+        await deleteDirectory(usrId, fileTest2.id);
+      } else {
+        expect(true).toBe(false);
+      }
+    } else {
+      expect(true).toBe(false);
+    }
+  });
+  it("insertContent with an emptyName /createFile/:id", async () => {
+    const usrId = 1;
+    const file: FileProps = { name: "" };
+    const response = await createFile(usrId, file);
+
+    // Check if the response is undefined
+    expect(response).toBeDefined();
+
+    if (response && "error" in response) {
+      expect(response.error).toBe("The name of the file can't be empty.");
+    } else {
+      expect(false).toBe(true);
     }
   });
   it("editDirectory with no existing file /editDirectory/:id", async () => {

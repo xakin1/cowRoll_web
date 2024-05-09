@@ -1,17 +1,17 @@
 export interface FileProps {
-  name: string;
-  directoryId?: number;
-  content: string;
-  id?: number;
+  name?: string;
+  directoryId?: Id;
+  content?: string;
+  id?: Id;
   type?: "File";
 }
 
-export type DirectoryId = number;
+export type Id = number;
 export interface DirectoryProps {
   name: string;
   parentId?: number;
-  id?: DirectoryId;
-  children?: FileProps[] | DirectoryProps[];
+  id?: Id;
+  children?: Array<FileProps | DirectoryProps>;
   type?: "Directory";
 }
 
