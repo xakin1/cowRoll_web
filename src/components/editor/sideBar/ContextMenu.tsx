@@ -24,21 +24,19 @@ export function ContextMenu({
 }: ContextMenuProps) {
   if (!items) return null;
 
-  // Single operation assuming only single item is passed when needed
   const singleItem = items.length === 1 ? items[0] : null;
-
-  // Insert File or Directory
-  const handleInsert = async (name: string, type: "File" | "Directory") => {
-    if (singleItem && singleItem.type === "Directory") {
+  const handleInsert = async (name: string) => {
+    const usrId = 1;
+    if (singleItem) {
       const data = {
         name: name,
-        directoryId: type === "File" ? singleItem.id : undefined,
-        parentId: type === "Directory" ? singleItem.id : undefined,
+        directoryId: singleItem.type === "File" ? singleItem.id : undefined,
+        parentId: singleItem.type === "Directory" ? singleItem.id : undefined,
       };
       const response =
-        type === "File"
-          ? await createFile(1, data)
-          : await createDirectory(1, data);
+        singleItem.type === "File"
+          ? await createFile(usrId, data)
+          : await createDirectory(usrId, data);
       if (response && "message" in response) {
         onAddNode();
       }
@@ -79,16 +77,40 @@ export function ContextMenu({
     >
       {singleItem && singleItem.type === "Directory" && items.length === 1 && (
         <>
-          <li onClick={() => handleInsert("", "File")}>
+          <li
+            onClick={() =>
+              handleOpenModal({
+                label: i18n.t("ContextualMenu.Modal.inputFileName"),
+                showInput: true,
+                action: handleInsert,
+              })
+            }
+          >
             {i18n.t("ContextualMenu.newFile")}
           </li>
-          <li onClick={() => handleInsert("", "Directory")}>
+          <li
+            onClick={() =>
+              handleOpenModal({
+                label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
+                showInput: true,
+                action: handleInsert,
+              })
+            }
+          >
             {i18n.t("ContextualMenu.newFolder")}
           </li>
         </>
       )}
       {singleItem && (
-        <li onClick={() => handleChangeName("")}>
+        <li
+          onClick={() =>
+            handleOpenModal({
+              label: i18n.t("ContextualMenu.Modal.renameName", singleItem.name),
+              showInput: true,
+              action: handleChangeName,
+            })
+          }
+        >
           {i18n.t("ContextualMenu.renameFile")}
         </li>
       )}

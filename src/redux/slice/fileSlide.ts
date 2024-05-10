@@ -21,15 +21,12 @@ export const directorySystemSlice = createSlice({
   reducers: {
     addFile: (state, action: PayloadAction<DirectoryProps>) => {
       if (action.payload) {
-        console.log(action.payload);
-
         state.directorySystem = action.payload;
       }
     },
 
     selectFile: (state, action: PayloadAction<FileProps>) => {
       if (action.payload) {
-        console.log(action.payload);
         state.selectedFile = action.payload;
       }
     },

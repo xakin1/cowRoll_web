@@ -47,6 +47,8 @@ export interface DirectoryProps {
   type: "Directory";
 }
 
+export type Items = { id: number; name: string; type: "File" | "Directory" };
+
 export type FetchCodeError = {
   error: CodeError;
 };

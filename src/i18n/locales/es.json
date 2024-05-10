@@ -13,6 +13,7 @@
     "Modal": {
       "inputFileName": "Introduce el nombre del archivo:",
       "inputDirectoryName": "Introduce el nombre dela carpeta:",
+      "renameName": "Introduce el nuevo nombre para el fichero: '{0}'",
       "deleteFolder": "¿Desea eliminar la carpeta seleccionada?",
       "deleteFile": "¿Desea eliminar el arhchivo seleccionada?",
       "multipleDelete": "Estas seguro de querer borrar los siguientes ficheros {0}?"

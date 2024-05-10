@@ -2,7 +2,11 @@ import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addFile, selectFile } from "../../../redux/slice/fileSlide";
-import type { DirectoryProps, FileProps } from "../../../utils/types/ApiTypes";
+import type {
+  DirectoryProps,
+  FileProps,
+  Items,
+} from "../../../utils/types/ApiTypes";
 import { ContextMenu } from "./ContextMenu";
 
 import { useAppSelector } from "../../../hooks/customHooks";
@@ -16,9 +20,7 @@ import "./folderTree.css";
 function FolderTree() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<ModalConfig | null>(null);
-  const [selectedItems, setSelectedItems] = useState<
-    { id: number; name: string; type: "File" | "Directory" }[]
-  >([]);
+  const [selectedItems, setSelectedItems] = useState<Items[]>([]);
 
   const directorySystem = useAppSelector(
     (state: RootState) => state.directorySystem.directorySystem
@@ -77,15 +79,16 @@ function FolderTree() {
     }
   }
 
-  const handleContextMenu = (event: React.MouseEvent, item: any) => {
+  const handleContextMenu = (event: React.MouseEvent, items: Items) => {
     event.preventDefault();
     event.stopPropagation();
+    setSelectedItems([items]);
     setContextMenu({
       ...contextMenu,
       visible: true,
       x: event.clientX,
       y: event.clientY,
-      items: selectedItems.length > 1 ? selectedItems : item,
+      items: [items],
     });
   };
 
