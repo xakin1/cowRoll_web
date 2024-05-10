@@ -83,3 +83,5 @@ export type FetchInsertContent<T> =
   | undefined;
 
 export type FetchRun<T> = FetchSuccess<T> | FetchCodeError | undefined;
+
+export type NodeTree = DirectoryProps | FileProps;

@@ -6,12 +6,13 @@ import type {
   DirectoryProps,
   FileProps,
   Items,
+  NodeTree,
 } from "../../../utils/types/ApiTypes";
 import { ContextMenu } from "./ContextMenu";
 
 import { useAppSelector } from "../../../hooks/customHooks";
 import type { RootState } from "../../../redux/store";
-import { getFiles } from "../../../services/codeApi";
+import { editDirectory, editFile, getFiles } from "../../../services/codeApi";
 import type { ContextMenuProps, ModalConfig } from "../../../utils/types/types";
 import Modal from "../../modal";
 import { CustomTreeItem } from "./BorderedTreeView";
@@ -60,21 +61,19 @@ function FolderTree() {
     event: React.MouseEvent,
     item: FileProps | DirectoryProps
   ) {
+    event.preventDefault();
     if (event.ctrlKey || event.metaKey) {
-      // Handle multi-selection logic
+      console.log(item);
       setSelectedItems((prev) => {
-        const itemIndex = prev.findIndex((x) => x.id === item.id);
-        if (itemIndex === -1) {
-          // If not already selected, add the new item
-          return [...prev, { id: item.id, name: item.name, type: item.type }];
+        const index = prev.findIndex((x) => x.id === item.id);
+        if (index === -1) {
+          return [...prev, item];
         } else {
-          // If already selected, remove the item
-          return prev.filter((_, index) => index !== itemIndex);
+          return prev.filter((x) => x.id !== item.id);
         }
       });
     } else {
-      // Handle single selection logic
-      setSelectedItems([{ id: item.id, name: item.name, type: item.type }]);
+      setSelectedItems([item]);
       if (item.type === "File") {
         dispatch(selectFile(item));
       }
@@ -104,6 +103,35 @@ function FolderTree() {
     if (docs?.message) dispatch(addFile(docs?.message));
   };
 
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    item: NodeTree
+  ) => {
+    console.log(item);
+    e.dataTransfer.setData("drag-item", JSON.stringify(item));
+    e.stopPropagation();
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLLIElement>,
+    targetDirectory: DirectoryProps
+  ) => {
+    e.preventDefault();
+    const item = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree;
+    if (item.type == "Directory") {
+      editDirectory(1, { ...item, parentId: targetDirectory.id });
+    } else {
+      editFile(1, { ...item, directoryId: targetDirectory.id });
+    }
+    addNode();
+    e.stopPropagation();
+  };
+
   // Añadir un listener para cerrar el menú si se hace clic fuera de él
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -125,7 +153,7 @@ function FolderTree() {
     };
   }, [contextMenu.visible]);
 
-  function buildTreeItems(current: DirectoryProps | FileProps): JSX.Element {
+  function buildTreeItems(current: NodeTree): JSX.Element {
     if (current.type === "File") {
       return (
         <>
@@ -137,15 +165,19 @@ function FolderTree() {
                 backgroundColor: "rgba(25, 118, 210, 0.08)",
                 cursor: "pointer",
               },
-              backgroundColor: selectedItems.some(
-                (item) => item.id === (current.id ?? -1)
-              )
+              backgroundColor: selectedItems.some((item) => {
+                return item.id === current.id;
+              })
                 ? "rgba(25, 118, 210, 0.18)"
                 : "transparent",
               cursor: "pointer",
             }}
             label={
-              <div className="nodeTree">
+              <div
+                className="nodeTree"
+                draggable="true"
+                onDragStart={(e) => handleDragStart(e, current)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -168,6 +200,7 @@ function FolderTree() {
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(event) => handleItemClick(event, current)}
             onContextMenu={(event) => handleContextMenu(event, current)}
+            onDragOver={handleDragOver}
           />
           {contextMenu.visible && (
             <ContextMenu
@@ -193,15 +226,19 @@ function FolderTree() {
                   backgroundColor: "rgba(25, 118, 210, 0.08)",
                   cursor: "pointer",
                 },
-                backgroundColor: selectedItems.some(
-                  (item) => item.id === (current.id ?? -1)
-                )
+                backgroundColor: selectedItems.some((item) => {
+                  return item.id === current.id;
+                })
                   ? "rgba(25, 118, 210, 0.18)"
                   : "transparent",
                 cursor: "pointer",
               }}
               label={
-                <div className="nodeTree">
+                <div
+                  className="nodeTree"
+                  draggable="true"
+                  onDragStart={(e) => handleDragStart(e, current)}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -217,20 +254,13 @@ function FolderTree() {
                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                     <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />
                   </svg>
-                  <span
-                    style={{
-                      flexGrow: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      fontWeight: "inherit",
-                    }}
-                  >
-                    {current.name}
-                  </span>
+                  <span className="directoryName">{current.name}</span>
                 </div>
               }
               onMouseDown={(e) => e.stopPropagation()}
               onContextMenu={(event) => handleContextMenu(event, current)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, current)}
             >
               {current.children &&
                 current.children.map((child) => {
