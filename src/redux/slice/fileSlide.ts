@@ -9,6 +9,8 @@ const initialState: DirectorySystem = {
   directorySystem: {
     name: "Root",
     type: "Directory",
+    children: [],
+    id: -1,
   },
   selectedFile: undefined,
 };

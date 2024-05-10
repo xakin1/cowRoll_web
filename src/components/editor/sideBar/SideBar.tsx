@@ -12,11 +12,14 @@ function Sidebar() {
   useEffect(() => {
     const fetchDocuments = async () => {
       const docs = await getFiles(1);
+      //TODO: tengo que coger el estado inicial del redux mejor
       dispatch(
         addFile(
           docs?.message || {
             name: "Root",
             type: "Directory",
+            children: [],
+            id: -1,
           }
         )
       );
