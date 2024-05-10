@@ -69,13 +69,13 @@ function Terminal() {
       <main className="container">
         <section className="section editorSection">
           <header className="header">
-            <h1>{i18n.Code.code}</h1>
+            <h1>{i18n.t("Code.code")}</h1>
             <button
               className="run-button"
               onClick={handleExecuteClick}
               aria-label="Ejecutar código en el editor"
             >
-              {i18n.Code.run}
+              {i18n.t("Code.run")}
             </button>
           </header>
           {file ? (
@@ -86,7 +86,7 @@ function Terminal() {
         </section>
         <section className="section">
           <header className="header">
-            <h1>{i18n.Code.output}</h1>
+            <h1>{i18n.t("Code.output")}</h1>
           </header>
           <div
             aria-label="Code Output"

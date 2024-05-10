@@ -89,26 +89,26 @@ export function ContextMenu({
           <li
             onClick={() => {
               handleOpenModal({
-                label: i18n.ContextualMenu.Modal.inputFileName,
+                label: i18n.t("ContextualMenu.Modal.inputFileName"),
                 initialText: "",
                 action: handleInsertFile,
               });
               onClose();
             }}
           >
-            {i18n.ContextualMenu.newFile}
+            {i18n.t("ContextualMenu.newFile")}
           </li>
           <li
             onClick={() => {
               handleOpenModal({
-                label: i18n.ContextualMenu.Modal.inputDirectoryName,
+                label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
                 initialText: "",
                 action: handleInsertDirectory,
               });
               onClose();
             }}
           >
-            {i18n.ContextualMenu.newFolder}
+            {i18n.t("ContextualMenu.newFolder")}
           </li>
         </>
       )}
@@ -116,8 +116,8 @@ export function ContextMenu({
         onClick={() => {
           const message =
             item.type == "Directory"
-              ? i18n.ContextualMenu.Modal.inputDirectoryName
-              : i18n.ContextualMenu.Modal.inputFileName;
+              ? i18n.t("ContextualMenu.Modal.inputDirectoryName")
+              : i18n.t("ContextualMenu.Modal.inputFileName");
 
           handleOpenModal({
             label: message + "  '" + item.name + "'",
@@ -127,14 +127,20 @@ export function ContextMenu({
           onClose();
         }}
       >
-        {i18n.ContextualMenu.renameFile}
+        {i18n.t("ContextualMenu.renameFile")}
       </li>
       <li
         onClick={() => {
-          let message =
-            item.type == "Directory"
-              ? i18n.ContextualMenu.Modal.deleteFolder
-              : i18n.ContextualMenu.Modal.deleteFile;
+          let message;
+          if (item.length > 1) {
+            message = i18n.t("ContextualMenu.Modal.multipleDelete");
+          } else {
+            message =
+              item[0].type == "Directory"
+                ? i18n.t("ContextualMenu.Modal.deleteFolder")
+                : i18n.t("ContextualMenu.Modal.deleteFile");
+          }
+
           handleOpenModal({
             label: message + "  '" + item.name + "'",
             showInput: false,
@@ -143,7 +149,7 @@ export function ContextMenu({
           onClose();
         }}
       >
-        {i18n.ContextualMenu.delete}
+        {i18n.t("ContextualMenu.delete")}
       </li>
     </ul>
   );

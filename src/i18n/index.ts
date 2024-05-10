@@ -8,19 +8,44 @@ const LANG = {
   GALICIAN: "gl",
 };
 
-export const getI18N = ({
-  currentLocale = "gl",
-}: {
-  currentLocale: string | undefined;
-}) => {
+export const getI18N = ({ currentLocale = LANG.GALICIAN }) => {
+  let localeData;
   switch (currentLocale) {
     case LANG.ENGLISH:
-      return { ...galician, ...spanish, ...english };
+      localeData = { ...galician, ...spanish, ...english };
+      break;
     case LANG.SPANISH:
-      return { ...galician, ...english, ...spanish };
+      // Spanish should overwrite English and Galician
+      localeData = { ...galician, ...english, ...spanish };
+      break;
     case LANG.GALICIAN:
-      return galician;
     default:
-      return galician; // Devuelve gallego por defecto si no coincide ningún caso
+      localeData = galician;
+      break;
   }
+
+  return {
+    t: (key: string, ...params: string[]): string => {
+      const keys = key.split(".");
+      let template: any = localeData;
+
+      for (let k of keys) {
+        if (template[k] !== undefined) {
+          template = template[k];
+        } else {
+          template = null;
+          break;
+        }
+      }
+
+      if (typeof template === "string") {
+        params.forEach((param, index) => {
+          template = template.replace(new RegExp(`\\{${index}\\}`, "g"), param);
+        });
+        return template;
+      }
+
+      return "Key not found";
+    },
+  };
 };

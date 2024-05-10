@@ -1,5 +1,3 @@
-import type { DirectoryProps, FileProps } from "./ApiTypes";
-
 // types.ts
 export interface Token {
   type: string;
@@ -28,7 +26,7 @@ export type ContextMenuProps = {
   x: number;
   y: number;
   visible?: boolean;
-  item?: FileProps | DirectoryProps;
+  item: { id: number; name: string; type: "File" | "Directory" }[];
   onClose: () => void;
   onAddNode: () => void;
   handleOpenModal: (config: ModalConfig) => void;

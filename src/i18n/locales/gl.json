@@ -14,7 +14,8 @@
       "inputFileName": "Introduce o nome do arquivo:",
       "inputDirectoryName": "Introduce o nome do cartafol:",
       "deleteFolder": "Desexa eliminar o cartafol seleccionado?",
-      "deleteFile": "Desexa eliminar o arquivo seleccionado?"
+      "deleteFile": "Desexa eliminar o arquivo seleccionado?",
+      "multipleDelete": "Desexa eliminar os seguintes arquivos {0}?"
     }
   },
   "General": {

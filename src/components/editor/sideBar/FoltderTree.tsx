@@ -17,7 +17,7 @@ function FolderTree() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<ModalConfig | null>(null);
   const [selectedItems, setSelectedItems] = useState<
-    { id: number; name: string }[]
+    { id: number; name: string; type: "File" | "Directory" }[]
   >([]);
 
   const directorySystem = useAppSelector(
@@ -27,6 +27,7 @@ function FolderTree() {
     visible: false,
     x: 0,
     y: 0,
+    item: selectedItems,
     onClose: () => {},
     onAddNode: () => {},
     handleOpenModal: () => {},
@@ -61,7 +62,7 @@ function FolderTree() {
         const itemIndex = prev.findIndex((x) => x.id === item.id);
         if (itemIndex === -1) {
           // If not already selected, add the new item
-          return [...prev, { id: item.id, name: item.name }];
+          return [...prev, { id: item.id, name: item.name, type: item.type }];
         } else {
           // If already selected, remove the item
           return prev.filter((_, index) => index !== itemIndex);
@@ -69,7 +70,7 @@ function FolderTree() {
       });
     } else {
       // Handle single selection logic
-      setSelectedItems([{ id: item.id, name: item.name }]);
+      setSelectedItems([{ id: item.id, name: item.name, type: item.type }]);
       if (item.type === "File") {
         dispatch(selectFile(item));
       }

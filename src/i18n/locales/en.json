@@ -14,7 +14,8 @@
       "inputFileName": "Insert the name of the file:",
       "inputDirectoryName": "Insert the folder of the file:",
       "deleteFolder": "Are you sure you want to delete:",
-      "deleteFile": "Are you sure you want to delete:"
+      "deleteFile": "Are you sure you want to delete:",
+      "multipleDelete": "Are you sure you want to delete the following {0} files?"
     }
   },
   "General": {

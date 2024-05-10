@@ -68,7 +68,7 @@ const Modal: React.FC<ModalProps> = ({
                 : styles.button
             }
           >
-            {i18n.General.cancel}
+            {i18n.t("General.cancel")}
           </button>
           <button
             onMouseEnter={() => setHoverAccept(true)}
@@ -80,7 +80,7 @@ const Modal: React.FC<ModalProps> = ({
                 : styles.button
             }
           >
-            {i18n.General.accept}
+            {i18n.t("General.accept")}
           </button>
         </div>
       </div>
