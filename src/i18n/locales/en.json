@@ -9,6 +9,16 @@
     "newFile": "New file...",
     "newFolder": "New folder...",
     "renameFile": "Rename...",
-    "delete": "Delete"
+    "delete": "Delete",
+    "Modal": {
+      "inputFileName": "Insert the name of the file:",
+      "inputDirectoryName": "Insert the folder of the file:",
+      "deleteFolder": "Are you sure you want to delete:",
+      "deleteFile": "Are you sure you want to delete:"
+    }
+  },
+  "General": {
+    "accept": "Accept",
+    "cancel": "Cancel"
   }
 }

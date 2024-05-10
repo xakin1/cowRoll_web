@@ -90,7 +90,7 @@ const CodeEditor = (file: FileProps) => {
         );
 
         if (file.content !== editorRef.current.getValue()) {
-          editorRef.current.setValue(file.content);
+          editorRef.current.setValue(file.content || "");
         }
       }
     }

@@ -74,6 +74,9 @@ dependencies:
   react-redux:
     specifier: ^9.1.1
     version: 9.1.1(@types/react@18.2.79)(react@18.2.0)(redux@5.0.1)
+  uuid:
+    specifier: ^9.0.1
+    version: 9.0.1
   vscode:
     specifier: npm:@codingame/monaco-vscode-api@~4.4.1
     version: /@codingame/monaco-vscode-api@4.4.1
@@ -6738,6 +6741,11 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
     dev: false
 
   /vfile-location@5.0.2:

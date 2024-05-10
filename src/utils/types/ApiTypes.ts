@@ -1,4 +1,12 @@
 export interface FileProps {
+  name: string;
+  directoryId: Id;
+  content?: string;
+  id: Id;
+  type: "File";
+}
+
+export interface editFileProps {
   name?: string;
   directoryId?: Id;
   content?: string;
@@ -6,13 +14,37 @@ export interface FileProps {
   type?: "File";
 }
 
+export interface insertFileProps {
+  name: string;
+  directoryId?: Id;
+  content?: string;
+}
+
+export interface insertContentProps {
+  content: string;
+  id: Id;
+}
+
+export interface insertDirectoryProps {
+  name: string;
+  parentId?: number;
+}
+
+export interface editDirectoryProps {
+  name?: string;
+  parentId?: number;
+  children?: Array<FileProps | DirectoryProps>;
+  type?: "Directory";
+  id: Id;
+}
+
 export type Id = number;
 export interface DirectoryProps {
   name: string;
   parentId?: number;
-  id?: Id;
-  children?: Array<FileProps | DirectoryProps>;
-  type?: "Directory";
+  id: Id;
+  children: Array<FileProps | DirectoryProps>;
+  type: "Directory";
 }
 
 export type FetchCodeError = {

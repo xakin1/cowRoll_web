@@ -6,6 +6,10 @@ import type {
   FetchSuccess,
   FileProps,
   Id,
+  editDirectoryProps,
+  editFileProps,
+  insertDirectoryProps,
+  insertFileProps,
 } from "../utils/types/ApiTypes";
 
 const apiUrl =
@@ -43,7 +47,7 @@ export async function getFileById(
 }
 export async function editFile(
   userId: number,
-  file: FileProps
+  file: editFileProps
 ): Promise<FetchSuccess<FileProps> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/editFile/" + userId, {
     method: "POST",
@@ -57,7 +61,7 @@ export async function editFile(
 
 export async function createDirectory(
   userId: number,
-  directory: DirectoryProps
+  directory: insertDirectoryProps
 ): Promise<FetchSuccess<Id> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/createDirectory/" + userId, {
     method: "POST",
@@ -70,21 +74,21 @@ export async function createDirectory(
 }
 export async function createFile(
   userId: number,
-  directory: FileProps
+  file: insertFileProps
 ): Promise<FetchSuccess<Id> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/createFile/" + userId, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(directory),
+    body: JSON.stringify(file),
   });
   return await response.json();
 }
 
 export async function editDirectory(
   userId: number,
-  directory: DirectoryProps
+  directory: editDirectoryProps
 ): Promise<FetchSuccess<DirectoryProps> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/editDirectory/" + userId, {
     method: "POST",

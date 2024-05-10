@@ -2,11 +2,14 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { DirectoryProps, FileProps } from "../../utils/types/ApiTypes";
 
 interface DirectorySystem {
-  directorySystem?: DirectoryProps;
+  directorySystem: DirectoryProps;
   selectedFile?: FileProps;
 }
 const initialState: DirectorySystem = {
-  directorySystem: undefined,
+  directorySystem: {
+    name: "Root",
+    type: "Directory",
+  },
   selectedFile: undefined,
 };
 
@@ -16,12 +19,15 @@ export const directorySystemSlice = createSlice({
   reducers: {
     addFile: (state, action: PayloadAction<DirectoryProps>) => {
       if (action.payload) {
+        console.log(action.payload);
+
         state.directorySystem = action.payload;
       }
     },
 
     selectFile: (state, action: PayloadAction<FileProps>) => {
       if (action.payload) {
+        console.log(action.payload);
         state.selectedFile = action.payload;
       }
     },

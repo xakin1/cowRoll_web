@@ -1,29 +1,24 @@
 import { useEffect, useState } from "react";
 
+import { useDispatch } from "react-redux";
+import { addFile } from "../../../redux/slice/fileSlide";
 import { getFiles } from "../../../services/codeApi";
-import type { DirectoryProps } from "../../../utils/types/ApiTypes";
 import FolderTree from "./FoltderTree";
 import "./sideBar.css";
 
 function Sidebar() {
-  const [directorySystem, setDirectorySystem] = useState<DirectoryProps>({
-    name: "Root",
-    type: "Directory",
-  });
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleDoubleClick = () => {
-    setIsEditing(true);
-  };
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchDocuments = async () => {
       const docs = await getFiles(1);
-      setDirectorySystem(
-        docs?.message || {
-          name: "Root",
-          type: "Directory",
-        }
+      dispatch(
+        addFile(
+          docs?.message || {
+            name: "Root",
+            type: "Directory",
+          }
+        )
       );
     };
     fetchDocuments();
@@ -53,7 +48,7 @@ function Sidebar() {
           <path d="M14 4l-4 16" />
         </svg>
       </div>
-      <FolderTree {...directorySystem}></FolderTree>
+      <FolderTree></FolderTree>
     </nav>
   );
 }

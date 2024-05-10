@@ -7,8 +7,18 @@
   },
   "ContextualMenu": {
     "newFile": "Crear arquivo...",
-    "newFolder": "Crear carpeta...",
+    "newFolder": "Crear cartafol...",
     "renameFile": "Cambiar o nome...",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "Modal": {
+      "inputFileName": "Introduce o nome do arquivo:",
+      "inputDirectoryName": "Introduce o nome do cartafol:",
+      "deleteFolder": "Desexa eliminar o cartafol seleccionado?",
+      "deleteFile": "Desexa eliminar o arquivo seleccionado?"
+    }
+  },
+  "General": {
+    "accept": "Aceptar",
+    "cancel": "Cancelar"
   }
 }

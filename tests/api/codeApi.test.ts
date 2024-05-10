@@ -15,8 +15,11 @@ import {
 } from "../../src/services/codeApi";
 import type {
   DirectoryProps,
-  FileProps,
   Id,
+  editFileProps,
+  insertContentProps,
+  insertDirectoryProps,
+  insertFileProps,
 } from "./../../src/utils/types/ApiTypes";
 describe("test Api", () => {
   beforeAll(async () => {
@@ -53,11 +56,14 @@ describe("test Api", () => {
   it("insertContent /insertContent/:id", async () => {
     const usrId = 1;
     const fileName = "Test";
-    const file: FileProps = { name: fileName };
+    const file: insertFileProps = { name: fileName };
 
     const response = await createFile(usrId, file);
     if (response && "message" in response) {
-      const content: FileProps = { id: response.message, content: "1+1" };
+      const content: insertContentProps = {
+        id: response.message,
+        content: "1+1",
+      };
       const responseContent = await insertContent(usrId, content);
 
       expect(responseContent).toBeDefined();
@@ -73,7 +79,7 @@ describe("test Api", () => {
   it("getFiles /file/:id", async () => {
     const usrId = 1;
     const response = await getFiles(usrId);
-    const files: DirectoryProps = {
+    const files = {
       children: [
         {
           content: "1+1",
@@ -106,7 +112,7 @@ describe("test Api", () => {
   });
   it("getFilesById /file/:id/:fileId", async () => {
     const usrId = 1;
-    const expectedFile: FileProps = {
+    const expectedFile: insertFileProps = {
       content: "1+1",
       name: "Test",
     };
@@ -130,10 +136,11 @@ describe("test Api", () => {
     }
   });
   it("editFile /editFile/:id", async () => {
-    const file: FileProps = {
+    const file: editFileProps = {
       content: "1+1",
       id: fileId,
       name: "Test42",
+      type: "File",
     };
 
     const usrId = 1;
@@ -145,7 +152,7 @@ describe("test Api", () => {
     }
   });
   it("editFile with no existing file /editFile/:id", async () => {
-    const file: FileProps = {
+    const file: editFileProps = {
       content: "1+1",
       id: -142,
       name: "Test",
@@ -162,7 +169,7 @@ describe("test Api", () => {
   it("deleteFile /deleteFile", async () => {
     const usrId = 1;
     const fileName = "Test2";
-    const file: FileProps = { name: fileName };
+    const file: insertFileProps = { name: fileName };
     const responseCreate = await createFile(usrId, file);
 
     if (responseCreate && "message" in responseCreate) {
@@ -193,6 +200,8 @@ describe("test Api", () => {
       name: "code2",
       id: -142,
       parentId: 2,
+      children: [],
+      type: "Directory",
     };
 
     const usrId = 1;
@@ -206,7 +215,7 @@ describe("test Api", () => {
   it("createDirectory /createDirectory/:id", async () => {
     const usrId = 1;
     const directoryName = "Code2";
-    const directory: DirectoryProps = { name: directoryName };
+    const directory: insertDirectoryProps = { name: directoryName };
 
     const response = await createDirectory(usrId, directory);
 
@@ -236,11 +245,11 @@ describe("test Api", () => {
     const usrId = 1;
     const directoryName = "Code2";
     const subdirectoryName = "SubDirectory";
-    const directory: DirectoryProps = { name: directoryName };
+    const directory: insertDirectoryProps = { name: directoryName };
 
     const response = await createDirectory(usrId, directory);
     if (response && "message" in response) {
-      const subdirectory: DirectoryProps = {
+      const subdirectory: insertDirectoryProps = {
         name: subdirectoryName,
         parentId: response.message,
       };
@@ -275,7 +284,7 @@ describe("test Api", () => {
   it("createFile/createFile/:id", async () => {
     const usrId: Id = 1;
     const fileName = "Code2";
-    const file: FileProps = { name: fileName };
+    const file: insertFileProps = { name: fileName };
 
     const response = await createFile(usrId, file);
 
@@ -303,7 +312,7 @@ describe("test Api", () => {
   });
   it("insertContent with an emptyName /createFile/:id", async () => {
     const usrId = 1;
-    const file: FileProps = { name: "" };
+    const file: insertFileProps = { name: "" };
     const response = await createFile(usrId, file);
 
     // Check if the response is undefined
@@ -320,6 +329,8 @@ describe("test Api", () => {
       name: "code2",
       id: -142,
       parentId: 2,
+      children: [],
+      type: "Directory",
     };
 
     const usrId = 1;
@@ -333,7 +344,7 @@ describe("test Api", () => {
   it("deleteDirectory /deleteDirectory", async () => {
     const usrId = 1;
     const directoryName = "code2";
-    const directory = { name: directoryName };
+    const directory: insertDirectoryProps = { name: directoryName };
     const responseInsert = await createDirectory(usrId, directory);
 
     expect(responseInsert).toBeDefined();

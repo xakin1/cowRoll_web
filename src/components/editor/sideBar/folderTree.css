@@ -1,0 +1,22 @@
+.treeIcon {
+  margin-right: 8px;
+  scale: 0.9;
+}
+
+.folderItem:hover {
+  background-color: gray;
+}
+
+.fileName {
+  display: inline-block;
+  max-width: calc(100% - 32px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-wrap: nowrap;
+}
+
+.nodeTree {
+  display: flex;
+  align-items: center;
+}

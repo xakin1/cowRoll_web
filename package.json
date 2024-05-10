@@ -34,6 +34,7 @@
     "react-i18next": "^14.1.1",
     "react-monaco-editor": "^0.55.0",
     "react-redux": "^9.1.1",
+    "uuid": "^9.0.1",
     "vscode": "npm:@codingame/monaco-vscode-api@~4.4.1"
   },
   "devDependencies": {
