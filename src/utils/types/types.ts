@@ -26,7 +26,7 @@ export type ContextMenuProps = {
   x: number;
   y: number;
   visible?: boolean;
-  item: { id: number; name: string; type: "File" | "Directory" }[];
+  items: { id: number; name: string; type: "File" | "Directory" }[];
   onClose: () => void;
   onAddNode: () => void;
   handleOpenModal: (config: ModalConfig) => void;

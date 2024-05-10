@@ -9,12 +9,6 @@ import {
   editDirectory,
   editFile,
 } from "../../../services/codeApi";
-import type {
-  editDirectoryProps,
-  editFileProps,
-  insertDirectoryProps,
-  insertFileProps,
-} from "../../../utils/types/ApiTypes";
 import type { ContextMenuProps } from "../../../utils/types/types";
 import "./contextMenu.css";
 
@@ -23,58 +17,57 @@ const i18n = getI18N({ currentLocale: getLang() });
 export function ContextMenu({
   x,
   y,
-  item,
+  items,
   onClose,
   onAddNode,
   handleOpenModal,
 }: ContextMenuProps) {
-  if (!item) return null;
+  if (!items) return null;
 
-  const handleInsertFile = async (fileName: string) => {
-    const file: insertFileProps = {
-      name: fileName,
-      directoryId: item.id,
-    };
-    const response = await createFile(1, file);
-    if (response && "message" in response) {
-      const treeFile = { ...file, id: response.message };
-      onAddNode();
+  // Single operation assuming only single item is passed when needed
+  const singleItem = items.length === 1 ? items[0] : null;
+
+  // Insert File or Directory
+  const handleInsert = async (name: string, type: "File" | "Directory") => {
+    if (singleItem && singleItem.type === "Directory") {
+      const data = {
+        name: name,
+        directoryId: type === "File" ? singleItem.id : undefined,
+        parentId: type === "Directory" ? singleItem.id : undefined,
+      };
+      const response =
+        type === "File"
+          ? await createFile(1, data)
+          : await createDirectory(1, data);
+      if (response && "message" in response) {
+        onAddNode();
+      }
     }
   };
-  const handleInsertDirectory = async (directoryName: string) => {
-    let directory: insertDirectoryProps = {
-      name: directoryName,
-      parentId: item.id,
-    };
-    await createDirectory(1, directory);
 
-    onAddNode();
+  // Rename File or Directory
+  const handleChangeName = async (name: string) => {
+    if (singleItem) {
+      const data = {
+        name: name,
+        id: singleItem.id,
+      };
+      const response =
+        singleItem.type === "Directory"
+          ? await editDirectory(1, data)
+          : await editFile(1, data);
+      if (response) {
+        onAddNode();
+      }
+    }
   };
 
-  const handleChangeFileName = async (fileName: string) => {
-    let file: editFileProps = {
-      name: fileName,
-      id: item.id,
-    };
-    await editFile(1, file);
-
-    onAddNode();
-  };
-
-  const handleChangeDirectoryName = async (directoryName: string) => {
-    let directory: editDirectoryProps = {
-      name: directoryName,
-      id: item.id,
-    };
-    await editDirectory(1, directory);
-
-    onAddNode();
-  };
-
-  const handleDeleteItem = async () => {
-    if (item.type == "Directory") await deleteDirectory(1, item.id);
-    else await deleteFile(1, item.id);
-
+  // Delete Items
+  const handleDeleteItems = async () => {
+    for (const item of items) {
+      if (item.type === "Directory") await deleteDirectory(1, item.id);
+      else await deleteFile(1, item.id);
+    }
     onAddNode();
   };
 
@@ -84,67 +77,36 @@ export function ContextMenu({
       style={{ top: y + "px", left: x + "px", position: "absolute" }}
       onMouseDown={(e) => e.stopPropagation()}
     >
-      {item.type == "Directory" && (
+      {singleItem && singleItem.type === "Directory" && items.length === 1 && (
         <>
-          <li
-            onClick={() => {
-              handleOpenModal({
-                label: i18n.t("ContextualMenu.Modal.inputFileName"),
-                initialText: "",
-                action: handleInsertFile,
-              });
-              onClose();
-            }}
-          >
+          <li onClick={() => handleInsert("", "File")}>
             {i18n.t("ContextualMenu.newFile")}
           </li>
-          <li
-            onClick={() => {
-              handleOpenModal({
-                label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
-                initialText: "",
-                action: handleInsertDirectory,
-              });
-              onClose();
-            }}
-          >
+          <li onClick={() => handleInsert("", "Directory")}>
             {i18n.t("ContextualMenu.newFolder")}
           </li>
         </>
       )}
+      {singleItem && (
+        <li onClick={() => handleChangeName("")}>
+          {i18n.t("ContextualMenu.renameFile")}
+        </li>
+      )}
       <li
         onClick={() => {
           const message =
-            item.type == "Directory"
-              ? i18n.t("ContextualMenu.Modal.inputDirectoryName")
-              : i18n.t("ContextualMenu.Modal.inputFileName");
-
-          handleOpenModal({
-            label: message + "  '" + item.name + "'",
-            initialText: "",
-            action: handleChangeFileName,
-          });
-          onClose();
-        }}
-      >
-        {i18n.t("ContextualMenu.renameFile")}
-      </li>
-      <li
-        onClick={() => {
-          let message;
-          if (item.length > 1) {
-            message = i18n.t("ContextualMenu.Modal.multipleDelete");
-          } else {
-            message =
-              item[0].type == "Directory"
+            items.length > 1
+              ? i18n.t(
+                  "ContextualMenu.Modal.multipleDelete",
+                  items.length.toString()
+                )
+              : singleItem?.type === "Directory"
                 ? i18n.t("ContextualMenu.Modal.deleteFolder")
                 : i18n.t("ContextualMenu.Modal.deleteFile");
-          }
-
           handleOpenModal({
-            label: message + "  '" + item.name + "'",
+            label: message,
             showInput: false,
-            action: handleDeleteItem,
+            action: handleDeleteItems,
           });
           onClose();
         }}

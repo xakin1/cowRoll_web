@@ -27,7 +27,7 @@ function FolderTree() {
     visible: false,
     x: 0,
     y: 0,
-    item: selectedItems,
+    items: selectedItems,
     onClose: () => {},
     onAddNode: () => {},
     handleOpenModal: () => {},
@@ -85,7 +85,7 @@ function FolderTree() {
       visible: true,
       x: event.clientX,
       y: event.clientY,
-      item: selectedItems.length > 1 ? selectedItems : item,
+      items: selectedItems.length > 1 ? selectedItems : item,
     });
   };
 
@@ -168,7 +168,7 @@ function FolderTree() {
             <ContextMenu
               x={contextMenu.x}
               y={contextMenu.y}
-              item={contextMenu.item}
+              items={contextMenu.items}
               onClose={closeContextMenu}
               onAddNode={addNode}
               handleOpenModal={handleOpenModal}
@@ -237,7 +237,7 @@ function FolderTree() {
               <ContextMenu
                 x={contextMenu.x}
                 y={contextMenu.y}
-                item={contextMenu.item}
+                items={contextMenu.items}
                 onClose={closeContextMenu}
                 onAddNode={addNode}
                 handleOpenModal={handleOpenModal}
