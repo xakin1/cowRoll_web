@@ -14,8 +14,8 @@
       "inputFileName": "Insert the name of the file:",
       "inputDirectoryName": "Insert the folder of the file:",
       "renameName": "Write the new name of the: '{0}'",
-      "deleteFolder": "Are you sure you want to delete:",
-      "deleteFile": "Are you sure you want to delete:",
+      "deleteFolder": "Are you sure you want to delete: '{0}'?",
+      "deleteFile": "Are you sure you want to delete: '{0}'?",
       "multipleDelete": "Are you sure you want to delete the following {0} files?"
     }
   },

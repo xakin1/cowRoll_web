@@ -13,9 +13,9 @@
     "Modal": {
       "inputFileName": "Introduce o nome do arquivo:",
       "inputDirectoryName": "Introduce o nome do cartafol:",
-      "deleteFolder": "Desexa eliminar o cartafol seleccionado?",
+      "deleteFolder": "Desexa eliminar o cartafol '{0}'?",
+      "deleteFile": "Desexa eliminar o arquivo '{0}'?",
       "renameName": "Introduce o novo nome para o arquivo: '{0}'",
-      "deleteFile": "Desexa eliminar o arquivo seleccionado?",
       "multipleDelete": "Desexa eliminar os seguintes arquivos {0}?"
     }
   },

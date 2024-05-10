@@ -40,6 +40,8 @@ function FolderTree() {
     setModalConfig({
       ...config,
     });
+    closeContextMenu();
+
     setModalOpen(true);
   };
 

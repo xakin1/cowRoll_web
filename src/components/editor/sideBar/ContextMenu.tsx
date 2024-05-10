@@ -122,9 +122,11 @@ export function ContextMenu({
                   "ContextualMenu.Modal.multipleDelete",
                   items.length.toString()
                 )
-              : singleItem?.type === "Directory"
-                ? i18n.t("ContextualMenu.Modal.deleteFolder")
-                : i18n.t("ContextualMenu.Modal.deleteFile");
+              : singleItem
+                ? singleItem.type == "Directory"
+                  ? i18n.t("ContextualMenu.Modal.deleteFolder", singleItem.name)
+                  : i18n.t("ContextualMenu.Modal.deleteFile", singleItem.name)
+                : ""; //No debería llegar aquí nunca
           handleOpenModal({
             label: message,
             showInput: false,
