@@ -25,18 +25,31 @@ export function ContextMenu({
   if (!items) return null;
 
   const singleItem = items.length === 1 ? items[0] : null;
-  const handleInsert = async (name: string) => {
+  const handleInsertFile = async (name: string) => {
     const usrId = 1;
     if (singleItem) {
       const data = {
         name: name,
-        directoryId: singleItem.type === "File" ? singleItem.id : undefined,
-        parentId: singleItem.type === "Directory" ? singleItem.id : undefined,
+        directoryId: singleItem.id,
       };
-      const response =
-        singleItem.type === "File"
-          ? await createFile(usrId, data)
-          : await createDirectory(usrId, data);
+
+      const response = await createFile(usrId, data);
+
+      if (response && "message" in response) {
+        onAddNode();
+      }
+    }
+  };
+  const handleInsertDirectory = async (name: string) => {
+    const usrId = 1;
+    if (singleItem) {
+      const data = {
+        name: name,
+        parentId: singleItem.id,
+      };
+      console.log(data);
+
+      const response = await createDirectory(usrId, data);
       if (response && "message" in response) {
         onAddNode();
       }
@@ -82,7 +95,7 @@ export function ContextMenu({
               handleOpenModal({
                 label: i18n.t("ContextualMenu.Modal.inputFileName"),
                 showInput: true,
-                action: handleInsert,
+                action: handleInsertFile,
               })
             }
           >
@@ -93,7 +106,7 @@ export function ContextMenu({
               handleOpenModal({
                 label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
                 showInput: true,
-                action: handleInsert,
+                action: handleInsertDirectory,
               })
             }
           >

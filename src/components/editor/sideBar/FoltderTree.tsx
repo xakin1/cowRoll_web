@@ -22,7 +22,7 @@ function FolderTree() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<ModalConfig | null>(null);
   const [selectedItems, setSelectedItems] = useState<Items[]>([]);
-
+  const [hoveredItemId, setHoveredItemId] = useState<number>(-1);
   const directorySystem = useAppSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
@@ -62,8 +62,8 @@ function FolderTree() {
     item: FileProps | DirectoryProps
   ) {
     event.preventDefault();
+    console.log(item);
     if (event.ctrlKey || event.metaKey) {
-      console.log(item);
       setSelectedItems((prev) => {
         const index = prev.findIndex((x) => x.id === item.id);
         if (index === -1) {
@@ -112,9 +112,18 @@ function FolderTree() {
     e.stopPropagation();
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragOver = (
+    e: React.DragEvent<HTMLLIElement>,
+    item: NodeTree
+  ) => {
     e.preventDefault();
     e.stopPropagation();
+    setHoveredItemId(item.id);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+    setHoveredItemId(-1);
   };
 
   const handleDrop = (
@@ -165,11 +174,11 @@ function FolderTree() {
                 backgroundColor: "rgba(25, 118, 210, 0.08)",
                 cursor: "pointer",
               },
-              backgroundColor: selectedItems.some((item) => {
-                return item.id === current.id;
-              })
-                ? "rgba(25, 118, 210, 0.18)"
-                : "transparent",
+              backgroundColor:
+                selectedItems.some((item) => item.id === current.id) ||
+                hoveredItemId === current.id
+                  ? "rgba(25, 118, 210, 0.18)"
+                  : "transparent",
               cursor: "pointer",
             }}
             label={
@@ -200,7 +209,8 @@ function FolderTree() {
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(event) => handleItemClick(event, current)}
             onContextMenu={(event) => handleContextMenu(event, current)}
-            onDragOver={handleDragOver}
+            onDragOver={(e) => handleDragOver(e, current)}
+            onDragLeave={handleDragLeave}
           />
           {contextMenu.visible && (
             <ContextMenu
@@ -226,11 +236,11 @@ function FolderTree() {
                   backgroundColor: "rgba(25, 118, 210, 0.08)",
                   cursor: "pointer",
                 },
-                backgroundColor: selectedItems.some((item) => {
-                  return item.id === current.id;
-                })
-                  ? "rgba(25, 118, 210, 0.18)"
-                  : "transparent",
+                backgroundColor:
+                  selectedItems.some((item) => item.id === current.id) ||
+                  hoveredItemId === current.id
+                    ? "rgba(25, 118, 210, 0.18)"
+                    : "transparent",
                 cursor: "pointer",
               }}
               label={
@@ -258,8 +268,10 @@ function FolderTree() {
                 </div>
               }
               onMouseDown={(e) => e.stopPropagation()}
+              onClick={(event) => handleItemClick(event, current)}
               onContextMenu={(event) => handleContextMenu(event, current)}
-              onDragOver={handleDragOver}
+              onDragOver={(e) => handleDragOver(e, current)}
+              onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, current)}
             >
               {current.children &&

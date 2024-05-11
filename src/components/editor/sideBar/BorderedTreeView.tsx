@@ -11,9 +11,4 @@ export const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
       opacity: 0.3,
     },
   },
-  [`& .${treeItemClasses.groupTransition}`]: {
-    marginLeft: 15,
-    paddingLeft: 18,
-    borderLeft: `1px dashed var(--border-color)`,
-  },
 }));
