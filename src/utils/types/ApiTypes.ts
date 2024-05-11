@@ -67,21 +67,20 @@ export interface FetchSuccess<T> {
   message: T;
 }
 
-export interface FetchSaveInsertWithoutErrors<T> {
-  message: T;
-  error: CodeError;
-}
-
 export interface FetchError {
   error: string;
 }
 
 export type FetchInsertContent<T> =
   | FetchSuccess<T>
-  | FetchSaveInsertWithoutErrors<T>
   | FetchError
+  | FetchCodeError
   | undefined;
 
 export type FetchRun<T> = FetchSuccess<T> | FetchCodeError | undefined;
 
 export type NodeTree = DirectoryProps | FileProps;
+
+export function isFetchCodeError(error: any): error is FetchCodeError {
+  return error && typeof error.error === "object" && "errorCode" in error.error;
+}

@@ -16,7 +16,7 @@
       "deleteFolder": "Desexa eliminar o cartafol '{0}'?",
       "deleteFile": "Desexa eliminar o arquivo '{0}'?",
       "renameName": "Introduce o novo nome para o arquivo: '{0}'",
-      "multipleDelete": "Desexa eliminar os seguintes arquivos {0}?"
+      "multipleDelete": "Desexa eliminar os seguintes {0} arquivos?"
     }
   },
   "General": {

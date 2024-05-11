@@ -39,8 +39,13 @@ export const codeSlice = createSlice({
       state.error.errorCode = action.payload.error?.errorCode || "";
       state.error.line = action.payload.error?.line || undefined;
     },
+    clearErrors: (state) => {
+      state.error.error = "";
+      state.error.errorCode = "";
+      state.error.line = undefined;
+    },
   },
 });
 
-export const { addOutput, addCompileErrors } = codeSlice.actions;
+export const { addOutput, addCompileErrors, clearErrors } = codeSlice.actions;
 export default codeSlice.reducer;

@@ -83,13 +83,13 @@ function FolderTree() {
   const handleContextMenu = (event: React.MouseEvent, items: Items) => {
     event.preventDefault();
     event.stopPropagation();
-    setSelectedItems([items]);
+
     setContextMenu({
       ...contextMenu,
       visible: true,
       x: event.clientX,
       y: event.clientY,
-      items: [items],
+      items: selectedItems.length > 1 ? selectedItems : [items],
     });
   };
 
@@ -152,7 +152,6 @@ function FolderTree() {
       ) {
         closeContextMenu();
       }
-      setSelectedItems([]);
     };
 
     document.addEventListener("mousedown", handleOutsideClick);

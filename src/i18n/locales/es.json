@@ -16,7 +16,7 @@
       "renameName": "Introduce el nuevo nombre para el fichero: '{0}'",
       "deleteFolder": "¿Desea eliminar la carpeta '{0}'?",
       "deleteFile": "¿Desea eliminar el arhchivo '{0}'?",
-      "multipleDelete": "Estas seguro de querer borrar los siguientes ficheros {0}?"
+      "multipleDelete": "Estas seguro de querer borrar los siguientes {0} ficheros?"
     }
   },
   "General": {

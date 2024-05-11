@@ -2,10 +2,14 @@ import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/customHooks";
+import { addCompileErrors, clearErrors } from "../../../redux/slice/codeSlide";
 import { selectFile } from "../../../redux/slice/fileSlide";
 import type { RootState } from "../../../redux/store";
 import { insertContent } from "../../../services/codeApi";
-import type { FileProps } from "../../../utils/types/ApiTypes";
+import {
+  isFetchCodeError,
+  type FileProps,
+} from "../../../utils/types/ApiTypes";
 import type { monaco } from "../../../utils/types/codeEditorType";
 import { setupEditorCommands } from "./languages/cowRoll/config/commands";
 import { setupLanguageFeatures } from "./languages/cowRoll/config/configuration";
@@ -30,7 +34,9 @@ const CodeEditor = (file: FileProps) => {
   // Define the saveDocument function
   saveDocumentRef.current = async (file: FileProps) => {
     const userId = 1;
-    insertContent(userId, file);
+    const response = await insertContent(userId, file);
+    if (isFetchCodeError(response)) dispatch(addCompileErrors(response));
+    else dispatch(clearErrors());
   };
 
   const applyTheme = (monaco: monaco) => {
