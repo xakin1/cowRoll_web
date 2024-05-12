@@ -32,7 +32,7 @@ export interface insertDirectoryProps {
 
 export interface editDirectoryProps {
   name?: string;
-  parentId?: number;
+  parentId?: Id;
   children?: Array<FileProps | DirectoryProps>;
   type?: "Directory";
   id: Id;
@@ -41,13 +41,13 @@ export interface editDirectoryProps {
 export type Id = number;
 export interface DirectoryProps {
   name: string;
-  parentId?: number;
+  parentId?: Id;
   id: Id;
   children: Array<FileProps | DirectoryProps>;
   type: "Directory";
 }
 
-export type Items = { id: number; name: string; type: "File" | "Directory" };
+export type Items = { id: Id; name: string; type: "File" | "Directory" };
 
 export type FetchCodeError = {
   error: CodeError;

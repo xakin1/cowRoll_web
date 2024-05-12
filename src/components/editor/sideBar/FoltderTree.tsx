@@ -62,7 +62,7 @@ function FolderTree() {
     item: FileProps | DirectoryProps
   ) {
     event.preventDefault();
-    console.log(item);
+
     if (event.ctrlKey || event.metaKey) {
       setSelectedItems((prev) => {
         const index = prev.findIndex((x) => x.id === item.id);
@@ -107,37 +107,34 @@ function FolderTree() {
     e: React.DragEvent<HTMLDivElement>,
     item: NodeTree
   ) => {
-    console.log(item);
     e.dataTransfer.setData("drag-item", JSON.stringify(item));
     e.stopPropagation();
   };
 
-  const handleDragOver = (
-    e: React.DragEvent<HTMLLIElement>,
-    item: NodeTree
-  ) => {
+  const handleDragOver = (e: React.DragEvent<any>, item: NodeTree) => {
     e.preventDefault();
     e.stopPropagation();
     setHoveredItemId(item.id);
   };
 
-  const handleDragLeave = (e: React.DragEvent<HTMLLIElement>) => {
+  const handleDragLeave = (e: React.DragEvent<any>) => {
     e.preventDefault();
     setHoveredItemId(-1);
   };
 
-  const handleDrop = (
-    e: React.DragEvent<HTMLLIElement>,
+  const handleDrop = async (
+    e: React.DragEvent<any>,
     targetDirectory: DirectoryProps
   ) => {
     e.preventDefault();
+    console.log(targetDirectory);
     const item = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree;
     if (item.type == "Directory") {
-      editDirectory(1, { ...item, parentId: targetDirectory.id });
+      await editDirectory(1, { ...item, parentId: targetDirectory.id });
     } else {
-      editFile(1, { ...item, directoryId: targetDirectory.id });
+      await editFile(1, { ...item, directoryId: targetDirectory.id });
     }
-    addNode();
+    await addNode();
     e.stopPropagation();
   };
 
@@ -162,15 +159,13 @@ function FolderTree() {
   }, [contextMenu.visible]);
 
   function buildTreeItems(current: NodeTree): JSX.Element {
+    const nodeId = current.id;
     if (current.type === "File") {
-      const nodeId = current.directoryId
-        ? `${current.directoryId}-${current.id}`
-        : `${current.id}`;
       return (
         <>
           <CustomTreeItem
             key={nodeId}
-            itemId={nodeId}
+            itemId={nodeId + "-" + current.type}
             sx={{
               "& .MuiTreeItem-content:hover": {
                 backgroundColor: "rgba(25, 118, 210, 0.08)",
@@ -188,6 +183,12 @@ function FolderTree() {
                 className="nodeTree"
                 draggable="true"
                 onDragStart={(e) => handleDragStart(e, current)}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDragOver(e, current);
+                }}
+                onDragLeave={handleDragLeave}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -211,8 +212,6 @@ function FolderTree() {
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(event) => handleItemClick(event, current)}
             onContextMenu={(event) => handleContextMenu(event, current)}
-            onDragOver={(e) => handleDragOver(e, current)}
-            onDragLeave={handleDragLeave}
           />
           {contextMenu.visible && (
             <ContextMenu
@@ -228,14 +227,11 @@ function FolderTree() {
       );
     } else {
       if (current.type === "Directory") {
-        const nodeId = current.parentId
-          ? `${current.parentId}-${current.id}`
-          : `${current.id}`;
         return (
           <>
             <CustomTreeItem
               key={nodeId}
-              itemId={nodeId}
+              itemId={nodeId + "-" + current.type}
               sx={{
                 "& .MuiTreeItem-content:hover": {
                   backgroundColor: "rgba(25, 118, 210, 0.08)",
@@ -253,6 +249,12 @@ function FolderTree() {
                   className="nodeTree"
                   draggable="true"
                   onDragStart={(e) => handleDragStart(e, current)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDragOver(e, current);
+                  }}
+                  onDrop={(e) => handleDrop(e, current)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -275,9 +277,7 @@ function FolderTree() {
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(event) => handleItemClick(event, current)}
               onContextMenu={(event) => handleContextMenu(event, current)}
-              onDragOver={(e) => handleDragOver(e, current)}
               onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, current)}
             >
               {current.children &&
                 current.children.map((child) => {
