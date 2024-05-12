@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import { toast, type ToastOptions } from "react-toastify";
 import { getI18N } from "../../../i18n";
 import { getLang } from "../../../i18n/utils";
 import {
@@ -37,6 +38,8 @@ export function ContextMenu({
 
       if (response && "message" in response) {
         onAddNode();
+      } else {
+        toast.error(i18n.t("Errors." + response?.error), tostStyle);
       }
     }
   };
@@ -47,11 +50,12 @@ export function ContextMenu({
         name: name,
         parentId: singleItem.id,
       };
-      console.log(data);
 
       const response = await createDirectory(usrId, data);
       if (response && "message" in response) {
         onAddNode();
+      } else {
+        toast.error(i18n.t("Errors." + response?.error), tostStyle);
       }
     }
   };
@@ -67,8 +71,10 @@ export function ContextMenu({
         singleItem.type === "Directory"
           ? await editDirectory(1, data)
           : await editFile(1, data);
-      if (response) {
+      if (response && "message" in response) {
         onAddNode();
+      } else {
+        toast.error(i18n.t("Errors." + response?.error), tostStyle);
       }
     }
   };
@@ -152,6 +158,10 @@ export function ContextMenu({
       </li>
     </ul>
   );
+
+  const tostStyle: ToastOptions<unknown> = {
+    position: "bottom-right",
+  };
 
   const portalRoot = document.getElementById("portal-root");
   if (!portalRoot) return null;

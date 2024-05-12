@@ -64,41 +64,43 @@ function Terminal() {
   const i18n = getI18N({ currentLocale });
 
   return (
-    <div className="container-page">
-      <Sidebar></Sidebar>
-      <main className="container">
-        <section className="section editorSection">
-          <header className="header">
-            <h1>{i18n.t("Code.code")}</h1>
-            <button
-              className="run-button"
-              onClick={handleExecuteClick}
-              aria-label="Ejecutar código en el editor"
+    <>
+      <div className="container-page">
+        <Sidebar></Sidebar>
+        <main className="container">
+          <section className="section editorSection">
+            <header className="header">
+              <h1>{i18n.t("Code.code")}</h1>
+              <button
+                className="run-button"
+                onClick={handleExecuteClick}
+                aria-label="Ejecutar código en el editor"
+              >
+                {i18n.t("Code.run")}
+              </button>
+            </header>
+            {file ? (
+              <CodeEditor {...file}></CodeEditor>
+            ) : (
+              <span> {i18n.t("General.selectFile")}</span>
+            )}
+          </section>
+          <section className="section">
+            <header className="header">
+              <h1>{i18n.t("Code.output")}</h1>
+            </header>
+            <div
+              aria-label="Code Output"
+              id="OutputDisplay"
+              className="output-area"
             >
-              {i18n.t("Code.run")}
-            </button>
-          </header>
-          {file ? (
-            <CodeEditor {...file}></CodeEditor>
-          ) : (
-            <span> Seleccione un fichero</span>
-          )}
-        </section>
-        <section className="section">
-          <header className="header">
-            <h1>{i18n.t("Code.output")}</h1>
-          </header>
-          <div
-            aria-label="Code Output"
-            id="OutputDisplay"
-            className="output-area"
-          >
-            {formatOutput(output, error)}
-          </div>
-        </section>
-      </main>
-      <div id="portal-root"></div>
-    </div>
+              {formatOutput(output, error)}
+            </div>
+          </section>
+        </main>
+        <div id="portal-root"></div>
+      </div>
+    </>
   );
 }
 

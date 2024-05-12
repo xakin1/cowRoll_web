@@ -163,11 +163,14 @@ function FolderTree() {
 
   function buildTreeItems(current: NodeTree): JSX.Element {
     if (current.type === "File") {
+      const nodeId = current.directoryId
+        ? `${current.directoryId}-${current.id}`
+        : `${current.id}`;
       return (
         <>
           <CustomTreeItem
-            key={current.id}
-            itemId={current.name + " " + current.directoryId}
+            key={nodeId}
+            itemId={nodeId}
             sx={{
               "& .MuiTreeItem-content:hover": {
                 backgroundColor: "rgba(25, 118, 210, 0.08)",
@@ -225,11 +228,14 @@ function FolderTree() {
       );
     } else {
       if (current.type === "Directory") {
+        const nodeId = current.parentId
+          ? `${current.parentId}-${current.id}`
+          : `${current.id}`;
         return (
           <>
             <CustomTreeItem
-              key={current.id}
-              itemId={current.name + " " + current.parentId}
+              key={nodeId}
+              itemId={nodeId}
               sx={{
                 "& .MuiTreeItem-content:hover": {
                   backgroundColor: "rgba(25, 118, 210, 0.08)",

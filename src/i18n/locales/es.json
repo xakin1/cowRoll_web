@@ -21,6 +21,24 @@
   },
   "General": {
     "accept": "Aceptar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "selectFile": "Selecione un archivo"
+  },
+  "Errors": {
+    "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",
+    "EMPTY_FILE_NAME": "El nombre del fichero no puede estar vacio",
+    "FILE_NOT_FOUND": "No se ha encontrado el fichero",
+    "FILE_NAME_ALREADY_EXISTS": "Ya existe un fichero con ese nombre",
+    "INVALID_USER_ID": "El identificador del usario es inválido",
+    "PARENT_NOT_FOUND": "El directorio padre especificado no existe",
+    "DIRECTORY_NOT_FOUND": "La carpeta no se encontró",
+    "DIRECTORY_NAME_ALREADY_EXISTS": "Ya existe una carpeta con ese nombre"
+  },
+  "Messages": {
+    "FILE_UPDATED": "El fichero se ha actualizado correctamente",
+    "FILE_DELETED": "El fichero se ha eliminado correctamente",
+    "DIRECTORY_UPDATED": "La carpeta se ha actualizado correctamente",
+    "DIRECTORY_NAME_UPDATED": "La carpeta se ha eliminado correctamente",
+    "CONTENT_INSERTED": "El contenido ha sido guardado correctamente"
   }
 }
