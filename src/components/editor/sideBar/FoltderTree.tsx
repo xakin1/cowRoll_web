@@ -74,6 +74,7 @@ function FolderTree() {
       });
     } else {
       setSelectedItems([item]);
+
       if (item.type === "File") {
         dispatch(selectFile(item));
       }
@@ -107,7 +108,8 @@ function FolderTree() {
     e: React.DragEvent<HTMLDivElement>,
     item: NodeTree
   ) => {
-    e.dataTransfer.setData("drag-item", JSON.stringify(item));
+    const items = selectedItems.length == 0 ? [item] : selectedItems;
+    e.dataTransfer.setData("drag-item", JSON.stringify(items));
     e.stopPropagation();
   };
 
@@ -127,14 +129,18 @@ function FolderTree() {
     targetDirectory: DirectoryProps
   ) => {
     e.preventDefault();
-    console.log(targetDirectory);
-    const item = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree;
-    if (item.type == "Directory") {
-      await editDirectory(1, { ...item, parentId: targetDirectory.id });
-    } else {
-      await editFile(1, { ...item, directoryId: targetDirectory.id });
+    setHoveredItemId(-1);
+    setSelectedItems([]);
+    const items = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree[];
+    for (const item of items) {
+      if (item.type == "Directory") {
+        await editDirectory(1, { id: item.id, parentId: targetDirectory.id });
+      } else {
+        await editFile(1, { id: item.id, directoryId: targetDirectory.id });
+      }
     }
     await addNode();
+
     e.stopPropagation();
   };
 
@@ -159,21 +165,22 @@ function FolderTree() {
   }, [contextMenu.visible]);
 
   function buildTreeItems(current: NodeTree): JSX.Element {
-    const nodeId = current.id;
+    const nodeId = current.id + "-" + current.type;
+    const isSelected = selectedItems.some((item) => item.id === current.id);
     if (current.type === "File") {
       return (
         <>
           <CustomTreeItem
             key={nodeId}
-            itemId={nodeId + "-" + current.type}
+            itemId={nodeId}
             sx={{
               "& .MuiTreeItem-content:hover": {
                 backgroundColor: "rgba(25, 118, 210, 0.08)",
                 cursor: "pointer",
               },
-              backgroundColor:
-                selectedItems.some((item) => item.id === current.id) ||
-                hoveredItemId === current.id
+              backgroundColor: isSelected
+                ? "rgba(25, 118, 210, 0.4)"
+                : hoveredItemId === current.id
                   ? "rgba(25, 118, 210, 0.18)"
                   : "transparent",
               cursor: "pointer",
@@ -231,15 +238,15 @@ function FolderTree() {
           <>
             <CustomTreeItem
               key={nodeId}
-              itemId={nodeId + "-" + current.type}
+              itemId={nodeId}
               sx={{
                 "& .MuiTreeItem-content:hover": {
                   backgroundColor: "rgba(25, 118, 210, 0.08)",
                   cursor: "pointer",
                 },
-                backgroundColor:
-                  selectedItems.some((item) => item.id === current.id) ||
-                  hoveredItemId === current.id
+                backgroundColor: isSelected
+                  ? "rgba(25, 118, 210, 0.4)"
+                  : hoveredItemId === current.id
                     ? "rgba(25, 118, 210, 0.18)"
                     : "transparent",
                 cursor: "pointer",
@@ -254,6 +261,7 @@ function FolderTree() {
                     e.stopPropagation();
                     handleDragOver(e, current);
                   }}
+                  onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, current)}
                 >
                   <svg
@@ -277,7 +285,6 @@ function FolderTree() {
               onMouseDown={(e) => e.stopPropagation()}
               onClick={(event) => handleItemClick(event, current)}
               onContextMenu={(event) => handleContextMenu(event, current)}
-              onDragLeave={handleDragLeave}
             >
               {current.children &&
                 current.children.map((child) => {
