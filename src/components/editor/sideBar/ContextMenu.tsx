@@ -27,14 +27,13 @@ export function ContextMenu({
 
   const singleItem = items.length === 1 ? items[0] : null;
   const handleInsertFile = async (name: string) => {
-    const usrId = 1;
     if (singleItem) {
       const data = {
         name: name,
         directoryId: singleItem.id,
       };
 
-      const response = await createFile(usrId, data);
+      const response = await createFile(data);
 
       if (response && "message" in response) {
         onAddNode();
@@ -44,14 +43,13 @@ export function ContextMenu({
     }
   };
   const handleInsertDirectory = async (name: string) => {
-    const usrId = 1;
     if (singleItem) {
       const data = {
         name: name,
         parentId: singleItem.id,
       };
 
-      const response = await createDirectory(usrId, data);
+      const response = await createDirectory(data);
       if (response && "message" in response) {
         onAddNode();
       } else {
@@ -69,8 +67,8 @@ export function ContextMenu({
       };
       const response =
         singleItem.type === "Directory"
-          ? await editDirectory(1, data)
-          : await editFile(1, data);
+          ? await editDirectory(data)
+          : await editFile(data);
       if (response && "message" in response) {
         onAddNode();
       } else {
@@ -82,8 +80,8 @@ export function ContextMenu({
   // Delete Items
   const handleDeleteItems = async () => {
     for (const item of items) {
-      if (item.type === "Directory") await deleteDirectory(1, item.id);
-      else await deleteFile(1, item.id);
+      if (item.type === "Directory") await deleteDirectory(item.id);
+      else await deleteFile(item.id);
     }
     onAddNode();
   };

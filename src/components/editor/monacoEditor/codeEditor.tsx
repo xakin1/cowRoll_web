@@ -33,8 +33,7 @@ const CodeEditor = (file: FileProps) => {
 
   // Define the saveDocument function
   saveDocumentRef.current = async (file: FileProps) => {
-    const userId = 1;
-    const response = await insertContent(userId, file);
+    const response = await insertContent(file);
     if (isFetchCodeError(response)) dispatch(addCompileErrors(response));
     else dispatch(clearErrors());
   };

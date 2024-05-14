@@ -11,7 +11,7 @@ function Sidebar() {
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const docs = await getFiles(1);
+      const docs = await getFiles();
       //TODO: tengo que coger el estado inicial del redux mejor
       dispatch(
         addFile(

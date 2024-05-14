@@ -1,0 +1,166 @@
+---
+import { getI18N } from "../../i18n";
+import ConsoleApp from "../ConsoleApp";
+
+const {currentLocale} = Astro
+const i18n = getI18N({currentLocale})
+---
+<html lang={currentLocale}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{i18n.t("General.sigIn")}</title>
+  <style>
+    body {
+      color: var(--text-color);
+      background-color: var(--background-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      background-color: var(--background-color);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px var(--border-color);
+      width: 320px;
+      height: 320px;
+
+      text-align: center;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      display: grid;
+    }
+    
+    h2 {
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+
+    input {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #007BFF;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: -5px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <main class="container"  id="signin-container">
+    <h2>{i18n.t("General.sigIn")}</h2>
+    <form id="signin-form" action="javascript:void(0);" method="post">
+      <input type="text" id="username" name="username" placeholder={i18n.t("General.username")} required>
+      <div id="username-error" class="error"></div>
+      <input type="password" id="password" name="password" placeholder={i18n.t("General.password")} required>
+      <div id="password-error" class="error"></div>
+      <button type="submit">{i18n.t("General.sigIn")}</button>
+    </form>
+  </main>
+
+  <script>
+    import { signUp } from "../../services/codeApi";
+    import { getI18N } from "../../i18n";
+    import { getLang } from "../../i18n/utils";
+
+    const i18n = getI18N({ currentLocale: getLang() });   
+    document.getElementById('signin-form')!.addEventListener('submit', async function(event) {
+ 
+      console.log("entro")
+      const usernameInput = document.getElementById('username') as HTMLInputElement;
+      const passwordInput = document.getElementById('password') as HTMLInputElement;
+      const usernameErrorDiv = document.getElementById('username-error');
+      const passwordErrorDiv = document.getElementById('password-error');
+
+      if (usernameInput && passwordInput && usernameErrorDiv && passwordErrorDiv) {
+        const username = usernameInput.value;
+        const password = passwordInput.value;
+
+        const usernameError = validateUsername(username);
+        const passwordError = validatePassword(password);
+
+        usernameErrorDiv.innerText = usernameError || '';
+        passwordErrorDiv.innerText = passwordError || '';
+
+        if (usernameError || passwordError) {
+          event.preventDefault();
+          return;
+        }
+
+        try {
+          await signUp(username, password);
+          window.location.href = '/app'
+        } catch (error) {
+          console.error("Error during sign up:", error);
+          //TODO: TRADUCIR ESTO
+          alert("Failed to sign up. Please try again.");
+        }
+      }
+    });
+
+    function validateUsername(username: string): string | null {
+      if (!username || username.trim() === '') {
+        return i18n.t("Errors.EMPTY_USER_NAME");
+      }
+      return null;
+    }
+
+    function validatePassword(password: string): string | null {
+      if (!password || password.trim() === '') {
+        return i18n.t("Errors.EMPTY_PASSWORD");
+      }
+      if (password.length < 8) {
+        return i18n.t("Errors.MINIMUN_LENGTH");
+      }
+      if (!/[0-9]/.test(password)) {
+        return i18n.t("Errors.MINIMUN_LENGTH");
+      }
+      if (!/[A-Z]/.test(password)) {
+        return i18n.t("Errors.UPER_CASE");
+      }
+      if (!/[a-z]/.test(password)) {
+        return i18n.t("Errors.LOWER_CASE");
+      }
+      if (!/[^a-zA-Z0-9]/.test(password)) {
+        return i18n.t("Errors.SPECIAL_CHARACTERES");
+      }
+      return null;
+    }
+  </script>
+</body>
+</html>

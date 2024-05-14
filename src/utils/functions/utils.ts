@@ -1,6 +1,6 @@
 //Detectanis neduabte js que es lo que prefiere el usuario si tema claro o oscuro
 
-function detectColorScheme() {
+export function detectColorScheme() {
   if (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -9,4 +9,8 @@ function detectColorScheme() {
   } else {
     return "light";
   }
+}
+
+export function cookiesEnabled() {
+  return navigator.cookieEnabled;
 }

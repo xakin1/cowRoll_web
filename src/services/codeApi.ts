@@ -1,3 +1,4 @@
+import { cookiesEnabled } from "../utils/functions/utils";
 import type {
   DirectoryProps,
   FetchError,
@@ -17,14 +18,13 @@ const apiUrl =
     ? import.meta.env.VITE_API_URL
     : import.meta.env.PUBLIC_API_URL;
 
-export async function getFiles(
-  userId: number
-): Promise<FetchSuccess<DirectoryProps> | undefined> {
-  const response = await fetch(apiUrl + "api/file/" + userId, {
+export async function getFiles(): Promise<
+  FetchSuccess<DirectoryProps> | undefined
+> {
+  const response = await fetch(apiUrl + "api/file", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
   });
   if (response.ok) {
     return await response.json();
@@ -33,68 +33,126 @@ export async function getFiles(
   }
 }
 
+export async function signUp(username: string, password: string) {
+  const response = await fetch(apiUrl + "api/signUp/", {
+    method: "POST",
+    headers: getHeaders(),
+    credentials: "include",
+    body: JSON.stringify({
+      username: username,
+      password: password,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to sign up.");
+  }
+
+  const data = await response.json();
+
+  // Usar localStorage solo si las cookies no están habilitadas
+  if (!cookiesEnabled() && data.message) {
+    localStorage.setItem("jwtToken", data.token);
+  }
+
+  return data;
+}
+
+export async function login(username: string, password: string) {
+  const response = await fetch(apiUrl + "api/login/", {
+    method: "POST",
+    headers: getHeaders(),
+    credentials: "include",
+    body: JSON.stringify({
+      username: username,
+      password: password,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to sign up.");
+  }
+
+  const data = await response.json();
+
+  // Usar localStorage solo si las cookies no están habilitadas
+  if (!cookiesEnabled() && data.message) {
+    localStorage.setItem("jwtToken", data.token);
+  }
+
+  return data;
+}
+
+function getHeaders(): HeadersInit {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // Only add Authorization header if cookies are not enabled and the token exists
+  if (!cookiesEnabled()) {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  return headers;
+}
+
 export async function getFileById(
-  userId: number,
   fileId: number
 ): Promise<FetchSuccess<FileProps> | FetchError | undefined> {
-  const response = await fetch(apiUrl + "api/file/" + userId + "/" + fileId, {
+  const response = await fetch(apiUrl + "api/file/" + fileId, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
   });
   return await response.json();
 }
+
 export async function editFile(
-  userId: number,
   file: editFileProps
 ): Promise<FetchSuccess<FileProps> | FetchError | undefined> {
-  const response = await fetch(apiUrl + "api/editFile/" + userId, {
+  const response = await fetch(apiUrl + "api/editFile", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
     body: JSON.stringify(file),
   });
   return await response.json();
 }
 
 export async function createDirectory(
-  userId: number,
   directory: insertDirectoryProps
 ): Promise<FetchSuccess<Id> | FetchError | undefined> {
-  const response = await fetch(apiUrl + "api/createDirectory/" + userId, {
+  const response = await fetch(apiUrl + "api/createDirectory", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
     body: JSON.stringify(directory),
   });
   return await response.json();
 }
+
 export async function createFile(
-  userId: number,
   file: insertFileProps
 ): Promise<FetchSuccess<Id> | FetchError | undefined> {
-  const response = await fetch(apiUrl + "api/createFile/" + userId, {
+  const response = await fetch(apiUrl + "api/createFile", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
     body: JSON.stringify(file),
   });
   return await response.json();
 }
 
 export async function editDirectory(
-  userId: number,
   directory: editDirectoryProps
 ): Promise<FetchSuccess<DirectoryProps> | FetchError | undefined> {
-  const response = await fetch(apiUrl + "api/editDirectory/" + userId, {
+  const response = await fetch(apiUrl + "api/editDirectory", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
     body: JSON.stringify(directory),
   });
   return await response.json();
@@ -104,7 +162,8 @@ export async function executeCode(code: string): Promise<FetchRun<any>> {
   try {
     const response = await fetch(apiUrl + "api/code", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getHeaders(),
+      credentials: "include",
       body: JSON.stringify({ content: code }),
     });
     if (response.ok) {
@@ -117,16 +176,15 @@ export async function executeCode(code: string): Promise<FetchRun<any>> {
     return { error: { error: "", errorCode: error.toString() } };
   }
 }
+
 export async function insertContent(
-  userId: number,
   file: any
 ): Promise<FetchInsertContent<string>> {
   try {
-    const response = await fetch(apiUrl + "api/insertContent/" + userId, {
+    const response = await fetch(apiUrl + "api/insertContent", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getHeaders(),
+      credentials: "include",
       body: JSON.stringify(file),
     });
     if (response.ok) {
@@ -141,14 +199,12 @@ export async function insertContent(
 }
 
 export async function saveContent(
-  userId: number,
   file: FileProps
 ): Promise<FetchInsertContent<string> | undefined> {
-  const response = await fetch(apiUrl + "api/editFile/" + userId, {
+  const response = await fetch(apiUrl + "api/editFile", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
     body: JSON.stringify(file),
   });
   if (response.ok) {
@@ -157,19 +213,15 @@ export async function saveContent(
     console.error("Failed to save the document.");
   }
 }
+
 export async function deleteFile(
-  userId: number,
   fileId: number
 ): Promise<FetchSuccess<string> | Response | undefined> {
-  const response = await fetch(
-    apiUrl + "api/deleteFile/" + userId + "/" + fileId,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(apiUrl + "api/deleteFile/" + fileId, {
+    method: "DELETE",
+    headers: getHeaders(),
+    credentials: "include",
+  });
   if (response.ok) {
     if (response.status == 204) {
       return response;
@@ -180,19 +232,15 @@ export async function deleteFile(
     console.error("Failed to delete the document.");
   }
 }
+
 export async function deleteDirectory(
-  userId: number,
   directoryId: number
 ): Promise<FetchSuccess<string> | Response | undefined> {
-  const response = await fetch(
-    apiUrl + "api/deleteDirectory/" + userId + "/" + directoryId,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(apiUrl + "api/deleteDirectory/" + directoryId, {
+    method: "DELETE",
+    headers: getHeaders(),
+    credentials: "include",
+  });
   if (response.ok) {
     if (response.status == 204) {
       return response;
@@ -207,8 +255,7 @@ export async function deleteDirectory(
 export async function resetBd() {
   await fetch(apiUrl + "test/reset", {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getHeaders(),
+    credentials: "include",
   });
 }

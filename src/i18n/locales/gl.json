@@ -22,17 +22,30 @@
   "General": {
     "accept": "Aceptar",
     "cancel": "Cancelar",
-    "selectFile": "Selecione un arquivo"
+    "selectFile": "Selecione un arquivo",
+    "sigIn": "Rexistrarse",
+    "username": "Usuario",
+    "password": "Contrasinal"
   },
   "Errors": {
-    "EMPTY_FOLDER_NAME": "O nome do cartafol non pode estar vacío",
-    "EMPTY_FILE_NAME": "O nome do ficheiro non pode estar vacio",
+    "EMPTY_FOLDER_NAME": "O nome do cartafol non pode estar vavaleirocío",
+    "EMPTY_FILE_NAME": "O nome do ficheiro non pode estar valeiro",
     "FILE_NOT_FOUND": "Non se atopou o ficheiro",
     "FILE_NAME_ALREADY_EXISTS": "Xa existe un ficheiro con este nome",
-    "INVALID_USER_ID": "O identificador do usario é inválido",
+    "INVALID_USER_ID": "O identificador do usuario é inválido",
     "PARENT_NOT_FOUND": "O directorio padre especificado non existe",
     "DIRECTORY_NOT_FOUND": "O cartafol non se atopou",
-    "DIRECTORY_NAME_ALREADY_EXISTS": "Xa existe unha carpeta con ese nombre"
+    "DIRECTORY_NAME_ALREADY_EXISTS": "Xa existe unha carpeta con ese nombre",
+    "EMPTY_USER_NAME": "O nombre de usuario non pode estar valeiro.",
+    "EMPTY_PASSWORD": "O contrasinal non pode estar valeiro",
+    "USER_NAME_ALREADY_EXISTS": "Xa existe o nome de usuario",
+    "USER_NOT_FOUND": "Non se atopou o usuario",
+    "INVALID_CREDENTIALS": "Credenciales inválidas",
+    "MINIMUN_LENGTH": "O contrasinal ten que ter unha lonxitude mínima de 8 caracteres",
+    "DIGITS": "O contrasinal ten que ter ao menos un número",
+    "UPER_CASE": "O contrasinal ten que ter ao menos unha maiuscula",
+    "LOWER_CASE": "O contrasinal ten que ter ao menos unha minuscula",
+    "SPECIAL_CHARACTERES": "O contrasinal ten que conter ao menos un caracter especial"
   },
   "Messages": {
     "FILE_UPDATED": "O ficheiro actualizouse correctamente",

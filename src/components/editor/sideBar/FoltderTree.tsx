@@ -100,7 +100,7 @@ function FolderTree() {
 
   const addNode = async () => {
     setSelectedItems([]);
-    const docs = await getFiles(1);
+    const docs = await getFiles();
     if (docs?.message) dispatch(addFile(docs?.message));
   };
 
@@ -134,9 +134,9 @@ function FolderTree() {
     const items = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree[];
     for (const item of items) {
       if (item.type == "Directory") {
-        await editDirectory(1, { id: item.id, parentId: targetDirectory.id });
+        await editDirectory({ id: item.id, parentId: targetDirectory.id });
       } else {
-        await editFile(1, { id: item.id, directoryId: targetDirectory.id });
+        await editFile({ id: item.id, directoryId: targetDirectory.id });
       }
     }
     await addNode();

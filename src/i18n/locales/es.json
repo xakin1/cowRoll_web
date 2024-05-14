@@ -22,7 +22,10 @@
   "General": {
     "accept": "Aceptar",
     "cancel": "Cancelar",
-    "selectFile": "Selecione un archivo"
+    "selectFile": "Selecione un archivo",
+    "sigIn": "Registrarse",
+    "username": "Usuario",
+    "password": "Contraseña"
   },
   "Errors": {
     "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",
@@ -32,7 +35,17 @@
     "INVALID_USER_ID": "El identificador del usario es inválido",
     "PARENT_NOT_FOUND": "El directorio padre especificado no existe",
     "DIRECTORY_NOT_FOUND": "La carpeta no se encontró",
-    "DIRECTORY_NAME_ALREADY_EXISTS": "Ya existe una carpeta con ese nombre"
+    "DIRECTORY_NAME_ALREADY_EXISTS": "Ya existe una carpeta con ese nombre",
+    "EMPTY_USER_NAME": "El nombre de usuario no puede estar vacío.",
+    "EMPTY_PASSWORD": "La contraseña no puede estar vacía",
+    "USER_NAME_ALREADY_EXISTS": "Ya existe el nombre de usuario",
+    "USER_NOT_FOUND": "No se encontró el usuario",
+    "INVALID_CREDENTIALS": "Credenciales inválidas",
+    "MINIMUN_LENGTH": "La contraseña tiene que tener una longitud mínima de 8 caracteres",
+    "DIGITS": "La contraseña tiene que tener al menos un número",
+    "UPER_CASE": "La contraseña tiene que tener al menos una mayuscula",
+    "LOWER_CASE": "La contraseña tiene que tener al menos una minuscula",
+    "SPECIAL_CHARACTERES": "La contraseña tiene que contener al menos un caracter especial"
   },
   "Messages": {
     "FILE_UPDATED": "El fichero se ha actualizado correctamente",
