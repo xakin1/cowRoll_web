@@ -20,7 +20,7 @@ function Terminal() {
     try {
       const formattedJson = JSON.stringify(data, null, 2); // Formatea el JSON
       return (
-        <pre style={{ whiteSpace: "pre-wrap", color: "lightgray" }}>
+        <pre style={{ whiteSpace: "pre-wrap", color: "var(--text-color)" }}>
           {formattedJson}
         </pre>
       );
