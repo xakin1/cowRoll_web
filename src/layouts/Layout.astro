@@ -1,113 +1,71 @@
 ---
+import "../styles/global.css";
+import Header from './Header.astro';
+
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
-const {currentLocale} = Astro
+const { currentLocale } = Astro;
 ---
 
 <!doctype html>
 <html lang={currentLocale}>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<button id="themeToggle">
-      Cambiar tema
-    </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Astro description" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{title}</title>
+</head>
+<body>
+	<div>
+		<Header/>
 		<slot />
-	</body>
-	<script>
-	//Primero miramos que preferencias tiene el usuario para cargar el tema que el desea
-  function loadTheme() {
-    const userPreferredTheme = localStorage.getItem('theme');
-    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-
-    const themeToApply = userPreferredTheme || systemPreference;
-    document.body.setAttribute('data-theme', themeToApply);
-    localStorage.setItem('theme', themeToApply);
-    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeToApply } }));
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    loadTheme(); 
-
-    const themeToggleButton = document.getElementById('themeToggle');
-    if (themeToggleButton) {
-      themeToggleButton.onclick = function() {
-        const currentTheme = document.body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
-      };
-    } else {
-      console.error('Theme toggle button not found!');
-    }
-  });
-</script>
-
-</html>
-<style is:global>
-	:root {
-		--background-color-light: #f0f0f0;
-		--text-color-light: #333;
-		--background-color-dark: #333;
-		--text-color-dark: #fff;
-		--border-color-light: rgba(0, 0, 0, 0.4); 
-		--border-color-dark: rgba(255, 255, 255, 0.4);
-	}
-	* {
-		box-sizing: border-box;
-	}
-	
-
-	[data-theme="light"] {
-		--background-color: var(--background-color-light);
-		--text-color: var(--text-color-light);
-		--border-color: var(--border-color-light);
-	}
-
-
-	[data-theme="dark"] {
-		--background-color: var(--background-color-dark);
-		--text-color: var(--text-color-dark);
-		--border-color: var(--border-color-dark);
-	}
-
-	a {
-		color:cornflowerblue
-	}
-
-
-
-    body {
-      color: var(--text-color);
-      background-color: var(--background-color);
-      height: 100vh;
+	</div>
+  <script>
+    function loadTheme() {
+      const userPreferredTheme = localStorage.getItem('theme');
+      const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const themeToApply = userPreferredTheme || systemPreference;
+      document.body.setAttribute('data-theme', themeToApply);
+      localStorage.setItem('theme', themeToApply);
+      document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeToApply } }));
+      updateThemeIcon(themeToApply);
     }
 
-    html, body {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          overflow: hidden
+    function updateThemeIcon(theme: string) {
+      const moonIcon = document.getElementById('moon-icon');
+      const sunIcon = document.getElementById('sun-icon');
+      if (moonIcon && sunIcon) {
+        if (theme === 'dark') {
+          moonIcon.style.display = 'block';
+          sunIcon.style.display = 'none';
+        } else {
+          moonIcon.style.display = 'none';
+          sunIcon.style.display = 'block';
+        }
       }
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
-</style>
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadTheme();
+      const themeToggleButton = document.getElementById('themeToggle');
+      if (themeToggleButton) {
+        themeToggleButton.onclick = function() {
+          const currentTheme = document.body.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.body.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+          updateThemeIcon(newTheme);
+        };
+      } else {
+        console.error('Theme toggle button not found!');
+      }
+    });
+  </script>
+</body>
+</html>
