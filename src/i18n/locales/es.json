@@ -24,6 +24,9 @@
     "cancel": "Cancelar",
     "selectFile": "Selecione un archivo",
     "sigIn": "Registrarse",
+    "logIn": "Iniciar sesión",
+    "noAccount": "¿No tienes cuenta?",
+    "register": "Registrate",
     "username": "Usuario",
     "password": "Contraseña"
   },

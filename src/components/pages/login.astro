@@ -1,6 +1,5 @@
 ---
 import { getI18N } from "../../i18n";
-import ConsoleApp from "../ConsoleApp";
 
 const {currentLocale} = Astro
 const i18n = getI18N({currentLocale})
@@ -9,7 +8,7 @@ const i18n = getI18N({currentLocale})
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{i18n.t("General.sigIn")}</title>
+  <title>{i18n.t("General.logIn")}</title>
   <style>
     body {
       color: var(--text-color);
@@ -82,47 +81,33 @@ const i18n = getI18N({currentLocale})
   </style>
 </head>
 <body>
-  <main class="container"  id="signin-container">
-    <h2>{i18n.t("General.sigIn")}</h2>
+  <main class="container"  id="login-container">
+    <h2>{i18n.t("General.logIn")}</h2>
     <form id="signin-form" action="javascript:void(0);" method="post">
       <input type="text" id="username" name="username" placeholder={i18n.t("General.username")} required>
-      <div id="username-error" class="error"></div>
       <input type="password" id="password" name="password" placeholder={i18n.t("General.password")} required>
-      <div id="password-error" class="error"></div>
-      <button type="submit">{i18n.t("General.sigIn")}</button>
+      <button type="submit">{i18n.t("General.logIn")}</button>
     </form>
+    <div class="register-link">
+      {i18n.t("General.noAccount")} <a id="register-link" href="/signUp">{i18n.t("General.register")}</a>
+    </div>
   </main>
 
   <script>
-    import { signUp } from "../../services/codeApi";
-    import { getI18N } from "../../i18n";
-    import { getLang } from "../../i18n/utils";
+    import { login } from "../../services/codeApi";
 
-    const i18n = getI18N({ currentLocale: getLang() });   
     document.getElementById('signin-form')!.addEventListener('submit', async function(event) {
- 
+
       const usernameInput = document.getElementById('username') as HTMLInputElement;
       const passwordInput = document.getElementById('password') as HTMLInputElement;
-      const usernameErrorDiv = document.getElementById('username-error');
-      const passwordErrorDiv = document.getElementById('password-error');
 
-      if (usernameInput && passwordInput && usernameErrorDiv && passwordErrorDiv) {
+
+      if (usernameInput && passwordInput) {
         const username = usernameInput.value;
         const password = passwordInput.value;
 
-        const usernameError = validateUsername(username);
-        const passwordError = validatePassword(password);
-
-        usernameErrorDiv.innerText = usernameError || '';
-        passwordErrorDiv.innerText = passwordError || '';
-
-        if (usernameError || passwordError) {
-          event.preventDefault();
-          return;
-        }
-
         try {
-          await signUp(username, password);
+          await login(username, password);
           window.location.href = '/app'
         } catch (error) {
           console.error("Error during sign up:", error);
@@ -131,35 +116,6 @@ const i18n = getI18N({currentLocale})
         }
       }
     });
-
-    function validateUsername(username: string): string | null {
-      if (!username || username.trim() === '') {
-        return i18n.t("Errors.EMPTY_USER_NAME");
-      }
-      return null;
-    }
-
-    function validatePassword(password: string): string | null {
-      if (!password || password.trim() === '') {
-        return i18n.t("Errors.EMPTY_PASSWORD");
-      }
-      if (password.length < 8) {
-        return i18n.t("Errors.MINIMUN_LENGTH");
-      }
-      if (!/[0-9]/.test(password)) {
-        return i18n.t("Errors.MINIMUN_LENGTH");
-      }
-      if (!/[A-Z]/.test(password)) {
-        return i18n.t("Errors.UPER_CASE");
-      }
-      if (!/[a-z]/.test(password)) {
-        return i18n.t("Errors.LOWER_CASE");
-      }
-      if (!/[^a-zA-Z0-9]/.test(password)) {
-        return i18n.t("Errors.SPECIAL_CHARACTERES");
-      }
-      return null;
-    }
   </script>
 </body>
 </html>

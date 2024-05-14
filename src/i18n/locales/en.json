@@ -24,6 +24,9 @@
     "cancel": "Cancel",
     "selectFile": "Select a file",
     "sigIn": "SignIn",
+    "logIn": "logIn",
+    "noAccount": "No account?",
+    "register": "Register",
     "username": "Username",
     "password": "Password"
   },
