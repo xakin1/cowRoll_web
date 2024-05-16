@@ -30,6 +30,21 @@
     "username": "Usuario",
     "password": "Contrasinal"
   },
+  "Operations": {
+    "number": "Número",
+    "text": "Texto",
+    "pow": "Elevar",
+    "div": "División",
+    "minus": "Resta",
+    "add": "Suma",
+    "multiplication": "Multiplicación",
+    "roundDiv": "División redondeo",
+    "rem": "Modulo",
+    "boolean": "Boolean",
+    "and": "And",
+    "or": "Or"
+  },
+
   "Errors": {
     "EMPTY_FOLDER_NAME": "O nome do cartafol non pode estar vavaleirocío",
     "EMPTY_FILE_NAME": "O nome do ficheiro non pode estar valeiro",

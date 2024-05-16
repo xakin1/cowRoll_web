@@ -32,6 +32,9 @@ dependencies:
   '@types/react-dom':
     specifier: ^18.2.25
     version: 18.2.25
+  '@types/styled-components':
+    specifier: ^5.1.34
+    version: 5.1.34
   '@typescript-eslint/eslint-plugin':
     specifier: ^7.7.1
     version: 7.7.1(@typescript-eslint/parser@7.7.1)(eslint@8.57.0)(typescript@5.4.5)
@@ -65,6 +68,9 @@ dependencies:
   react-i18next:
     specifier: ^14.1.1
     version: 14.1.1(i18next@23.11.2)(react-dom@18.2.0)(react@18.2.0)
+  react-icons:
+    specifier: ^5.2.1
+    version: 5.2.1(react@18.2.0)
   react-monaco-editor:
     specifier: ^0.55.0
     version: 0.55.0(@types/react@18.2.79)(monaco-editor@0.44.0)(react@18.2.0)
@@ -74,6 +80,36 @@ dependencies:
   react-toastify:
     specifier: ^10.0.5
     version: 10.0.5(react-dom@18.2.0)(react@18.2.0)
+  rete:
+    specifier: 2.0.3
+    version: 2.0.3
+  rete-area-plugin:
+    specifier: 2.0.3
+    version: 2.0.3(rete@2.0.3)
+  rete-auto-arrange-plugin:
+    specifier: 2.0.0
+    version: 2.0.0(elkjs@0.8.2)(rete-area-plugin@2.0.3)(rete@2.0.3)(web-worker@1.3.0)
+  rete-connection-plugin:
+    specifier: 2.0.2
+    version: 2.0.2(rete-area-plugin@2.0.3)(rete@2.0.3)
+  rete-context-menu-plugin:
+    specifier: 2.0.0
+    version: 2.0.0(rete-area-plugin@2.0.3)(rete@2.0.3)
+  rete-dock-plugin:
+    specifier: 2.0.0
+    version: 2.0.0(rete-area-plugin@2.0.3)(rete@2.0.3)
+  rete-engine:
+    specifier: 2.0.0
+    version: 2.0.0(rete@2.0.3)
+  rete-react-plugin:
+    specifier: 2.0.5
+    version: 2.0.5(react-dom@18.2.0)(react@18.2.0)(rete-area-plugin@2.0.3)(rete-render-utils@2.0.2)(rete@2.0.3)(styled-components@6.1.11)
+  rete-render-utils:
+    specifier: 2.0.2
+    version: 2.0.2(rete-area-plugin@2.0.3)(rete@2.0.3)
+  styled-components:
+    specifier: ^6.1.11
+    version: 6.1.11(react-dom@18.2.0)(react@18.2.0)
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
@@ -1979,6 +2015,18 @@ packages:
     resolution: {integrity: sha512-jmIUGWrAiwu3dZpxntxieC+1n/5c3mjrImkmOSQ2NC5uP6cYO4aAZDdSmRcI5C1oiTmqlZGHC+/NmJrKogbP5A==}
     dev: true
 
+  /@types/styled-components@5.1.34:
+    resolution: {integrity: sha512-mmiVvwpYklFIv9E8qfxuPyIt/OuyIrn6gMOAMOFUO3WJfSrSE+sGUoa4PiZj77Ut7bKZpaa6o1fBKS/4TOEvnA==}
+    dependencies:
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/react': 18.2.79
+      csstype: 3.1.3
+    dev: false
+
+  /@types/stylis@4.2.5:
+    resolution: {integrity: sha512-1Xve+NMN7FWjY14vLoY5tL3BVEQ/n42YLwaqJIPYhotZ9uBHt87VceMwWQpzmdEt2TNXIorIFG+YeCUUW7RInw==}
+    dev: false
+
   /@types/unist@2.0.10:
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
     dev: false
@@ -2709,6 +2757,10 @@ packages:
     engines: {node: '>=14.16'}
     dev: false
 
+  /camelize@1.0.1:
+    resolution: {integrity: sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==}
+    dev: false
+
   /caniuse-lite@1.0.30001612:
     resolution: {integrity: sha512-lFgnZ07UhaCcsSZgWW0K5j4e69dK1u/ltrL9lTUiFOwNHs12S3UMIEYgBV0Z6C6hRDev7iRnMzzYmKabYdXF9g==}
     dev: false
@@ -2931,6 +2983,19 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  /css-color-keywords@1.0.0:
+    resolution: {integrity: sha512-FyyrDHZKEjXDpNJYvVsV960FiqQyXc/LlYmsxl2BcdMb2WPx0OGRVgTg55rPSyLSNMqP52R9r8geSp7apN3Ofg==}
+    engines: {node: '>=4'}
+    dev: false
+
+  /css-to-react-native@3.2.0:
+    resolution: {integrity: sha512-e8RKaLXMOFii+02mOlqwjbD00KSEKqblnpO9e++1aXS1fPQOpS1YoqdVHBqPjHNoxeF2mimzVqawm2KCbEdtHQ==}
+    dependencies:
+      camelize: 1.0.1
+      css-color-keywords: 1.0.0
+      postcss-value-parser: 4.2.0
+    dev: false
+
   /cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
@@ -3129,6 +3194,10 @@ packages:
 
   /electron-to-chromium@1.4.748:
     resolution: {integrity: sha512-VWqjOlPZn70UZ8FTKUOkUvBLeTQ0xpty66qV0yJcAGY2/CthI4xyW9aEozRVtuwv3Kpf5xTesmJUcPwuJmgP4A==}
+    dev: false
+
+  /elkjs@0.8.2:
+    resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
     dev: false
 
   /emmet@2.4.7:
@@ -4669,6 +4738,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
 
+  /lodash.debounce@4.0.8:
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+    dev: false
+
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
@@ -5598,6 +5671,10 @@ packages:
       util-deprecate: 1.0.2
     dev: true
 
+  /postcss-value-parser@4.2.0:
+    resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
+    dev: false
+
   /postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -5753,6 +5830,14 @@ packages:
       i18next: 23.11.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /react-icons@5.2.1(react@18.2.0):
+    resolution: {integrity: sha512-zdbW5GstTzXaVKvGSyTaBalt7HSfuK5ovrzlpyiWHAFXndXTdd/1hdDHI4xBM1Mn7YriT6aqESucFl9kEXzrdw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-is@16.13.1:
@@ -6014,6 +6099,110 @@ packages:
       signal-exit: 3.0.7
     dev: false
 
+  /rete-area-plugin@2.0.3(rete@2.0.3):
+    resolution: {integrity: sha512-RWHCoMh0HJ7arnBEaU51j1J4AuK+qWYR7tadVom8uiwkXK7Xv9VeJkKy8xWT+Ckw+g2DlsI4SWrQkMG7wfWtug==}
+    peerDependencies:
+      rete: ^2.0.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+    dev: false
+
+  /rete-auto-arrange-plugin@2.0.0(elkjs@0.8.2)(rete-area-plugin@2.0.3)(rete@2.0.3)(web-worker@1.3.0):
+    resolution: {integrity: sha512-wyrJ+DW94J1E4ceTX6XVHt7lnp0eNXdwHKnuREY8ePl3BO8buLutvVpuMFwJEVW6AbnUVcKY38/huAwp4wDGoQ==}
+    peerDependencies:
+      elkjs: ^0.8.2
+      rete: ^2.0.1
+      rete-area-plugin: ^2.0.0
+      web-worker: ^1.2.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      elkjs: 0.8.2
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+      web-worker: 1.3.0
+    dev: false
+
+  /rete-connection-plugin@2.0.2(rete-area-plugin@2.0.3)(rete@2.0.3):
+    resolution: {integrity: sha512-0FPDYcU6zPcOLyuc4ObYpM6lgv5BZII+bxVWSJ0n4Lv8sOJlE3YrlvwFOq1BLmvOYrzQRgPbVWddY4EsnqIEIA==}
+    peerDependencies:
+      rete: ^2.0.1
+      rete-area-plugin: ^2.0.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+    dev: false
+
+  /rete-context-menu-plugin@2.0.0(rete-area-plugin@2.0.3)(rete@2.0.3):
+    resolution: {integrity: sha512-cFqXUCgbuzdD994+cUgLNCiN/BeQzBb8PS1oZfJijL1RsHpRIlMM/pvVgGp1DJcveeIeKccndXb6UuzR9qfU4A==}
+    peerDependencies:
+      rete: ^2.0.1
+      rete-area-plugin: ^2.0.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+    dev: false
+
+  /rete-dock-plugin@2.0.0(rete-area-plugin@2.0.3)(rete@2.0.3):
+    resolution: {integrity: sha512-T5/lNrf0Y9ZvY4PLF1nPdBeEBGuPugMJzT/HIffMu/jVVIM5H/swLXU+eJIcrgKkCrsKAneSEacRtSBiaNzPgg==}
+    peerDependencies:
+      rete: ^2.0.1
+      rete-area-plugin: ^2.0.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+    dev: false
+
+  /rete-engine@2.0.0(rete@2.0.3):
+    resolution: {integrity: sha512-Xo/UggbWDgZf2TnFY5ftylkGH42CX3Ws5dH9fBx7r3PNXfAYJLIT3Calaoe+JogJPTeMZHMoeR61/aJTZABGzQ==}
+    peerDependencies:
+      rete: ^2.0.1
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+    dev: false
+
+  /rete-react-plugin@2.0.5(react-dom@18.2.0)(react@18.2.0)(rete-area-plugin@2.0.3)(rete-render-utils@2.0.2)(rete@2.0.3)(styled-components@6.1.11):
+    resolution: {integrity: sha512-xoui2+Mv6iqpRTxccAu3MZv3+l5LYk4AmtqGWEqlCIwZjplrsAoVeOLYq235spwf+vd3ujzapnycEzYF9aj3cA==}
+    peerDependencies:
+      react: ^16.8.6 || ^17 || ^18
+      react-dom: ^16.8.6 || ^17 || ^18
+      rete: ^2.0.1
+      rete-area-plugin: ^2.0.0
+      rete-render-utils: ^2.0.0
+      styled-components: ^5.3.6 || ^6
+    dependencies:
+      '@babel/runtime': 7.24.4
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+      rete-render-utils: 2.0.2(rete-area-plugin@2.0.3)(rete@2.0.3)
+      styled-components: 6.1.11(react-dom@18.2.0)(react@18.2.0)
+      usehooks-ts: 2.16.0(react@18.2.0)
+    dev: false
+
+  /rete-render-utils@2.0.2(rete-area-plugin@2.0.3)(rete@2.0.3):
+    resolution: {integrity: sha512-f4kj+dFL5QrebOkjCdwi8htHteDFbKyqrVdFDToEUvGuGod1sdLeKxOPBOhwyYDB4Zxd3Cq84I93vD2etrTL9g==}
+    peerDependencies:
+      rete: ^2.0.0
+      rete-area-plugin: ^2.0.0
+    dependencies:
+      '@babel/runtime': 7.24.4
+      rete: 2.0.3
+      rete-area-plugin: 2.0.3(rete@2.0.3)
+    dev: false
+
+  /rete@2.0.3:
+    resolution: {integrity: sha512-/xzcyEBhVXhMZVZHElnYaLKOmTEuwlnul9Wfjvxw5sdl/+6Nqn2nyqIaW4koefrFpIWZy9aitnjnP3zeCMVDuw==}
+    requiresBuild: true
+    dependencies:
+      '@babel/runtime': 7.24.4
+    dev: false
+
   /retext-latin@3.1.0:
     resolution: {integrity: sha512-5MrD1tuebzO8ppsja5eEu+ZbBeUNCjoEarn70tkXOS7Bdsdf6tNahsv2bY0Z8VooFF6cw7/6S+d3yI/TMlMVVQ==}
     dependencies:
@@ -6176,6 +6365,10 @@ packages:
       functions-have-names: 1.2.3
       has-property-descriptors: 1.0.2
     dev: true
+
+  /shallowequal@1.1.0:
+    resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}
+    dev: false
 
   /sharp@0.33.3:
     resolution: {integrity: sha512-vHUeXJU1UvlO/BNwTpT0x/r53WkLUVxrmb5JTgW92fdFCFk0ispLMAeu/jPO2vjkXM1fYUi3K7/qcLF47pwM1A==}
@@ -6424,6 +6617,26 @@ packages:
       js-tokens: 9.0.0
     dev: true
 
+  /styled-components@6.1.11(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Ui0jXPzbp1phYij90h12ksljKGqF8ncGx+pjrNPsSPhbUUjWT2tD1FwGo2LF6USCnbrsIhNngDfodhxbegfEOA==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+    dependencies:
+      '@emotion/is-prop-valid': 1.2.2
+      '@emotion/unitless': 0.8.1
+      '@types/stylis': 4.2.5
+      css-to-react-native: 3.2.0
+      csstype: 3.1.3
+      postcss: 8.4.38
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      shallowequal: 1.1.0
+      stylis: 4.3.2
+      tslib: 2.6.2
+    dev: false
+
   /styled-jsx@5.1.1(@babel/core@7.24.4)(react@18.2.0):
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
     engines: {node: '>= 12.0.0'}
@@ -6444,6 +6657,10 @@ packages:
 
   /stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
+    dev: false
+
+  /stylis@4.3.2:
+    resolution: {integrity: sha512-bhtUjWd/z6ltJiQwg0dUfxEJ+W+jdqQd8TbWLWyeIJHlnsqmGLRFFd8e5mA0AZi/zx90smXRlN66YMTcaSFifg==}
     dev: false
 
   /suf-log@2.5.3:
@@ -6834,6 +7051,16 @@ packages:
       react: 18.2.0
     dev: false
 
+  /usehooks-ts@2.16.0(react@18.2.0):
+    resolution: {integrity: sha512-bez95WqYujxp6hFdM/CpRDiVPirZPxlMzOH2QB8yopoKQMXpscyZoxOjpEdaxvV+CAWUDSM62cWnqHE0E/MZ7w==}
+    engines: {node: '>=16.15.0'}
+    peerDependencies:
+      react: ^16.8.0  || ^17 || ^18
+    dependencies:
+      lodash.debounce: 4.0.8
+      react: 18.2.0
+    dev: false
+
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
@@ -7167,6 +7394,10 @@ packages:
 
   /web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
+    dev: false
+
+  /web-worker@1.3.0:
+    resolution: {integrity: sha512-BSR9wyRsy/KOValMgd5kMyr3JzpdeoR9KVId8u5GVlTTAtNChlsE4yTxeY7zMdNSyOmoKBv8NH2qeRY9Tg+IaA==}
     dev: false
 
   /webidl-conversions@7.0.0:
