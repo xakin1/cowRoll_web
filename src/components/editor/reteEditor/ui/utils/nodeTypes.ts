@@ -1,7 +1,8 @@
 import { ClassicPreset, type GetSchemes } from "rete";
-import * as ArithmeticNodes from "./arithmeticNode/nodes"; // Importa todas las clases de nodos desde nodes.ts
-import * as BooleanNodes from "./booleanNode/nodes"; // Importa todas las clases de nodos desde nodes.ts
-import type BooleanControl from "./customControls/BooleanInputControl";
+import type BooleanControl from "../customControls/BooleanInputControl";
+import * as ArithmeticNodes from "../customNode/arithmeticNode"; // Importa todas las clases de nodos desde nodes.ts
+import * as BooleanNodes from "../customNode/booleanNode";
+import type { IfNode } from "../customNode/functionalNode";
 
 const AllNodes = {
   ...ArithmeticNodes,
@@ -14,7 +15,7 @@ type NodeClassNames = keyof typeof AllNodes;
 type NodeClasses = (typeof AllNodes)[NodeClassNames];
 
 // y de forma mágica tenemos los tipos de esa clase de forma automática
-export type Node = InstanceType<NodeClasses>;
+export type Node = InstanceType<NodeClasses> | IfNode;
 
 class Connection<
   A extends Node,

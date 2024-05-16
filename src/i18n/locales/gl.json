@@ -40,9 +40,25 @@
     "multiplication": "Multiplicación",
     "roundDiv": "División redondeo",
     "rem": "Modulo",
-    "boolean": "Boolean",
+    "boolean": "Booleano",
     "and": "And",
-    "or": "Or"
+    "or": "Or",
+    "not": "Negación",
+    "left": "Esquerda",
+    "right": "Dereita",
+    "var": "Variable",
+    "value": "Valor",
+    "name": "Nome",
+    "type": "Tipo",
+    "if": "Si",
+    "true": "Verdadeiro",
+    "false": "Falso",
+    "condition": "Condición",
+    "dataFlow": "Fluxo",
+    "strictMore": ">",
+    "strictLess": "<",
+    "less": "<=",
+    "more": ">="
   },
 
   "Errors": {

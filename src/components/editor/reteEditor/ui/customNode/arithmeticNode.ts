@@ -21,7 +21,10 @@ export class NumberNode extends ClassicPreset.Node<
       "value",
       new ClassicPreset.InputControl("number", { initial, change })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(): { value: number } {
@@ -30,6 +33,7 @@ export class NumberNode extends ClassicPreset.Node<
     };
   }
 }
+
 export class TextNode extends ClassicPreset.Node<
   {},
   { value: ClassicPreset.Socket },
@@ -44,7 +48,10 @@ export class TextNode extends ClassicPreset.Node<
       "value",
       new ClassicPreset.InputControl("text", { initial, change })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Text"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.text"))
+    );
   }
 
   data(): { value: string } {
@@ -67,8 +74,8 @@ export class AddNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.add"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -85,7 +92,10 @@ export class AddNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -120,8 +130,8 @@ export class MinusNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.minus"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -138,7 +148,10 @@ export class MinusNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -173,8 +186,8 @@ export class MultiplicationNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.multiplication"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -191,7 +204,10 @@ export class MultiplicationNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -226,8 +242,8 @@ export class DivisionNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.div"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -244,7 +260,10 @@ export class DivisionNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -280,8 +299,8 @@ export class RoundDivisionNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.roundDiv"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -298,7 +317,10 @@ export class RoundDivisionNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -334,8 +356,8 @@ export class RemainderNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.rem"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -352,7 +374,10 @@ export class RemainderNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {
@@ -387,8 +412,8 @@ export class PowNode extends ClassicPreset.Node<
     private update?: (control: ClassicPreset.InputControl<"number">) => void
   ) {
     super(i18n.t("Operations.pow"));
-    const left = new ClassicPreset.Input(socket, "Left");
-    const right = new ClassicPreset.Input(socket, "Right");
+    const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
+    const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
     left.addControl(
       new ClassicPreset.InputControl("number", { initial: 0, change })
@@ -405,7 +430,10 @@ export class PowNode extends ClassicPreset.Node<
         readonly: true,
       })
     );
-    this.addOutput("value", new ClassicPreset.Output(socket, "Number"));
+    this.addOutput(
+      "value",
+      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
+    );
   }
 
   data(inputs: { left?: number[]; right?: number[] }): { value: number } {

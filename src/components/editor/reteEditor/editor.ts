@@ -13,24 +13,27 @@ import {
 import { DockPlugin, DockPresets } from "rete-dock-plugin";
 import { DataflowEngine } from "rete-engine";
 import { Presets, ReactPlugin, type ReactArea2D } from "rete-react-plugin";
-import { CustomNode } from "./customNode/CustomNode";
-import { CustomSocket } from "./customNode/CustomSocket";
-import {
-  AddNode,
-  DivisionNode,
-  MinusNode,
-  MultiplicationNode,
-  NumberNode,
-  PowNode,
-  RemainderNode,
-  RoundDivisionNode,
-  TextNode,
-} from "./nodes/arithmeticNode/nodes";
-import { AndNode, BooleanNode, OrNode } from "./nodes/booleanNode/nodes";
+
+import { ActionConnectionComponent } from "./ui/customConnections/ActionConnection";
 import BooleanControl, {
   CustomSwitch,
-} from "./nodes/customControls/BooleanInputControl";
-import type { Schemes } from "./nodes/nodeTypes";
+} from "./ui/customControls/BooleanInputControl";
+import {
+  CustomTextInput,
+  TextControl,
+} from "./ui/customControls/TextInputControl";
+import CustomVariableInput, {
+  VarControl,
+} from "./ui/customControls/VarInputControl";
+import { BooleanNode } from "./ui/customNode/booleanNode";
+import { IfNode, VariableNode } from "./ui/customNode/functionalNode";
+import { CustomNode } from "./ui/customNode/style/CustomNode";
+import { CustomSocket } from "./ui/customNode/style/CustomSocket";
+import { ActionSocketComponent } from "./ui/customSockets/ActionSocket";
+import { ActionSocket, TextSocket } from "./ui/customSockets/sockets";
+import type { Schemes } from "./ui/utils/nodeTypes";
+import { getConnectionSockets } from "./ui/utils/utils";
+("./sockets");
 
 type AreaExtra = ReactArea2D<Schemes>;
 let customEvent = false;
@@ -43,22 +46,55 @@ export async function createEditor(container: HTMLElement) {
   const arrange = new AutoArrangePlugin<Schemes>();
   const engine = new DataflowEngine<Schemes>();
   const dock = new DockPlugin<Schemes>();
+  const dataflow = new DataflowEngine<Schemes>(({ inputs, outputs }) => {
+    return {
+      inputs: () =>
+        Object.entries(inputs)
+          .filter(([_, input]) => input.socket instanceof TextSocket)
+          .map(([name]) => name),
+      outputs: () =>
+        Object.entries(outputs)
+          .filter(([_, output]) => output.socket instanceof TextSocket)
+          .map(([name]) => name),
+    };
+  });
 
   render.addPreset(
     Presets.classic.setup({
       customize: {
-        control(data) {
-          if (data.payload instanceof BooleanControl) {
-            return CustomSwitch;
-          } else {
-            return Presets.classic.Control;
+        connection(data) {
+          const { source, target } = getConnectionSockets(editor, data.payload);
+
+          if (
+            source instanceof ActionSocket ||
+            target instanceof ActionSocket
+          ) {
+            return ActionConnectionComponent;
           }
+          return Presets.classic.Connection;
+        },
+        control(context) {
+          if (context.payload instanceof BooleanControl) {
+            return CustomSwitch;
+          }
+          if (context.payload instanceof TextControl) {
+            return CustomTextInput;
+          }
+
+          if (context.payload instanceof VarControl) {
+            return CustomVariableInput;
+          }
+          return Presets.classic.Control;
         },
         node(context) {
           return CustomNode;
         },
         socket(context) {
-          return CustomSocket;
+          if (context.payload instanceof ActionSocket) {
+            return ActionSocketComponent;
+          } else {
+            return CustomSocket;
+          }
         },
       },
     })
@@ -122,18 +158,25 @@ export async function createEditor(container: HTMLElement) {
   AreaExtensions.showInputControl(area);
 
   const nodesToAdd = [
-    () => new AddNode(process, (c) => area.update("control", c.id)),
-    () => new MinusNode(process, (c) => area.update("control", c.id)),
-    () => new MultiplicationNode(process, (c) => area.update("control", c.id)),
-    () => new DivisionNode(process, (c) => area.update("control", c.id)),
-    () => new RoundDivisionNode(process, (c) => area.update("control", c.id)),
-    () => new RemainderNode(process, (c) => area.update("control", c.id)),
-    () => new PowNode(process, (c) => area.update("control", c.id)),
-    () => new NumberNode(1, process),
-    () => new TextNode("text", process),
+    () => new IfNode(false, dataflow, (c) => area.update("control", c.id)),
+    () => new VariableNode(false, process),
+    // () => new AddNode(process, (c) => area.update("control", c.id)),
+    // () => new MinusNode(process, (c) => area.update("control", c.id)),
+    // () => new MultiplicationNode(process, (c) => area.update("control", c.id)),
+    // () => new DivisionNode(process, (c) => area.update("control", c.id)),
+    // () => new RoundDivisionNode(process, (c) => area.update("control", c.id)),
+    // () => new RemainderNode(process, (c) => area.update("control", c.id)),
+    // () => new PowNode(process, (c) => area.update("control", c.id)),
+    // () => new NumberNode(1, process),
+    // () => new TextNode("text", process),
     () => new BooleanNode(false, process),
-    () => new AndNode(process, (c) => area.update("control", c.id)),
-    () => new OrNode(process, (c) => area.update("control", c.id)),
+    // () => new NotNode(process, (c) => area.update("control", c.id)),
+    // () => new AndNode(process, (c) => area.update("control", c.id)),
+    // () => new OrNode(process, (c) => area.update("control", c.id)),
+    // () => new StrictMoreNode(process, (c) => area.update("control", c.id)),
+    // () => new StrictLessNode(process, (c) => area.update("control", c.id)),
+    // () => new MoreNode(process, (c) => area.update("control", c.id)),
+    // () => new LessNode(process, (c) => area.update("control", c.id)),
   ];
 
   nodesToAdd.forEach((node) => dock.add(node));

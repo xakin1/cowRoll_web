@@ -116,3 +116,24 @@ code {
     padding: 15px 20px;
   }
 }
+
+.control span {
+  display: block;
+}
+
+.general {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  color: #333;
+  width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  color: white;
+}

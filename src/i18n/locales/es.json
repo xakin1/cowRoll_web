@@ -40,9 +40,26 @@
     "multiplication": "Multiplicación",
     "roundDiv": "División redondeo",
     "rem": "Modulo",
-    "boolean": "Boolean",
+    "boolean": "Booleano",
     "and": "And",
-    "or": "Or"
+    "or": "Or",
+    "not": "Negación",
+    "left": "Izquierda",
+    "right": "Derecha",
+    "var": "Variable",
+    "value": "Valor",
+    "name": "Nombre",
+    "type": "Tipo",
+
+    "if": "Si",
+    "true": "Verdadero",
+    "false": "Falso",
+    "condition": "Condición",
+    "dataFlow": "Flujo",
+    "strictMore": ">",
+    "strictLess": "<",
+    "less": "<=",
+    "more": ">="
   },
   "Errors": {
     "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",
