@@ -1,12 +1,12 @@
 import { ClassicPreset } from "rete";
 import { DataflowEngine } from "rete-engine";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
+import type { Schemes } from "../../utils/nodeTypes";
 import BooleanControl from "../customControls/BooleanInputControl";
 import { TextControl } from "../customControls/TextInputControl";
 import { VarControl } from "../customControls/VarInputControl";
 import { ActionSocket } from "../customSockets/sockets";
-import type { Schemes } from "../utils/nodeTypes";
 
 const socket = new ClassicPreset.Socket("socket");
 

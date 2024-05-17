@@ -14,29 +14,51 @@ import { DockPlugin, DockPresets } from "rete-dock-plugin";
 import { DataflowEngine } from "rete-engine";
 import { Presets, ReactPlugin, type ReactArea2D } from "rete-react-plugin";
 
-import { ActionConnectionComponent } from "./ui/customConnections/ActionConnection";
+import { ActionConnectionComponent } from "./ui/nodes/customConnections/ActionConnection";
 import BooleanControl, {
   CustomSwitch,
-} from "./ui/customControls/BooleanInputControl";
+} from "./ui/nodes/customControls/BooleanInputControl";
 import {
   CustomTextInput,
   TextControl,
-} from "./ui/customControls/TextInputControl";
+} from "./ui/nodes/customControls/TextInputControl";
 import CustomVariableInput, {
   VarControl,
-} from "./ui/customControls/VarInputControl";
-import { BooleanNode } from "./ui/customNode/booleanNode";
-import { IfNode, VariableNode } from "./ui/customNode/functionalNode";
-import { CustomNode } from "./ui/customNode/style/CustomNode";
-import { CustomSocket } from "./ui/customNode/style/CustomSocket";
-import { ActionSocketComponent } from "./ui/customSockets/ActionSocket";
-import { ActionSocket, TextSocket } from "./ui/customSockets/sockets";
+} from "./ui/nodes/customControls/VarInputControl";
+import {
+  AddNode,
+  DivisionNode,
+  MinusNode,
+  MultiplicationNode,
+  NumberNode,
+  PowNode,
+  RemainderNode,
+  RoundDivisionNode,
+  TextNode,
+} from "./ui/nodes/customNode/arithmeticNode";
+import {
+  AndNode,
+  BooleanNode,
+  LessNode,
+  MoreNode,
+  NotNode,
+  OrNode,
+  StrictLessNode,
+  StrictMoreNode,
+} from "./ui/nodes/customNode/booleanNode";
+import { IfNode, VariableNode } from "./ui/nodes/customNode/functionalNode";
+import { CustomNode } from "./ui/nodes/customNode/style/CustomNode";
+import { CustomSocket } from "./ui/nodes/customNode/style/CustomSocket";
+import { ActionSocketComponent } from "./ui/nodes/customSockets/ActionSocket";
+import { ActionSocket, TextSocket } from "./ui/nodes/customSockets/sockets";
 import type { Schemes } from "./ui/utils/nodeTypes";
-import { getConnectionSockets } from "./ui/utils/utils";
+import { clearEditor, getConnectionSockets } from "./ui/utils/utils";
 ("./sockets");
 
 type AreaExtra = ReactArea2D<Schemes>;
 let customEvent = false;
+
+const modulesData: { [key in string]: any } = {};
 
 export async function createEditor(container: HTMLElement) {
   const editor = new NodeEditor<Schemes>();
@@ -160,23 +182,23 @@ export async function createEditor(container: HTMLElement) {
   const nodesToAdd = [
     () => new IfNode(false, dataflow, (c) => area.update("control", c.id)),
     () => new VariableNode(false, process),
-    // () => new AddNode(process, (c) => area.update("control", c.id)),
-    // () => new MinusNode(process, (c) => area.update("control", c.id)),
-    // () => new MultiplicationNode(process, (c) => area.update("control", c.id)),
-    // () => new DivisionNode(process, (c) => area.update("control", c.id)),
-    // () => new RoundDivisionNode(process, (c) => area.update("control", c.id)),
-    // () => new RemainderNode(process, (c) => area.update("control", c.id)),
-    // () => new PowNode(process, (c) => area.update("control", c.id)),
-    // () => new NumberNode(1, process),
-    // () => new TextNode("text", process),
+    () => new AddNode(process, (c) => area.update("control", c.id)),
+    () => new MinusNode(process, (c) => area.update("control", c.id)),
+    () => new MultiplicationNode(process, (c) => area.update("control", c.id)),
+    () => new DivisionNode(process, (c) => area.update("control", c.id)),
+    () => new RoundDivisionNode(process, (c) => area.update("control", c.id)),
+    () => new RemainderNode(process, (c) => area.update("control", c.id)),
+    () => new PowNode(process, (c) => area.update("control", c.id)),
+    () => new NumberNode(1, process),
+    () => new TextNode("text", process),
     () => new BooleanNode(false, process),
-    // () => new NotNode(process, (c) => area.update("control", c.id)),
-    // () => new AndNode(process, (c) => area.update("control", c.id)),
-    // () => new OrNode(process, (c) => area.update("control", c.id)),
-    // () => new StrictMoreNode(process, (c) => area.update("control", c.id)),
-    // () => new StrictLessNode(process, (c) => area.update("control", c.id)),
-    // () => new MoreNode(process, (c) => area.update("control", c.id)),
-    // () => new LessNode(process, (c) => area.update("control", c.id)),
+    () => new NotNode(process, (c) => area.update("control", c.id)),
+    () => new AndNode(process, (c) => area.update("control", c.id)),
+    () => new OrNode(process, (c) => area.update("control", c.id)),
+    () => new StrictMoreNode(process, (c) => area.update("control", c.id)),
+    () => new StrictLessNode(process, (c) => area.update("control", c.id)),
+    () => new MoreNode(process, (c) => area.update("control", c.id)),
+    () => new LessNode(process, (c) => area.update("control", c.id)),
   ];
 
   nodesToAdd.forEach((node) => dock.add(node));
@@ -190,8 +212,26 @@ export async function createEditor(container: HTMLElement) {
 
   await arrange.layout();
   AreaExtensions.zoomAt(area, editor.getNodes());
+  let currentModulePath: null | string = null;
 
+  async function openModule(path: string) {
+    currentModulePath = null;
+
+    await clearEditor(editor);
+
+    const module = modules.findModule(path);
+
+    if (module) {
+      currentModulePath = path;
+      await module.apply(editor);
+    }
+
+    await arrange.layout();
+    AreaExtensions.zoomAt(area, editor.getNodes());
+  }
   return {
-    destroy: () => area.destroy(),
+    destroy: () => {
+      area.destroy();
+    },
   };
 }

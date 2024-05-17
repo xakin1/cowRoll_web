@@ -1,8 +1,8 @@
 import { ClassicPreset, type GetSchemes } from "rete";
-import type BooleanControl from "../customControls/BooleanInputControl";
-import * as ArithmeticNodes from "../customNode/arithmeticNode"; // Importa todas las clases de nodos desde nodes.ts
-import * as BooleanNodes from "../customNode/booleanNode";
-import type { IfNode } from "../customNode/functionalNode";
+import type BooleanControl from "../nodes/customControls/BooleanInputControl";
+import * as ArithmeticNodes from "../nodes/customNode/arithmeticNode"; // Importa todas las clases de nodos desde nodes.ts
+import * as BooleanNodes from "../nodes/customNode/booleanNode";
+import type { IfNode } from "../nodes/customNode/functionalNode";
 
 const AllNodes = {
   ...ArithmeticNodes,

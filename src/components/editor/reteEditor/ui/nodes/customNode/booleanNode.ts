@@ -1,6 +1,6 @@
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
 import BooleanControl from "../customControls/BooleanInputControl";
 
 const currentLocale = getLang();

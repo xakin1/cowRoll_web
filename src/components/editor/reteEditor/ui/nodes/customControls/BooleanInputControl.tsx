@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
 import type { Options } from "./types";
 
 const currentLocale = getLang();
@@ -60,7 +60,6 @@ export function CustomSwitch(props: {
 
   const selectStyles = {
     cursor: props.data.readonly ? "not-allowed" : "pointer",
-    backgroundColor: props.data.readonly ? "#e9ecef" : "#fff",
     appearance: props.data.readonly ? "none" : ("auto" as "none" | "auto"),
   };
 

@@ -13,7 +13,17 @@ export function getLang() {
   const url = new URL(window.location.href);
 
   const [, lang] = url.pathname.split("/");
-  if (lang in ui) return lang as keyof typeof ui;
+  if (lang in ui) {
+    return lang as keyof typeof ui;
+  }
+
+  // Obtener el locale del dispositivo
+  const deviceLocale = navigator.language;
+  const deviceLang = deviceLocale.split("-")[0]; // Obtener solo el código de idioma (por ejemplo, "en" de "en-US")
+  if (deviceLang in ui) {
+    return deviceLang as keyof typeof ui;
+  }
+
   return defaultLang;
 }
 

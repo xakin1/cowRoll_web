@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
 import type { Options } from "./types";
 const currentLocale = getLang();
 const i18n = getI18N({ currentLocale });

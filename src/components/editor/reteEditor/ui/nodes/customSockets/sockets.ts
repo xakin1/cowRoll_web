@@ -1,5 +1,7 @@
 import { ClassicPreset } from "rete";
 
+export const numberSocket = new ClassicPreset.Socket("Number");
+
 export class ActionSocket extends ClassicPreset.Socket {
   constructor() {
     super("Action");

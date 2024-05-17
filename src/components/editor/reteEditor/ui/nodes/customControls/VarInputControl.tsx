@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
 import { CustomSwitch as CustomSwitchBoolean } from "./BooleanInputControl";
 import { CustomTextInput } from "./TextInputControl";
 import type { Options } from "./types";
@@ -60,8 +60,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   tooltip: {
     display: "flex",
     alignItems: "center",
-    backgroundColor: "#f9f9f9",
     border: "1px solid #ccc",
+    background: "var(--background-color)",
     borderRadius: "6px",
     padding: "5px",
     position: "absolute" as "absolute",

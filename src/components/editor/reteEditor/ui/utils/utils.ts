@@ -1,5 +1,5 @@
-import { ClassicPreset, NodeEditor } from "rete";
-import type { ActionSocket, TextSocket } from "../customSockets/sockets";
+import { ClassicPreset, NodeEditor, type BaseSchemes } from "rete";
+import type { ActionSocket, TextSocket } from "../nodes/customSockets/sockets";
 import type { Schemes } from "./nodeTypes";
 
 type Sockets = ActionSocket | TextSocket;
@@ -23,4 +23,13 @@ export function getConnectionSockets(
     source: output?.socket,
     target: input?.socket,
   };
+}
+
+export async function clearEditor(editor: NodeEditor<BaseSchemes>) {
+  for (const c of [...editor.getConnections()]) {
+    await editor.removeConnection(c.id);
+  }
+  for (const n of [...editor.getNodes()]) {
+    await editor.removeNode(n.id);
+  }
 }
