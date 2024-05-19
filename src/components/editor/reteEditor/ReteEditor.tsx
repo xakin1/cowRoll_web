@@ -6,7 +6,10 @@ export default function App() {
 
   return (
     <div className="App">
-      <div ref={ref} style={{ height: "100vh", width: "100vw" }}></div>
+      <div
+        ref={ref}
+        style={{ height: "100vh", width: "100%", border: "1px solid #ccc" }}
+      ></div>
     </div>
   );
 }

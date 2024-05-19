@@ -6,6 +6,7 @@ import type { RootState } from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
 import type { CodeError } from "../../../utils/types/ApiTypes.js";
 import CodeEditor from "../monacoEditor/codeEditor.js";
+import ReteEditor from "../reteEditor/ReteEditor.js";
 import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
 
@@ -80,23 +81,20 @@ function Terminal() {
               </button>
             </header>
             {file ? (
-              <CodeEditor {...file}></CodeEditor>
+              <>
+                <CodeEditor {...file}></CodeEditor>
+              </>
             ) : (
               <span> {i18n.t("General.selectFile")}</span>
             )}
           </section>
-          <section className="section">
-            <header className="header">
-              <h1>{i18n.t("Code.output")}</h1>
-            </header>
-            <div
-              aria-label="Code Output"
-              id="OutputDisplay"
-              className="output-area"
-            >
-              {formatOutput(output, error)}
-            </div>
-          </section>
+          {!file ? (
+            <></>
+          ) : (
+            <section className="section">
+              <ReteEditor></ReteEditor>
+            </section>
+          )}
         </main>
         <div id="portal-root"></div>
       </div>

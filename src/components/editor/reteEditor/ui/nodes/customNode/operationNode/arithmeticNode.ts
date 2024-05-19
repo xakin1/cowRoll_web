@@ -1,73 +1,20 @@
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../../i18n";
-import { getLang } from "../../../../../../i18n/utils";
+import { getI18N } from "../../../../../../../i18n";
+import { getLang } from "../../../../../../../i18n/utils";
+import { height, width } from "../style/vars";
 
 const currentLocale = getLang();
 const i18n = getI18N({ currentLocale });
 
 const socket = new ClassicPreset.Socket("socket");
 
-export class NumberNode extends ClassicPreset.Node<
-  {},
-  { value: ClassicPreset.Socket },
-  { value: ClassicPreset.InputControl<"number"> }
-> {
-  height = 120;
-  width = 180;
-
-  constructor(initial: number, change?: () => void) {
-    super(i18n.t("Operations.number"));
-    this.addControl(
-      "value",
-      new ClassicPreset.InputControl("number", { initial, change })
-    );
-    this.addOutput(
-      "value",
-      new ClassicPreset.Output(socket, i18n.t("Operations.number"))
-    );
-  }
-
-  data(): { value: number } {
-    return {
-      value: this.controls.value.value || 0,
-    };
-  }
-}
-
-export class TextNode extends ClassicPreset.Node<
-  {},
-  { value: ClassicPreset.Socket },
-  { value: ClassicPreset.InputControl<"text"> }
-> {
-  height = 120;
-  width = 180;
-
-  constructor(initial: string, change?: () => void) {
-    super(i18n.t("Operations.text"));
-    this.addControl(
-      "value",
-      new ClassicPreset.InputControl("text", { initial, change })
-    );
-    this.addOutput(
-      "value",
-      new ClassicPreset.Output(socket, i18n.t("Operations.text"))
-    );
-  }
-
-  data(): { value: string } {
-    return {
-      value: this.controls.value.value || "",
-    };
-  }
-}
-
 export class AddNode extends ClassicPreset.Node<
   { left: ClassicPreset.Socket; right: ClassicPreset.Socket },
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -104,11 +51,21 @@ export class AddNode extends ClassicPreset.Node<
     const rightControl = this.inputs.right
       ?.control as ClassicPreset.InputControl<"number">;
 
-    const { left, right } = inputs;
-    const value =
-      (left ? left[0] : leftControl.value || 0) +
-      (right ? right[0] : rightControl.value || 0);
+    // Inicializar valores de entrada desde los controles
+    let leftValue = leftControl.value || 0;
+    let rightValue = rightControl.value || 0;
 
+    // Si hay entradas desde conexiones, actualiza los valores de los inputs
+    if (inputs.left && inputs.left.length > 0) {
+      leftValue = inputs.left[0];
+    }
+    if (inputs.right && inputs.right.length > 0) {
+      rightValue = inputs.right[0];
+    }
+
+    const value = leftValue + rightValue;
+
+    // Actualizar el control `value`
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
@@ -122,8 +79,8 @@ export class MinusNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -168,7 +125,6 @@ export class MinusNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }
@@ -178,8 +134,8 @@ export class MultiplicationNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -224,7 +180,6 @@ export class MultiplicationNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }
@@ -234,8 +189,8 @@ export class DivisionNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -281,7 +236,6 @@ export class DivisionNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }
@@ -291,8 +245,8 @@ export class RoundDivisionNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -338,7 +292,6 @@ export class RoundDivisionNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }
@@ -348,8 +301,8 @@ export class RemainderNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -394,7 +347,6 @@ export class RemainderNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }
@@ -404,8 +356,8 @@ export class PowNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: ClassicPreset.InputControl<"number"> }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -451,7 +403,6 @@ export class PowNode extends ClassicPreset.Node<
     this.controls.value.setValue(value);
 
     if (this.update) this.update(this.controls.value);
-
     return { value };
   }
 }

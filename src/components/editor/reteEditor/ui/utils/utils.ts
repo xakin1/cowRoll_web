@@ -3,6 +3,7 @@ import type { ActionSocket, TextSocket } from "../nodes/customSockets/sockets";
 import type { Schemes } from "./nodeTypes";
 
 type Sockets = ActionSocket | TextSocket;
+
 type Input = ClassicPreset.Input<Sockets>;
 type Output = ClassicPreset.Output<Sockets>;
 

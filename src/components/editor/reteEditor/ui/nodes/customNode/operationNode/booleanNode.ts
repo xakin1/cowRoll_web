@@ -1,47 +1,21 @@
 import { ClassicPreset } from "rete";
-import { getI18N } from "../../../../../../i18n";
-import { getLang } from "../../../../../../i18n/utils";
-import BooleanControl from "../customControls/BooleanInputControl";
+import { getI18N } from "../../../../../../../i18n";
+import { getLang } from "../../../../../../../i18n/utils";
+import BooleanControl from "../../customControls/BooleanInputControl";
+import { height, width } from "../style/vars";
 
 const currentLocale = getLang();
 const i18n = getI18N({ currentLocale });
 
 const socket = new ClassicPreset.Socket("Boolean");
 
-export class BooleanNode extends ClassicPreset.Node<
-  {},
-  { value: ClassicPreset.Socket },
-  { value: BooleanControl }
-> {
-  height = 120;
-  width = 180;
-
-  constructor(initial: boolean, change?: () => void) {
-    super(i18n.t("Operations.boolean"));
-    this.addControl(
-      "value",
-      new BooleanControl("boolean", { initial, change })
-    );
-    this.addOutput(
-      "value",
-      new ClassicPreset.Output(socket, i18n.t("Operations.boolean"))
-    );
-  }
-
-  data(): { value: boolean } {
-    return {
-      value: this.controls.value.value,
-    };
-  }
-}
-
 export class NotNode extends ClassicPreset.Node<
   { input: ClassicPreset.Socket },
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -84,8 +58,8 @@ export class OrNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -131,14 +105,15 @@ export class AndNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
     private update?: (control: BooleanControl) => void
   ) {
     super(i18n.t("Operations.and"));
+
     const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
     const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
@@ -178,14 +153,15 @@ export class StrictMoreNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
     private update?: (control: BooleanControl) => void
   ) {
     super(i18n.t("Operations.strictMore"));
+
     const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
     const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
@@ -234,14 +210,15 @@ export class MoreNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
     private update?: (control: BooleanControl) => void
   ) {
     super(i18n.t("Operations.more"));
+
     const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
     const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 
@@ -287,8 +264,8 @@ export class StrictLessNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
@@ -343,14 +320,15 @@ export class LessNode extends ClassicPreset.Node<
   { value: ClassicPreset.Socket },
   { value: BooleanControl }
 > {
-  height = 190;
-  width = 180;
+  height = height;
+  width = width;
 
   constructor(
     change?: () => void,
     private update?: (control: BooleanControl) => void
   ) {
     super(i18n.t("Operations.less"));
+
     const left = new ClassicPreset.Input(socket, i18n.t("Operations.left"));
     const right = new ClassicPreset.Input(socket, i18n.t("Operations.right"));
 

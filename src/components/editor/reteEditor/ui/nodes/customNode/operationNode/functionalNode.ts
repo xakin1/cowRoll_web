@@ -1,12 +1,12 @@
 import { ClassicPreset } from "rete";
 import { DataflowEngine } from "rete-engine";
-import { getI18N } from "../../../../../../i18n";
-import { getLang } from "../../../../../../i18n/utils";
-import type { Schemes } from "../../utils/nodeTypes";
-import BooleanControl from "../customControls/BooleanInputControl";
-import { TextControl } from "../customControls/TextInputControl";
-import { VarControl } from "../customControls/VarInputControl";
-import { ActionSocket } from "../customSockets/sockets";
+import { getI18N } from "../../../../../../../i18n";
+import { getLang } from "../../../../../../../i18n/utils";
+import type { Schemes } from "../../../utils/nodeTypes";
+import BooleanControl from "../../customControls/BooleanInputControl";
+import { TextControl } from "../../customControls/TextInputControl";
+import { VarControl } from "../../customControls/VarInputControl";
+import { ActionSocket } from "../../customSockets/sockets";
 
 const socket = new ClassicPreset.Socket("socket");
 
@@ -77,7 +77,7 @@ export class IfNode extends ClassicPreset.Node<
 }
 
 export class VariableNode extends ClassicPreset.Node<
-  {},
+  { exec: ClassicPreset.Socket },
   { exec: ClassicPreset.Socket; value: ClassicPreset.Socket },
   {
     name: TextControl;
@@ -85,11 +85,16 @@ export class VariableNode extends ClassicPreset.Node<
   }
 > {
   width = 180;
-  height = 220;
+  height = 240;
   value?: string;
 
   constructor(initial: string | boolean, change?: () => void) {
     super(i18n.t("Operations.var"));
+    this.addInput(
+      "exec",
+      new ClassicPreset.Input(new ActionSocket(), i18n.t("Operations.dataFlow"))
+    );
+
     this.addOutput(
       "exec",
       new ClassicPreset.Output(
