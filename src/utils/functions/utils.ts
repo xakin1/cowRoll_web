@@ -49,6 +49,25 @@ export class Graph {
   ): { node: string; direction: string }[] | undefined {
     return this.adjList.get(nodeId);
   }
+
+  countTerminalNodes(): number {
+    const allNodes = new Set<string>();
+    const nodesWithOutgoingEdges = new Set<string>();
+
+    // Recopilar todos los nodos y los nodos que tienen aristas salientes
+    this.edges.forEach(([source, destination]) => {
+      allNodes.add(source);
+      allNodes.add(destination);
+      if (source != destination) nodesWithOutgoingEdges.add(source);
+    });
+
+    // Los nodos terminales son los que están en `allNodes` pero no en `nodesWithOutgoingEdges`
+    const terminalNodes = new Set(
+      [...allNodes].filter((node) => !nodesWithOutgoingEdges.has(node))
+    );
+
+    return terminalNodes.size;
+  }
 }
 
 export function countTargetOccurrences(edge: Edge[], id: String) {

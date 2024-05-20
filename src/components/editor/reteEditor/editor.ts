@@ -28,7 +28,6 @@ import CustomVariableInput, {
   VarControl,
 } from "./ui/nodes/customControls/VarInputControl";
 
-import type { Input } from "rete/_types/presets/classic";
 import {
   Graph,
   associateLooseInputs,
@@ -73,81 +72,12 @@ import { getConnectionSockets } from "./ui/utils/utils";
 type AreaExtra = ReactArea2D<Schemes>;
 let customEvent = false;
 
-interface Input {
-  control: {
-    value: any;
-  };
-}
-interface BinaryInputs {
-  left: Input;
-  Right: Input;
-}
+type Inputs = {
+  [key: string]: any;
+};
 
 const currentLocale = getLang();
 const i18n = getI18N({ currentLocale });
-
-function putCode(nodeLabel: string, value?: any): string {
-  let code: string = "";
-  switch (nodeLabel) {
-    //No sé hasta que punto podría darse este if con precedencias
-    //TODO: Mirar como elegir seguir el flujo de true y de false
-    case i18n.t("Operations.if"):
-      code = "if " + " then \n true \n else\n false \n end";
-      break;
-
-    case i18n.t("Operations.add"):
-      code = " + ";
-      break;
-    case i18n.t("Operations.minus"):
-      code = " - ";
-      break;
-
-    case i18n.t("Operations.and"):
-      code = " and ";
-      break;
-
-    case i18n.t("Operations.or"):
-      code = " or ";
-      break;
-
-    case i18n.t("Operations.strictMore"):
-      code = " > ";
-      break;
-    case i18n.t("Operations.strictLess"):
-      code = " < ";
-      break;
-    case i18n.t("Operations.less"):
-      code = " <= ";
-      break;
-    case i18n.t("Operations.more"):
-      code = " >= ";
-      break;
-    case i18n.t("Operations.multiplication"):
-      code = " * ";
-      break;
-
-    case i18n.t("Operations.div"):
-      code = " / ";
-      break;
-    case i18n.t("Operations.roundDiv"):
-      code = " // ";
-      break;
-    case i18n.t("Operations.rem"):
-      code = " % ";
-      break;
-    case i18n.t("Operations.pow"):
-      code = " ^ ";
-      break;
-
-    case i18n.t("Operations.number"):
-      code = value?.toString() || "0";
-      break;
-
-    default:
-      break;
-  }
-  return code;
-}
 
 function reconstructCode(graph: Graph, editor: NodeEditor<Schemes>) {
   // Nodos que no están recibiendo ningún input
@@ -155,12 +85,17 @@ function reconstructCode(graph: Graph, editor: NodeEditor<Schemes>) {
   let results: { [key: string]: any } = {};
   let lastExpression = "";
   const processed: Set<string> = new Set();
+  const operationLabels = new Set([
+    i18n.t("Operations.boolean"),
+    i18n.t("Operations.text"),
+    i18n.t("Operations.number"),
+  ]);
   while (leadNodes.length > 0) {
     const current = leadNodes.shift()!;
     const node = editor.getNode(current);
 
-    if (node.label === "Number") {
-      results[current] = node.controls.value.value!;
+    if (operationLabels.has(node.label)) {
+      results[current] = node.controls.value.value ?? false;
       processed.add(current);
     }
 
@@ -168,12 +103,11 @@ function reconstructCode(graph: Graph, editor: NodeEditor<Schemes>) {
       const targetNode = editor.getNode(toNode);
 
       //tiene un lazo consigo mismo
-      if (toNode === current) {
+      if (toNode === current && current === fromNode) {
         if (!processed.has(toNode)) {
           if (results[toNode + "-" + direction] === undefined) {
-            console.log(node.inputs[direction].control.value);
             results[toNode + "-" + direction] =
-              node.inputs[direction].control.value || 0;
+              node.inputs[direction].control?.value ?? false;
           }
         }
       }
@@ -194,21 +128,69 @@ function reconstructCode(graph: Graph, editor: NodeEditor<Schemes>) {
         );
 
         if (allInputsAvailable) {
-          // Añadimos paréntesis cuando es necesario (que es básicamente siempre por ahora)
-          let left = results[toNode + "-left"] || 0;
-          let right = results[toNode + "-right"] || 0;
-          if (typeof left === "string" && left.includes(" "))
-            left = `(${left})`;
-          if (typeof right === "string" && right.includes(" "))
-            right = `(${right})`;
+          let inputs: Inputs = Object.keys(targetNode.inputs).reduce(
+            (acc, inputDirection) => {
+              let value = results[toNode + "-" + inputDirection] ?? false;
+              if (typeof value === "string" && value.includes(" ")) {
+                value = `(${value})`;
+              }
+              acc[inputDirection] = value;
+              return acc;
+            },
+            {}
+          );
 
-          if (targetNode.label === i18n.t("Operations.add")) {
-            results[toNode] = left + " + " + right;
-          } else if (targetNode.label === i18n.t("Operations.minus")) {
-            results[toNode] = left + " - " + right;
-          } else if (targetNode.label === i18n.t("Operations.multiplication")) {
-            results[toNode] = left + " * " + right;
+          switch (targetNode.label) {
+            // El consecuent y el alternate no están todavía controlados
+            case i18n.t("Operations.if"):
+              results[toNode] =
+                `if ${inputs.condition} then\n consecuent\n else\n alternate end`;
+              break;
+            case i18n.t("Operations.variable"):
+              results[toNode] = `${inputs.name} = ${inputs.value}\n`;
+              break;
+            case i18n.t("Operations.not"):
+              results[toNode] = `not ${inputs.input}`;
+              break;
+            // Estos son operaciones binarios en general
+            case i18n.t("Operations.add"):
+              results[toNode] = `${inputs.left} + ${inputs.right}`;
+              break;
+            case i18n.t("Operations.minus"):
+              results[toNode] = `${inputs.left} - ${inputs.right}`;
+              break;
+            case i18n.t("Operations.multiplication"):
+              results[toNode] = `${inputs.left} * ${inputs.right}`;
+              break;
+            case i18n.t("Operations.and"):
+              results[toNode] = `${inputs.left} and ${inputs.right}`;
+              break;
+            case i18n.t("Operations.or"):
+              results[toNode] = `${inputs.left} or ${inputs.right}`;
+              break;
+            case i18n.t("Operations.div"):
+              results[toNode] = `${inputs.left} / ${inputs.right}`;
+              break;
+            case i18n.t("Operations.roundDiv"):
+              results[toNode] = `${inputs.left} // ${inputs.right}`;
+              break;
+            case i18n.t("Operations.strictMore"):
+              results[toNode] = `${inputs.left} > ${inputs.right}`;
+              break;
+            case i18n.t("Operations.strictLess"):
+              results[toNode] = `${inputs.left} < ${inputs.right}`;
+              break;
+            case i18n.t("Operations.more"):
+              results[toNode] = `${inputs.left} >= ${inputs.right}`;
+              break;
+            case i18n.t("Operations.less"):
+              results[toNode] = `${inputs.left} <= ${inputs.right}`;
+              break;
+
+            default:
+              break;
           }
+
           processed.add(toNode);
           lastExpression = results[toNode];
         }
@@ -244,10 +226,9 @@ function traverseDataflow(
 
   let graph = new Graph(edge);
   console.log(graph);
-
-  let code;
-  code = reconstructCode(graph, editor) || "";
-  console.log(code);
+  if (graph.countTerminalNodes() == 1) {
+    console.log(reconstructCode(graph, editor) || "");
+  }
 }
 
 export async function createEditor(container: HTMLElement) {
