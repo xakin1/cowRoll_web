@@ -5,8 +5,8 @@ import { addOutput } from "../../../redux/slice/codeSlide.js";
 import type { RootState } from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
 import type { CodeError } from "../../../utils/types/ApiTypes.js";
+import BlocklyEditor from "../blockyEditor/BlocklyEditor.jsx";
 import CodeEditor from "../monacoEditor/codeEditor.js";
-import ReteEditor from "../reteEditor/ReteEditor.js";
 import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
 
@@ -92,7 +92,7 @@ function Terminal() {
             <></>
           ) : (
             <section className="section">
-              <ReteEditor></ReteEditor>
+              <BlocklyEditor></BlocklyEditor>
             </section>
           )}
         </main>
