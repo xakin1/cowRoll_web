@@ -42,11 +42,12 @@ const BlocklyEditor = () => {
         <block type="map"></block>
         <block type="map_field"></block>
       </category>
-      <category name="Variables" custom="VARIABLE" colour="#A65C81"></category>
+     <category name="Variables" colour="#A65C81" custom="VARIABLE_CUSTOM">
+        <button text="Create Variable" callbackKey="CREATE_VARIABLE"></button>
+      </category>
       <category name="Functions"  colour="#9A5CA6">
-        <block type="function_definition"></block>
           <block type="procedures_defnoreturn"></block>
-          <block type="procedures_callreturn"></block>
+          <block type="procedures_callnoreturn"></block>
       </category>
       <category name="General"  colour="#FFFFFF">
         <block type="return"></block>
@@ -58,6 +59,41 @@ const BlocklyEditor = () => {
     const workspace = Blockly.inject(blocklyDiv.current, {
       toolbox: toolboxXml,
     });
+
+    workspace.registerButtonCallback("CREATE_VARIABLE", function (button) {
+      Blockly.Variables.createVariableButtonHandler(
+        button.getTargetWorkspace()
+      );
+    });
+
+    // Define a custom flyoutCallback for the variables category
+    // Define a custom flyoutCallback for the variables category
+    workspace.registerToolboxCategoryCallback(
+      "VARIABLE_CUSTOM",
+      function (workspace) {
+        const xmlList = [];
+        const button = document.createElement("button");
+        button.setAttribute("text", Blockly.Msg["NEW_VARIABLE"]);
+        button.setAttribute("callbackKey", "CREATE_VARIABLE");
+        xmlList.push(button);
+
+        const variableList = workspace.getAllVariables();
+        if (variableList.length > 0) {
+          for (let i = 0; i < variableList.length; i++) {
+            const variable = variableList[i];
+            const getBlockText = `<block type="variables_get"><field name="VAR">${variable.name}</field></block>`;
+            const getBlock = Blockly.utils.xml.textToDom(getBlockText);
+            xmlList.push(getBlock);
+          }
+
+          // Add a single variables_set block
+          const setBlockText = `<block type="variables_set"><field name="VAR">${variableList[0].name}</field></block>`;
+          const setBlock = Blockly.utils.xml.textToDom(setBlockText);
+          xmlList.push(setBlock);
+        }
+        return xmlList;
+      }
+    );
     return () => workspace.dispose();
   }, []);
 

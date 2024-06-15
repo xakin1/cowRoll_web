@@ -7,21 +7,21 @@ Blockly.defineBlocksWithJsonArray([
     args0: [
       {
         type: "field_variable",
-        name: "VALUE",
+        name: "VAR",
       },
       {
         type: "input_value",
-        name: "VALUE",
+        name: "RANGE1",
         check: ["Number"],
       },
       {
         type: "input_value",
-        name: "VALUE",
+        name: "RANGE12",
         check: ["Number"],
       },
       {
         type: "input_statement",
-        name: "VALUE",
+        name: "DO",
       },
     ],
     inputsInline: true,
@@ -62,10 +62,12 @@ Blockly.defineBlocksWithJsonArray([
       {
         type: "field_variable",
         name: "VAR",
+        variable: "variable",
       },
       {
         type: "field_variable",
-        name: "enum",
+        name: "ENUMERABLE_VAR",
+        variable: "enumerable",
       },
       {
         type: "input_statement",
