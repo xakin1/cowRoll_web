@@ -5,7 +5,7 @@ import { addOutput } from "../../../redux/slice/codeSlide.js";
 import type { RootState } from "../../../redux/store.js";
 import { executeCode } from "../../../services/codeApi.js";
 import type { CodeError } from "../../../utils/types/ApiTypes.js";
-import BlocklyEditor from "../blockyEditor/BlocklyEditor.jsx";
+import BlocklyEditor from "../blockyEditor/BlocklyEditor.js";
 import CodeEditor from "../monacoEditor/codeEditor.js";
 import Sidebar from "../sideBar/SideBar.js";
 import "./terminal.css";
@@ -21,7 +21,13 @@ function Terminal() {
     try {
       const formattedJson = JSON.stringify(data, null, 2); // Formatea el JSON
       return (
-        <pre style={{ whiteSpace: "pre-wrap", color: "var(--text-color)" }}>
+        <pre
+          style={{
+            whiteSpace: "pre-wrap",
+            color: "var(--text-color)",
+            marginBottom: "10px",
+          }}
+        >
           {formattedJson}
         </pre>
       );
@@ -69,32 +75,46 @@ function Terminal() {
       <div className="container-page">
         <Sidebar></Sidebar>
         <main className="container">
-          <section className="section editorSection">
-            <header className="header">
-              <h1>{i18n.t("Code.code")}</h1>
-              <button
-                className="run-button"
-                onClick={handleExecuteClick}
-                aria-label="Ejecutar código en el editor"
-              >
-                {i18n.t("Code.run")}
-              </button>
-            </header>
-            {file ? (
-              <>
-                <CodeEditor {...file}></CodeEditor>
-              </>
-            ) : (
-              <span> {i18n.t("General.selectFile")}</span>
-            )}
-          </section>
-          {!file ? (
-            <></>
-          ) : (
-            <section className="section">
-              <BlocklyEditor></BlocklyEditor>
+          <div className="top-section">
+            <section className="section editorSection">
+              <header className="header">
+                <h1>{i18n.t("Code.code")}</h1>
+                <button
+                  className="run-button"
+                  onClick={handleExecuteClick}
+                  aria-label="Ejecutar código en el editor"
+                >
+                  {i18n.t("Code.run")}
+                </button>
+              </header>
+              {file ? (
+                <>
+                  <CodeEditor {...file}></CodeEditor>
+                </>
+              ) : (
+                <span> {i18n.t("General.selectFile")}</span>
+              )}
             </section>
-          )}
+            {!file ? (
+              <></>
+            ) : (
+              <section className="section">
+                <header className="header">
+                  <h1>{i18n.t("Code.output")}</h1>
+                </header>
+                <div
+                  aria-label="Code Output"
+                  id="OutputDisplay"
+                  className="output-area"
+                >
+                  {formatOutput(output, error)}
+                </div>
+              </section>
+            )}
+          </div>
+          <section className="blocklySection">
+            <BlocklyEditor></BlocklyEditor>
+          </section>
         </main>
         <div id="portal-root"></div>
       </div>

@@ -8,7 +8,8 @@ import "blockly/php";
 import "blockly/python";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { addOutput } from "../../../redux/slice/codeSlide";
+import { updateSelectedFileContent } from "../../../redux/slice/fileSlide";
+import "./BlocklyEditor.css";
 import "./customBlocks/index";
 import { cowRollGenerator } from "./generators/cowRoll";
 
@@ -113,17 +114,19 @@ const BlocklyEditor = () => {
     const workspace = Blockly.getMainWorkspace();
     const code = cowRollGenerator.workspaceToCode(workspace);
     console.log(code);
-    dispatch(addOutput({ message: code }));
+    dispatch(updateSelectedFileContent(code));
   };
 
   return (
     <>
-      <div
-        ref={blocklyDiv}
-        style={{ height: "480px", width: "100%", backgroundColor: "#f5f5f5" }}
-      ></div>
-      <div>
-        <button onClick={generateCode}>Generate code</button>
+      <div className="parent-container">
+        <div
+          ref={blocklyDiv}
+          style={{ height: "100%", width: "100%", backgroundColor: "#f5f5f5" }}
+        ></div>
+        <button className="generator-button" onClick={generateCode}>
+          Generate code
+        </button>
       </div>
     </>
   );

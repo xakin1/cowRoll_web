@@ -1,48 +1,107 @@
-.output-area {
-  background-color: var(--output-background-color, #1e1e1e);
-  color: var(--output-text-color, #ffffff);
-  border: 1px solid #c2c2c2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: auto;
-  min-height: 150px;
-  flex-grow: 1;
-  width: 100%;
-}
-
 [data-theme="light"] .output-area {
   background-color: #ffffff;
   color: #333333;
   border: 1px solid #ccc;
 }
-
 .container-page {
   display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.sidebar {
+  flex: 0 0 20%;
+  background-color: var(--output-background-color, #1e1e1e);
+  border-right: 1px solid #ccc;
 }
 
 .container {
   display: flex;
-  padding: 1rem;
-  flex-direction: row;
-  gap: 10px;
-  height: 80vh;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
   width: 100%;
-  box-sizing: border-box;
+}
+.top-section {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 2; /* Increased flex-grow value to give more space */
+  margin-bottom: 10px; /* Adjust this margin as necessary */
+  overflow: hidden;
+  max-height: 400px;
 }
 
-.section {
+.blocklySection {
   display: flex;
+  padding: 10px;
   flex-direction: column;
+  flex-grow: 1; /* Reduced flex-grow value to give less space */
+  overflow: hidden;
 }
+.section {
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  overflow: auto;
+  flex: 1; /* Allow flex-grow to take available space */
+}
+
 .editorSection {
+  flex: 2;
+}
+
+.outputSection {
+  flex: 1;
+}
+
+.blocklySection {
+  flex: 2; /* Ensure this takes up more space */
   overflow: hidden;
 }
 
-.section:first-child {
-  flex: 6;
+.top-section {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  margin-bottom: 10px; /* Adjust this margin as necessary */
+  overflow: hidden;
 }
 
-.section:last-child {
-  flex: 4;
+.section {
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.editorSection {
+  flex: 2;
+  overflow: auto;
+}
+
+.outputSection {
+  flex: 1;
+  flex-grow: 1; /* Allow outputSection to grow */
+  overflow: auto;
+}
+
+.output-area {
+  background-color: var(--output-background-color, #1e1e1e);
+  color: var(--output-text-color, #ffffff);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  overflow: auto;
+  max-height: 75%;
+  width: 100%; /* Ensure output-area takes full width */
+}
+
+.blockly-editor {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 .header {
@@ -68,9 +127,5 @@
   .sidebar {
     width: 100%;
     height: auto;
-  }
-
-  .content {
-    padding-top: 0;
   }
 }

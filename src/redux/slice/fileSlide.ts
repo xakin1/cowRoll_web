@@ -30,8 +30,15 @@ export const directorySystemSlice = createSlice({
         state.selectedFile = action.payload;
       }
     },
+    // Nueva acción para actualizar el contenido del archivo seleccionado
+    updateSelectedFileContent: (state, action: PayloadAction<string>) => {
+      if (state.selectedFile) {
+        state.selectedFile.content = action.payload;
+      }
+    },
   },
 });
 
-export const { addFile, selectFile } = directorySystemSlice.actions;
+export const { addFile, selectFile, updateSelectedFileContent } =
+  directorySystemSlice.actions;
 export default directorySystemSlice.reducer;

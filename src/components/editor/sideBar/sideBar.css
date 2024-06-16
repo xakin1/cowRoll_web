@@ -1,7 +1,7 @@
 .sidebar {
   width: 250px;
-  color: #fff;
-  background-color: #0f0f0f;
+  color: var(--output-text-color, #ffffff);
+  background-color: var(--output-background-color, #1e1e1e);
   transition: width 0.2s linear;
   height: 100vh;
   padding-top: 20px;
@@ -42,7 +42,7 @@ img {
 }
 
 .sidebar ul li a {
-  color: #fff;
+  color: var(--output-text-color, #ffffff);
   list-style: inside;
   text-decoration: none;
 }
