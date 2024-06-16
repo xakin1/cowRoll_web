@@ -7,10 +7,13 @@ import "blockly/msg/en";
 import "blockly/php";
 import "blockly/python";
 import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { addOutput } from "../../../redux/slice/codeSlide";
 import "./customBlocks/index";
 import { cowRollGenerator } from "./generators/cowRoll";
 
 const BlocklyEditor = () => {
+  const dispatch = useDispatch();
   const blocklyDiv = useRef(null);
   const toolboxXml = `
     <xml id="toolbox" style="display: none">
@@ -28,10 +31,9 @@ const BlocklyEditor = () => {
       </category>
       <category name="Math" colour="#5C68A6">
         <block type="math_number"></block>
-        <block type="math_arithmetic"></block>
-        <block type="math_round"></block>
-        <block type="math_modulo"></block>
-        <block type="math_random_int"></block>
+        <block type="math_custom_arithmetic"></block>
+        <block type="rand_with_range"></block>
+        <block type="rand"></block>
       </category>
       <category name="Text" colour="#5CA68D">
         <block type="text"></block>
@@ -47,9 +49,9 @@ const BlocklyEditor = () => {
       </category>
       <category name="Functions"  colour="#9A5CA6">
           <block type="procedures_defnoreturn"></block>
-          <block type="procedures_callnoreturn"></block>
+          <block type="custom_procedures_callnoreturn"></block>
       </category>
-      <category name="General"  colour="#FFFFFF">
+      <category name="General"  colour="#800">
         <block type="return"></block>
       </category>
     </xml>
@@ -58,6 +60,17 @@ const BlocklyEditor = () => {
   useEffect(() => {
     const workspace = Blockly.inject(blocklyDiv.current, {
       toolbox: toolboxXml,
+      zoom: {
+        controls: true,
+        wheel: true,
+        startScale: 1.0,
+        minScale: 0.3,
+        pinch: true,
+      },
+      trashcan: true,
+      toolboxPosition: "start",
+      horizontalLayout: false,
+      sounds: true,
     });
 
     workspace.registerButtonCallback("CREATE_VARIABLE", function (button) {
@@ -66,7 +79,6 @@ const BlocklyEditor = () => {
       );
     });
 
-    // Define a custom flyoutCallback for the variables category
     // Define a custom flyoutCallback for the variables category
     workspace.registerToolboxCategoryCallback(
       "VARIABLE_CUSTOM",
@@ -101,7 +113,7 @@ const BlocklyEditor = () => {
     const workspace = Blockly.getMainWorkspace();
     const code = cowRollGenerator.workspaceToCode(workspace);
     console.log(code);
-    // dispatch(addOutput({ message: code }));
+    dispatch(addOutput({ message: code }));
   };
 
   return (

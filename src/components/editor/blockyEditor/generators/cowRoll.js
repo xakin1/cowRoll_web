@@ -24,7 +24,7 @@ const Order = {
 cowRollGenerator.scrub_ = function (block, code, thisOnly) {
   const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
   if (nextBlock && !thisOnly) {
-    return code + ",\n" + cowRollGenerator.blockToCode(nextBlock);
+    return code + "\n" + cowRollGenerator.blockToCode(nextBlock);
   }
   return code;
 };
@@ -39,10 +39,24 @@ cowRollGenerator.forBlock["text"] = function (block) {
 
 cowRollGenerator.forBlock["math_number"] = function (block) {
   const code = String(block.getFieldValue("NUM"));
-  return [code, Order.ORDER_ATOMIC];
+  return [code, Order.ORDER_NONE];
+};
+cowRollGenerator.forBlock["rand_with_range"] = function (block) {
+  const order = Order.ORDER_ATOMIC;
+  const from = cowRollGenerator.valueToCode(block, "A", order) || 0;
+  const to = cowRollGenerator.valueToCode(block, "B", order) || 0;
+  const code = `rand(${from},${to})`;
+  return [code, Order.ORDER_NONE];
 };
 
-cowRollGenerator.forBlock["math_arithmetic"] = function (block) {
+cowRollGenerator.forBlock["rand"] = function (block) {
+  const order = Order.ORDER_ATOMIC;
+  const to = cowRollGenerator.valueToCode(block, "A", order) || 0;
+  const code = `rand(${to})`;
+  return [code, Order.ORDER_NONE];
+};
+
+cowRollGenerator.forBlock["math_custom_arithmetic"] = function (block) {
   const operator = block.getFieldValue("OP");
   let op;
 
@@ -59,6 +73,12 @@ cowRollGenerator.forBlock["math_arithmetic"] = function (block) {
     case "DIVIDE":
       op = "/";
       break;
+    case "ROUND_DIVIDE":
+      op = "//";
+      break;
+    case "MODULO":
+      op = "%";
+      break;
     case "POWER":
       op = "^";
       break;
@@ -67,8 +87,8 @@ cowRollGenerator.forBlock["math_arithmetic"] = function (block) {
   }
 
   const order = cowRollGenerator.getOrderForOperator(op);
-  const argument0 = cowRollGenerator.valueToCode(block, "A", order) || "false";
-  const argument1 = cowRollGenerator.valueToCode(block, "B", order) || "false";
+  const argument0 = cowRollGenerator.valueToCode(block, "A", order) || "0";
+  const argument1 = cowRollGenerator.valueToCode(block, "B", order) || "0";
   const code = `${argument0} ${op} ${argument1}`;
   return [code, order];
 };
@@ -150,7 +170,7 @@ cowRollGenerator.forBlock["variables_get"] = function (block) {
   // Obtiene el nombre de la variable
   const variableName = block.getField("VAR").getText();
   const code = variableName;
-  return [code, Order.ORDER_ATOMIC];
+  return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["variables_set"] = function (block) {
@@ -162,7 +182,7 @@ cowRollGenerator.forBlock["variables_set"] = function (block) {
     "VALUE",
     Order.ORDER_ATOMIC
   );
-  const code = `${variableName} = ${value}\n`;
+  const code = `${variableName} = ${value}`;
   return code;
 };
 
@@ -175,36 +195,41 @@ cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {
   // Construcción de la lista de parámetros
   const params = args.join(", ");
 
-  const code = `function ${functionName} (${params}) do\n${branch}\nend\n`;
+  const code = `function ${functionName} (${params}) do\n${branch}\nend`;
   return code;
 };
 
-cowRollGenerator.forBlock["procedures_callnoreturn"] = function (block) {
-  const functionName = block.getField("NAME").getText();
-  const args = [];
+cowRollGenerator.forBlock["custom_procedures_callnoreturn"] = function (block) {
+  const functionName = block.getFieldValue("FUNCTION_NAME");
+  const workspace = block.workspace;
+  const functionBlock = workspace
+    .getAllBlocks()
+    .find(
+      (block) =>
+        block.type === "procedures_defnoreturn" &&
+        block.getFieldValue("NAME") === functionName
+    );
 
-  // Obtiene los valores de los argumentos
-  for (let i = 0; i < block.inputList.length; i++) {
-    const input = block.inputList[i];
-    if (input.name && input.name.startsWith("ARG")) {
-      const arg = cowRollGenerator.valueToCode(
+  const paramValues = [];
+  if (functionBlock) {
+    const paramNames = functionBlock.arguments_;
+    for (let i = 0; i < paramNames.length; i++) {
+      const paramValue = cowRollGenerator.valueToCode(
         block,
-        input.name,
+        paramNames[i],
         Order.ORDER_ATOMIC
       );
-      args.push(arg);
+      paramValues.push(paramValue || "null");
     }
   }
-  // Construcción de la lista de argumentos
-  const params = args.join(", ");
 
-  const code = `${functionName}(${params})`;
-  return code;
+  const code = `${functionName}(${paramValues.join(", ")});\n`;
+  return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["logic_boolean"] = function (block) {
   const code = block.getFieldValue("BOOL") === "TRUE" ? "true" : "false";
-  return [code, Order.ORDER_ATOMIC];
+  return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["logic_operation"] = function (block) {
@@ -257,7 +282,11 @@ cowRollGenerator.forBlock["custom_if"] = function (block) {
       cowRollGenerator.valueToCode(block, "IF" + n, order) || "false";
     branchCode = cowRollGenerator.statementToCode(block, "DO" + n);
     code +=
-      (n === 0 ? "if " : "elseif ") + conditionCode + " then\n" + branchCode;
+      (n === 0 ? "if " : "elseif ") +
+      conditionCode +
+      " then\n" +
+      branchCode +
+      "\n";
     n++;
   } while (block.getInput("IF" + n));
 

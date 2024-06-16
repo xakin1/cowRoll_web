@@ -3,7 +3,7 @@ import * as Blockly from "blockly";
 Blockly.defineBlocksWithJsonArray([
   {
     type: "custom_if",
-    message0: "if %1 then %2 end",
+    message0: "if %1 then %2",
     args0: [
       {
         type: "input_value",
@@ -110,11 +110,6 @@ Blockly.Extensions.registerMutator(
           clauseBlock.nextConnection.targetBlock();
       }
       this.updateShape_();
-      this.reconnectChildBlocks_(
-        valueConnections,
-        statementConnections,
-        elseStatementConnection
-      );
     },
     updateShape_: function () {
       if (this.getInput("ELSE")) {
@@ -133,17 +128,6 @@ Blockly.Extensions.registerMutator(
       if (this.elseCount_) {
         this.appendStatementInput("ELSE").appendField("else");
       }
-    },
-    reconnectChildBlocks_: function (
-      valueConnections,
-      statementConnections,
-      elseStatementConnection
-    ) {
-      for (var i = 1; i <= this.elseifCount_; i++) {
-        Blockly.Mutator.reconnect(valueConnections[i], this, "IF" + i);
-        Blockly.Mutator.reconnect(statementConnections[i], this, "DO" + i);
-      }
-      Blockly.Mutator.reconnect(elseStatementConnection, this, "ELSE");
     },
   },
   null,

@@ -12,7 +12,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     previousStatement: null,
     nextStatement: null,
-    colour: 230, // Adjust color as needed
+    colour: 800,
     tooltip: "Return a value",
     helpUrl: "",
   },
