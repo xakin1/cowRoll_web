@@ -22,11 +22,17 @@ const Order = {
 };
 
 cowRollGenerator.scrub_ = function (block, code, thisOnly) {
+  const comment = block.getCommentText(); // Get the comment text from the block
+  let commentCode = "";
+  if (comment) {
+    commentCode = "# " + comment + "\n"; // Format the comment for the target language (JavaScript style)
+  }
+
   const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
   if (nextBlock && !thisOnly) {
-    return code + "\n" + cowRollGenerator.blockToCode(nextBlock);
+    return commentCode + code + "\n" + cowRollGenerator.blockToCode(nextBlock);
   }
-  return code;
+  return commentCode + code;
 };
 
 cowRollGenerator.forBlock = {};
