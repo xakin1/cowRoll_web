@@ -60,6 +60,157 @@
     "less": "<=",
     "more": ">="
   },
+  "Blocky": {
+    "ContextualMenu": {
+      "DUPLICATE_BLOCK": "Duplicate",
+      "ADD_COMMENT": "Add Comment",
+      "REMOVE_COMMENT": "Remove Comment",
+      "EXTERNAL_INPUTS": "External Inputs",
+      "INLINE_INPUTS": "Inline Inputs",
+      "HORIZONTAL_PARAMETERS": "Horizontal Parameters",
+      "VERTICAL_PARAMETERS": "Vertical Parameters",
+      "DELETE_BLOCK": "Delete Block",
+      "DELETE_X_BLOCKS": "Delete %1 Blocks",
+      "DISABLE_BLOCK": "Disable Block",
+      "ENABLE_BLOCK": "Enable Block",
+      "EXPAND_BLOCK": "Expand Block",
+      "COLLAPSE_BLOCK": "Collapse Block",
+      "HELP": "Help"
+    },
+    "Dialog": {
+      "CHANGE_VALUE_TITLE": "Change value:",
+      "NEW_VARIABLE": "New variable...",
+      "NEW_STRING_VARIABLE": "New string variable...",
+      "NEW_NUMBER_VARIABLE": "New number variable...",
+      "NEW_COLOUR_VARIABLE": "New colour variable...",
+      "RENAME_VARIABLE": "Rename variable...",
+      "RENAME_VARIABLE_TITLE": "Rename all '%1' variables to:",
+      "RENAME_VARIABLE_MODAL_TITLE": "Rename Variable"
+    },
+    "Toolbox": {
+      "VARIABLE_CATEGORY": "Variables",
+      "PROCEDURE_CATEGORY": "Functions",
+      "LOOP_CATEGORY": "Loops",
+      "LOGIC_CATEGORY": "Logic",
+      "MATH_CATEGORY": "Math",
+      "TEXT_CATEGORY": "Text",
+      "LIST_CATEGORY": "Lists",
+      "COLOUR_CATEGORY": "Colour",
+      "VARIABLE_DYNAMIC_CATEGORY": "Dynamic Variables"
+    },
+    "Common": {
+      "UNDO": "Undo",
+      "REDO": "Redo",
+      "CLEAN_UP": "Clean up Blocks",
+      "COLLAPSE_ALL": "Collapse Blocks",
+      "EXPAND_ALL": "Expand Blocks",
+      "IMPORT_BLOCKS": "Import Blocks",
+      "EXPORT_BLOCKS": "Export Blocks"
+    },
+    "Loops": {
+      "MODULE_NAME": "Loops",
+      "CONTROLS_REPEAT_TITLE": "repeat %1 times",
+      "CONTROLS_REPEAT_INPUT_DO": "do",
+      "CONTROLS_WHILEUNTIL_OPERATOR_WHILE": "while",
+      "CONTROLS_WHILEUNTIL_OPERATOR_UNTIL": "until",
+      "Blocks": {
+        "FOR_WITH_RANGE": "for each %1 in %2 up to %3 do %4 end",
+        "FOR_TOOLTIP": "Repeat the action indicated for each element in the defined interval",
+        "FOR": "for each %1 in the %2  do %3 end",
+        "VAR_FOR": "element_of_the_list",
+        "ENUM_FOR": "list"
+      }
+    },
+    "Logic": {
+      "MODULE_NAME": "Logic",
+      "LOGIC_COMPARE_TOOLTIP_EQ": "Return true if both inputs equal each other.",
+      "LOGIC_COMPARE_TOOLTIP_NEQ": "Return true if both inputs are not equal to each other.",
+      "LOGIC_COMPARE_TOOLTIP_LT": "Return true if the first input is smaller than the second input.",
+      "LOGIC_COMPARE_TOOLTIP_LTE": "Return true if the first input is smaller than or equal to the second input.",
+      "LOGIC_COMPARE_TOOLTIP_GT": "Return true if the first input is greater than the second input.",
+      "LOGIC_COMPARE_TOOLTIP_GTE": "Return true if the first input is greater than or equal to the second input.",
+      "LOGIC_BOOLEAN_TRUE": "true",
+      "LOGIC_BOOLEAN_FALSE": "false",
+      "LOGIC_NEGATE_TITLE": "not %1",
+      "Blocks": {
+        "CUSTOM_IF": "if %1 then %2",
+        "CUSTOM_IF_TOOLTIP": "Conditional block",
+        "THEN": "then",
+        "ELSEIF": "otherwise, if ",
+        "ELSE": "if not",
+        "IF": "if"
+      }
+    },
+    "Math": {
+      "MODULE_NAME": "Math",
+      "MATH_CHANGE_TITLE": "change %1 by %2",
+      "MATH_CONSTANT_TOOLTIP": "Return one of the common constants: π (3.141…), e (2.718…), φ (1.618…), sqrt(2) (1.414…), sqrt(½) (0.707…), or ∞ (infinity).",
+      "MATH_IS_TOOLTIP": "Check if a number is odd, even, prime, whole, positive, negative, or if it is divisible by a certain number.",
+      "MATH_MODULO_TOOLTIP": "Return the remainder from dividing the two numbers.",
+      "MATH_RANDOM_FLOAT_TOOLTIP": "Return a random fraction between 0.0 (inclusive) and 1.0 (exclusive).",
+      "MATH_RANDOM_INT_TOOLTIP": "Return a random integer between the two specified limits, inclusive.",
+      "Blocks": {
+        "RAND_INTERVAL": "random integer from %1 to %2",
+        "RAND_INTERVAL_TOOLTIP": "generates an integer between the two numbers listed (included)",
+        "RAND": "random integer to %1",
+        "RAND_TOOLTIP": "generates an integer between 0 and the specified number"
+      }
+    },
+    "Text": {
+      "MODULE_NAME": "Text",
+      "TEXT_APPEND_TITLE": "to %1 append text %2",
+      "TEXT_CREATE_JOIN_ITEM_TITLE_ITEM": "item",
+      "TEXT_CREATE_JOIN_TITLE_JOIN": "join",
+      "TEXT_GET_SUBSTRING_TOOLTIP": "Return a specified portion of the text.",
+      "TEXT_INDEXOF_TOOLTIP": "Return the index of the first/last occurrence of the first text in the second text. Return -1 if text is not found.",
+      "TEXT_LENGTH_TOOLTIP": "Returns the number of letters (including spaces) in the provided text.",
+      "TEXT_PRINT_TITLE": "print %1",
+      "TEXT_PROMPT_TOOLTIP_NUMBER": "Prompt for user for a number.",
+      "TEXT_PROMPT_TOOLTIP_TEXT": "Prompt for user for some text.",
+      "TEXT_REPLACE_TOOLTIP": "Replace all occurrences of some text within some other text.",
+      "TEXT_TEXT_TOOLTIP": "A letter, word, or line of text."
+    },
+    "Lists": {
+      "MODULE_NAME": "Lists",
+      "Blocks": {
+        "ARRAY": "array %1",
+        "ARRAY_TOOLTIP": "Create an array with elements",
+        "ARRAY_ELEMENT": "element %1",
+        "ARRAY_ELEMENT_TOOLTIP": "An element for an array",
+        "MAP": "map %1",
+        "KEY": "key",
+        "MAP_TOOLTIP": "Create a map with key-value pairs",
+        "MAP_ELEMENT": "key %1 value %2",
+        "MAP_ELEMENT_TOOLTIP": "A key-value pair for a map"
+      }
+    },
+    "Variables": {
+      "MODULE_NAME": "Variables",
+      "CREATE_VAR": "Create variable...",
+      "NEW_VARIABLE_TITLE": "New variable name:",
+      "VARIABLE_ALREADY_EXISTS": "A variable named '%1' already exists."
+    },
+    "Functions": {
+      "PROCEDURES_DEFNORETURN_PROCEDURE": "input name",
+      "PROCEDURES_DEFNORETURN_TITLE": "function",
+      "PROCEDURES_DEFNORETURN_DO": "do",
+      "PROCEDURES_MUTATORCONTAINER_TITLE": "inputs",
+      "PROCEDURES_MUTATORARG_TITLE": "input name",
+      "MODULE_NAME": "Functions",
+      "Blocks": {
+        "CALL": "call %1",
+        "CALL_TOOLTIP": "Calls the specified function"
+      }
+    },
+    "General": {
+      "MODULE_NAME": "General",
+      "Blocks": {
+        "RETURN": "return %1",
+        "RETURN_TOOLTIP": "Return a value"
+      }
+    },
+    "GENERATE_CODE": "Generate code"
+  },
   "Errors": {
     "EMPTY_FOLDER_NAME": "The folder name can't be empty",
     "EMPTY_FILE_NAME": "The file name can't be empty",

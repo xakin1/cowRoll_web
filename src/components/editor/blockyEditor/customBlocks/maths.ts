@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import i18n from "../../../../i18n/i18n";
 
 Blockly.defineBlocksWithJsonArray([
   {
@@ -37,7 +38,7 @@ Blockly.defineBlocksWithJsonArray([
   },
   {
     type: "rand_with_range",
-    message0: "random integer from %1 to %2",
+    message0: i18n.t("Blocky.Math.Blocks.RAND_INTERVAL"),
     args0: [
       {
         type: "input_value",
@@ -53,12 +54,12 @@ Blockly.defineBlocksWithJsonArray([
     inputsInline: true,
     output: "Number",
     colour: 230,
-    tooltip: "",
+    tooltip: i18n.t("Blocky.Math.Blocks.RAND_INTERVAL_TOOLTIP"),
     helpUrl: "",
   },
   {
     type: "rand",
-    message0: "random integer to %1",
+    message0: i18n.t("Blocky.Math.Blocks.RAND"),
     args0: [
       {
         type: "input_value",
@@ -69,7 +70,7 @@ Blockly.defineBlocksWithJsonArray([
     inputsInline: true,
     output: "Number",
     colour: 230,
-    tooltip: "from 0 to the specify integer",
+    tooltip: i18n.t("Blocky.Math.Blocks.RAND_TOOLTIP"),
     helpUrl: "",
   },
 ]);

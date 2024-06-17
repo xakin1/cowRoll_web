@@ -8,10 +8,11 @@ import "blockly/php";
 import "blockly/python";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import i18n from "../../../i18n/i18n";
 import { updateSelectedFileContent } from "../../../redux/slice/fileSlide";
 import "./BlocklyEditor.css";
-import "./customBlocks/index";
 import { cowRollGenerator } from "./generators/cowRoll";
+import "./index";
 import { darkTheme } from "./themes/darkTheme";
 
 const BlocklyEditor = () => {
@@ -30,41 +31,41 @@ const BlocklyEditor = () => {
   const blocklyDiv = useRef(null);
   const toolboxXml = `
     <xml id="toolbox" style="display: none">
-      <category name="Logic" colour="#5C81A6">
+      <category name="${i18n.t("Blocky.Logic.MODULE_NAME")}" colour="#5C81A6">
         <block type="custom_if"></block>
         <block type="logic_compare"></block>
         <block type="logic_operation"></block>
         <block type="logic_negate"></block>
         <block type="logic_boolean"></block>
       </category>
-      <category name="Loops" colour="#5CA65C">
+      <category name="${i18n.t("Blocky.Loops.MODULE_NAME")}" colour="#5CA65C">
         <block type="for"></block>
         <block type="for_with_range"></block>
         <block type="for_with_var"></block>
       </category>
-      <category name="Math" colour="#5C68A6">
+      <category name="${i18n.t("Blocky.Math.MODULE_NAME")}" colour="#5C68A6">
         <block type="math_number"></block>
         <block type="math_custom_arithmetic"></block>
         <block type="rand_with_range"></block>
         <block type="rand"></block>
       </category>
-      <category name="Text" colour="#5CA68D">
+      <category name="${i18n.t("Blocky.Text.MODULE_NAME")}" colour="#5CA68D">
         <block type="text"></block>
       </category>
-      <category name="Lists" colour="#745CA6">
+      <category name="${i18n.t("Blocky.Lists.MODULE_NAME")}" colour="#745CA6">
         <block type="array"></block>
         <block type="array_element"></block>
         <block type="map"></block>
         <block type="map_field"></block>
       </category>
-     <category name="Variables" colour="#A65C81" custom="VARIABLE_CUSTOM">
+     <category name="${i18n.t("Blocky.Variables.MODULE_NAME")}" colour="#A65C81" custom="VARIABLE_CUSTOM">
         <button text="Create Variable" callbackKey="CREATE_VARIABLE"></button>
       </category>
-      <category name="Functions"  colour="#9A5CA6">
+      <category name="${i18n.t("Blocky.Functions.MODULE_NAME")}"  colour="#9A5CA6">
           <block type="procedures_defnoreturn"></block>
           <block type="custom_procedures_callnoreturn"></block>
       </category>
-      <category name="General"  colour="#800">
+      <category name="${i18n.t("Blocky.General.MODULE_NAME")}"  colour="#800">
         <block type="return"></block>
       </category>
     </xml>
@@ -99,7 +100,7 @@ const BlocklyEditor = () => {
       function (workspace) {
         const xmlList = [];
         const button = document.createElement("button");
-        button.setAttribute("text", Blockly.Msg["NEW_VARIABLE"]);
+        button.setAttribute("text", i18n.t("Blocky.Variables.CREATE_VAR"));
         button.setAttribute("callbackKey", "CREATE_VARIABLE");
         xmlList.push(button);
 
@@ -152,7 +153,7 @@ const BlocklyEditor = () => {
           style={{ height: "100%", width: "100%", backgroundColor: "#f5f5f5" }}
         ></div>
         <button className="generator-button" onClick={generateCode}>
-          Generate code
+          {i18n.t("Blocky.GENERATE_CODE")}
         </button>
       </div>
     </>

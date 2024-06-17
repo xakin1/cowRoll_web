@@ -1,9 +1,10 @@
 import * as Blockly from "blockly";
+import i18n from "../../../../i18n/i18n";
 
 Blockly.defineBlocksWithJsonArray([
   {
     type: "array",
-    message0: "array %1",
+    message0: i18n.t("Blocky.Lists.Blocks.ARRAY"),
     args0: [
       {
         type: "input_statement",
@@ -12,12 +13,12 @@ Blockly.defineBlocksWithJsonArray([
     ],
     output: "Array",
     colour: 260,
-    tooltip: "Create an array with elements",
+    tooltip: i18n.t("Blocky.Lists.Blocks.ARRAY_TOOLTIP"),
     helpUrl: "",
   },
   {
     type: "array_element",
-    message0: "element %1",
+    message0: i18n.t("Blocky.Lists.Blocks.ARRAY_ELEMENT"),
     args0: [
       {
         type: "input_value",
@@ -27,12 +28,12 @@ Blockly.defineBlocksWithJsonArray([
     previousStatement: null,
     nextStatement: null,
     colour: 260,
-    tooltip: "An element for an array",
+    tooltip: i18n.t("Blocky.Lists.Blocks.ARRAY_ELEMENT_TOOLTIP"),
     helpUrl: "",
   },
   {
     type: "map",
-    message0: "map %1",
+    message0: i18n.t("Blocky.Lists.Blocks.MAP"),
     args0: [
       {
         type: "input_statement",
@@ -41,17 +42,17 @@ Blockly.defineBlocksWithJsonArray([
     ],
     output: "Map",
     colour: 230,
-    tooltip: "Create a map with key-value pairs",
+    tooltip: i18n.t("Blocky.Lists.Blocks.MAP_TOOLTIP"),
     helpUrl: "",
   },
   {
     type: "map_field",
-    message0: "key %1 value %2",
+    message0: i18n.t("Blocky.Lists.Blocks.MAP_ELEMENT"),
     args0: [
       {
         type: "field_input",
         name: "KEY",
-        text: "key",
+        text: i18n.t("Blocky.Lists.Blocks.KEY"),
       },
       {
         type: "input_value",
@@ -61,7 +62,7 @@ Blockly.defineBlocksWithJsonArray([
     previousStatement: null,
     nextStatement: null,
     colour: 230,
-    tooltip: "A key-value pair for a map",
+    tooltip: i18n.t("Blocky.Lists.Blocks.MAP_ELEMENT_TOOLTIP"),
     helpUrl: "",
   },
 ]);

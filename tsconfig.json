@@ -5,6 +5,7 @@
     "jsxImportSource": "react",
     "moduleResolution": "node",
     "strict": true,
+
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

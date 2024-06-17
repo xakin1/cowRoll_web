@@ -1,9 +1,10 @@
 import * as Blockly from "blockly";
+import i18n from "../../../../i18n/i18n";
 
 Blockly.defineBlocksWithJsonArray([
   {
     type: "custom_if",
-    message0: "if %1 then %2",
+    message0: i18n.t("Blocky.Logic.Blocks.CUSTOM_IF"),
     args0: [
       {
         type: "input_value",
@@ -19,12 +20,12 @@ Blockly.defineBlocksWithJsonArray([
     previousStatement: null,
     nextStatement: null,
     colour: 210,
-    tooltip: "If-ElseIf-Else block",
+    tooltip: i18n.t("Blocky.Logic.Blocks.CUSTOM_IF_TOOLTIP"),
     helpUrl: "",
   },
   {
     type: "custom_elseif_mutator",
-    message0: "elseif",
+    message0: i18n.t("Blocky.Logic.Blocks.ELSEIF"),
     nextStatement: null,
     previousStatement: null,
     colour: 210,
@@ -33,7 +34,7 @@ Blockly.defineBlocksWithJsonArray([
   },
   {
     type: "custom_if_mutator",
-    message0: "if",
+    message0: i18n.t("Blocky.Logic.Blocks.IF"),
     nextStatement: null,
     previousStatement: null,
     colour: 210,
@@ -42,7 +43,7 @@ Blockly.defineBlocksWithJsonArray([
   },
   {
     type: "custom_else_mutator",
-    message0: "else",
+    message0: i18n.t("Blocky.Logic.Blocks.ELSE"),
     nextStatement: null,
     previousStatement: null,
     colour: 210,
@@ -122,11 +123,15 @@ Blockly.Extensions.registerMutator(
       for (var i = 1; i <= this.elseifCount_; i++) {
         this.appendValueInput("IF" + i)
           .setCheck("Boolean")
-          .appendField("elseif");
-        this.appendStatementInput("DO" + i).appendField("then");
+          .appendField(i18n.t("Blocky.Logic.Blocks.ELSEIF"));
+        this.appendStatementInput("DO" + i).appendField(
+          i18n.t("Blocky.Logic.Blocks.THEN")
+        );
       }
       if (this.elseCount_) {
-        this.appendStatementInput("ELSE").appendField("else");
+        this.appendStatementInput("ELSE").appendField(
+          i18n.t("Blocky.Logic.Blocks.ELSE")
+        );
       }
     },
   },

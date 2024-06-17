@@ -60,7 +60,126 @@
     "less": "<=",
     "more": ">="
   },
-
+  "Blocky": {
+    "ContextualMenu": {
+      "DUPLICATE_BLOCK": "Duplicar",
+      "ADD_COMMENT": "Engadir comentario",
+      "REMOVE_COMMENT": "Eliminar comentario",
+      "EXTERNAL_INPUTS": "Entradas externas",
+      "INLINE_INPUTS": "Entradas en liña",
+      "HORIZONTAL_PARAMETERS": "Parámetros horizontais",
+      "VERTICAL_PARAMETERS": "Parámetros verticais",
+      "DELETE_BLOCK": "Eliminar bloque",
+      "DELETE_X_BLOCKS": "Eliminar %1 bloques",
+      "DISABLE_BLOCK": "Deshabilitar bloque",
+      "ENABLE_BLOCK": "Habilitar bloque",
+      "EXPAND_BLOCK": "Expandir bloque",
+      "COLLAPSE_BLOCK": "Contraer bloque",
+      "HELP": "Axuda"
+    },
+    "Dialog": {
+      "CHANGE_VALUE_TITLE": "Cambia o valor:",
+      "NEW_VARIABLE": "Nova variable ...",
+      "RENAME_VARIABLE": "Cambiar do nome da variable ...",
+      "RENAME_VARIABLE_TITLE": "Cambiar todas as variables '%1' a:",
+      "RENAME_VARIABLE_MODAL_TITLE": "Borrar variable"
+    },
+    "Toolbox": {
+      "VARIABLE_CATEGORY": "Variables",
+      "PROCEDURE_CATEGORY": "Funcions",
+      "LOOP_CATEGORY": "Bucles",
+      "LOGIC_CATEGORY": "Loxica",
+      "MATH_CATEGORY": "Matemáticas",
+      "TEXT_CATEGORY": "Texto",
+      "LIST_CATEGORY": "Listaxes"
+    },
+    "Common": {
+      "UNDO": "Desfacer",
+      "REDO": "Refacer",
+      "CLEAN_UP": "Limpiar os bloques",
+      "COLLAPSE_ALL": "Contraer os bloques",
+      "EXPAND_ALL": "Expandir os bloques",
+      "IMPORT_BLOCKS": "Importar os bloques",
+      "EXPORT_BLOCKS": "Exportar os bloques"
+    },
+    "Loops": {
+      "MODULE_NAME": "Bucles",
+      "Blocks": {
+        "FOR_WITH_RANGE": "para cada %1 de %2 ata %3 facer %4 finalizar",
+        "FOR_TOOLTIP": "Repite a acción indicada para cada elemento definido na lista ou intervalo",
+        "FOR": "para cada %1 na %2 facer %3 finalizar",
+        "VAR_FOR": "elemento_da_lista",
+        "ENUM_FOR": "lista"
+      }
+    },
+    "Logic": {
+      "MODULE_NAME": "Loxica",
+      "LOGIC_BOOLEAN_TRUE": "Verdadeiro",
+      "LOGIC_BOOLEAN_FALSE": "Falso",
+      "LOGIC_NEGATE_TITLE": "no %1",
+      "Blocks": {
+        "CUSTOM_IF": "se %1 enton %2",
+        "CUSTOM_IF_TOOLTIP": "Bloque condicional",
+        "THEN": "enton",
+        "ELSEIF": "pola contra, se ",
+        "ELSE": "se non",
+        "IF": "se"
+      }
+    },
+    "Math": {
+      "MODULE_NAME": "Matemáticas",
+      "Blocks": {
+        "RAND_INTERVAL": "Número enteiro aleatorio entre %1 y %2",
+        "RAND_INTERVAL_TOOLTIP": "xenera un número aleatorio enterio entre os rangos especificados (incluidos)",
+        "RAND": "Número enteiro aleatiorio con valor máximo de %1",
+        "RAND_TOOLTIP": "xenera un número enteiro entre 0 e o valor especificado"
+      }
+    },
+    "Text": {
+      "MODULE_NAME": "Texto",
+      "TEXT_TEXT_TOOLTIP": "Unha letra, unha palabra, unha frase..."
+    },
+    "Lists": {
+      "MODULE_NAME": "Listaxes",
+      "Blocks": {
+        "ARRAY": "lista %1",
+        "ARRAY_TOOLTIP": "Crea unha listaxe con elementos",
+        "ARRAY_ELEMENT": "elemento %1",
+        "ARRAY_ELEMENT_TOOLTIP": "Un elemento dunha lista",
+        "MAP": "mapa %1",
+        "KEY": "clave",
+        "MAP_TOOLTIP": "Crea un mapa de pares clave-valor",
+        "MAP_ELEMENT": "Clave %1 valor %2",
+        "MAP_ELEMENT_TOOLTIP": "Un elemento clave-valor para os mapas"
+      }
+    },
+    "Variables": {
+      "MODULE_NAME": "Variables",
+      "CREATE_VAR": "Crear variable...",
+      "NEW_VARIABLE_TITLE": "Novo nome para a variable:",
+      "VARIABLE_ALREADY_EXISTS": "A variable co nome '%1' xa existe."
+    },
+    "Functions": {
+      "MODULE_NAME": "Funcions",
+      "PROCEDURES_DEFNORETURN_PROCEDURE": "Nome da entrada",
+      "PROCEDURES_DEFNORETURN_TITLE": "función",
+      "PROCEDURES_DEFNORETURN_DO": "facer",
+      "PROCEDURES_MUTATORCONTAINER_TITLE": "entradas",
+      "PROCEDURES_MUTATORARG_TITLE": "nome da entrada",
+      "Blocks": {
+        "CALL": "Chamar a %1",
+        "CALL_TOOLTIP": "Chama á función especificada"
+      }
+    },
+    "General": {
+      "MODULE_NAME": "Xeral",
+      "Blocks": {
+        "RETURN": "devolver %1",
+        "RETURN_TOOLTIP": "Devolve o valor especificado"
+      }
+    },
+    "GENERATE_CODE": "Xerar código"
+  },
   "Errors": {
     "EMPTY_FOLDER_NAME": "O nome do cartafol non pode estar vavaleirocío",
     "EMPTY_FILE_NAME": "O nome do ficheiro non pode estar valeiro",

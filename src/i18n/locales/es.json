@@ -61,6 +61,126 @@
     "less": "<=",
     "more": ">="
   },
+  "Blocky": {
+    "ContextualMenu": {
+      "DUPLICATE_BLOCK": "Duplicar",
+      "ADD_COMMENT": "Añadir comentario",
+      "REMOVE_COMMENT": "Eliminar comentario",
+      "EXTERNAL_INPUTS": "Entradas externas",
+      "INLINE_INPUTS": "Entradas en linea",
+      "HORIZONTAL_PARAMETERS": "Parámetros horizontales",
+      "VERTICAL_PARAMETERS": "Parámetros verticales",
+      "DELETE_BLOCK": "Eliminar bloque",
+      "DELETE_X_BLOCKS": "Eliminar %1 bloques",
+      "DISABLE_BLOCK": "Deshabilitar bloque",
+      "ENABLE_BLOCK": "Habilitar bloque",
+      "EXPAND_BLOCK": "Expandir bloque",
+      "COLLAPSE_BLOCK": "Contraer bloque",
+      "HELP": "Ayuda"
+    },
+    "Dialog": {
+      "CHANGE_VALUE_TITLE": "Cambia el valor:",
+      "NEW_VARIABLE": "Nueva variable ...",
+      "RENAME_VARIABLE": "Cambiar de nombre a la variable ...",
+      "RENAME_VARIABLE_TITLE": "Cambiar todas las variables '%1' a:",
+      "RENAME_VARIABLE_MODAL_TITLE": "Borrar variable"
+    },
+    "Toolbox": {
+      "VARIABLE_CATEGORY": "Variables",
+      "PROCEDURE_CATEGORY": "Funciones",
+      "LOOP_CATEGORY": "Bucles",
+      "LOGIC_CATEGORY": "Logica",
+      "MATH_CATEGORY": "Matemáticas",
+      "TEXT_CATEGORY": "Texto",
+      "LIST_CATEGORY": "Listas"
+    },
+    "Common": {
+      "UNDO": "Deshacer",
+      "REDO": "Rehacer",
+      "CLEAN_UP": "Limpiar los bloques",
+      "COLLAPSE_ALL": "Contraer los bloques",
+      "EXPAND_ALL": "Expandir los bloques",
+      "IMPORT_BLOCKS": "Importar los bloques",
+      "EXPORT_BLOCKS": "Exportar los bloques"
+    },
+    "Loops": {
+      "MODULE_NAME": "Bucles",
+      "Blocks": {
+        "FOR_WITH_RANGE": "para cada %1 de %2 hasta %3 hacer %4 finalizar",
+        "FOR_TOOLTIP": "Repite la acción indicada para cada elemento definido en la lista o intervalo",
+        "FOR": "para cada %1 en la %2 hacer %3 finalizar",
+        "VAR_FOR": "elemento_de_la_lista",
+        "ENUM_FOR": "lista"
+      }
+    },
+    "Logic": {
+      "MODULE_NAME": "Logica",
+      "LOGIC_BOOLEAN_TRUE": "Verdadero",
+      "LOGIC_BOOLEAN_FALSE": "Falso",
+      "LOGIC_NEGATE_TITLE": "no %1",
+      "Blocks": {
+        "CUSTOM_IF": "si %1 entonces %2",
+        "CUSTOM_IF_TOOLTIP": "Bloque condicional",
+        "THEN": "entonces",
+        "ELSEIF": "de lo contrario, si ",
+        "ELSE": "si no",
+        "IF": "si"
+      }
+    },
+    "Math": {
+      "MODULE_NAME": "Matemáticas",
+      "Blocks": {
+        "RAND_INTERVAL": "Número entero aleatorio entre %1 y %2",
+        "RAND_INTERVAL_TOOLTIP": "genera un número aleatorio enterio entre los rangos especificados (incluidos)",
+        "RAND": "Número entero aleatiorio con valor máximo de %1",
+        "RAND_TOOLTIP": "genera un número entero de 0 al valor especificado"
+      }
+    },
+    "Text": {
+      "MODULE_NAME": "Texto",
+      "TEXT_TEXT_TOOLTIP": "Una letra, una palabra, una frase..."
+    },
+    "Lists": {
+      "MODULE_NAME": "Listas",
+      "Blocks": {
+        "ARRAY": "lista %1",
+        "ARRAY_TOOLTIP": "Crea una lista con elementos",
+        "ARRAY_ELEMENT": "elemento %1",
+        "ARRAY_ELEMENT_TOOLTIP": "Un elemento de una lista",
+        "MAP": "mapa %1",
+        "KEY": "clave",
+        "MAP_TOOLTIP": "Crea un mapa de pares clave-valor",
+        "MAP_ELEMENT": "Clave %1 valor %2",
+        "MAP_ELEMENT_TOOLTIP": "Un elemento clave-valor para los mapas"
+      }
+    },
+    "Variables": {
+      "MODULE_NAME": "Variables",
+      "CREATE_VAR": "Crear variable...",
+      "NEW_VARIABLE_TITLE": "Nuevo nombre para la variable:",
+      "VARIABLE_ALREADY_EXISTS": "La variable con el nombre '%1' ya existe."
+    },
+    "Functions": {
+      "MODULE_NAME": "Funciones",
+      "PROCEDURES_DEFNORETURN_PROCEDURE": "Nombre de la entrada",
+      "PROCEDURES_DEFNORETURN_TITLE": "función",
+      "PROCEDURES_DEFNORETURN_DO": "hacer",
+      "PROCEDURES_MUTATORCONTAINER_TITLE": "entradas",
+      "PROCEDURES_MUTATORARG_TITLE": "nombre de la entrada",
+      "Blocks": {
+        "CALL": "llamar a %1",
+        "CALL_TOOLTIP": "Llama a la función especificada"
+      }
+    },
+    "General": {
+      "MODULE_NAME": "General",
+      "Blocks": {
+        "RETURN": "devolver %1",
+        "RETURN_TOOLTIP": "Devuelve el valor especificado"
+      }
+    },
+    "GENERATE_CODE": "Generar código"
+  },
   "Errors": {
     "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",
     "EMPTY_FILE_NAME": "El nombre del fichero no puede estar vacio",

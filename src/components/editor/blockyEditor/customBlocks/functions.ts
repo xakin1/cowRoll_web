@@ -1,9 +1,10 @@
 import * as Blockly from "blockly";
+import i18n from "../../../../i18n/i18n";
 
 Blockly.defineBlocksWithJsonArray([
   {
     type: "custom_procedures_callnoreturn",
-    message0: "call %1",
+    message0: i18n.t("Blocky.Functions.Blocks.CALL"),
     args0: [
       {
         type: "field_dropdown",
@@ -13,7 +14,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     output: null,
     colour: Blockly.Msg.PROCEDURES_HUE,
-    tooltip: "",
+    tooltip: i18n.t("Blocky.Functions.Blocks.CALL_TOOLTIP"),
     helpUrl: "",
   },
 ]);
