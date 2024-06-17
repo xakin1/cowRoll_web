@@ -6,15 +6,27 @@ import "blockly/lua";
 import "blockly/msg/en";
 import "blockly/php";
 import "blockly/python";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { updateSelectedFileContent } from "../../../redux/slice/fileSlide";
 import "./BlocklyEditor.css";
 import "./customBlocks/index";
 import { cowRollGenerator } from "./generators/cowRoll";
+import { darkTheme } from "./themes/darkTheme";
 
 const BlocklyEditor = () => {
+  const getInitialTheme = () => {
+    const userPreferredTheme = localStorage.getItem("theme");
+    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    const themeToApply = userPreferredTheme || systemPreference;
+    return themeToApply === "dark" ? darkTheme : Blockly.Themes.Classic;
+  };
+
   const dispatch = useDispatch();
+  const [blocklyTheme, setBlocklyTheme] = useState(getInitialTheme); // Default theme
   const blocklyDiv = useRef(null);
   const toolboxXml = `
     <xml id="toolbox" style="display: none">
@@ -61,6 +73,7 @@ const BlocklyEditor = () => {
   useEffect(() => {
     const workspace = Blockly.inject(blocklyDiv.current, {
       toolbox: toolboxXml,
+      theme: blocklyTheme,
       zoom: {
         controls: true,
         wheel: true,
@@ -107,7 +120,21 @@ const BlocklyEditor = () => {
         return xmlList;
       }
     );
-    return () => workspace.dispose();
+    const handleThemeChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ theme: string }>;
+      const newTheme = customEvent.detail.theme;
+      setBlocklyTheme(newTheme === "dark" ? darkTheme : Blockly.Themes.Classic);
+      workspace.setTheme(
+        newTheme === "dark" ? darkTheme : Blockly.Themes.Classic
+      );
+    };
+
+    document.addEventListener("themeChanged", handleThemeChange);
+
+    return () => {
+      workspace.dispose();
+      document.removeEventListener("themeChanged", handleThemeChange);
+    };
   }, []);
 
   const generateCode = () => {
