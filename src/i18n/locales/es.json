@@ -118,6 +118,8 @@
       "LOGIC_BOOLEAN_TRUE": "Verdadero",
       "LOGIC_BOOLEAN_FALSE": "Falso",
       "LOGIC_NEGATE_TITLE": "no %1",
+      "LOGIC_OPERATION_AND": "y",
+      "LOGIC_OPERATION_OR": "o",
       "Blocks": {
         "CUSTOM_IF": "si %1 entonces %2",
         "CUSTOM_IF_TOOLTIP": "Bloque condicional",
@@ -157,6 +159,7 @@
     "Variables": {
       "MODULE_NAME": "Variables",
       "CREATE_VAR": "Crear variable...",
+      "SET": "establecer %1 a %2",
       "NEW_VARIABLE_TITLE": "Nuevo nombre para la variable:",
       "VARIABLE_ALREADY_EXISTS": "La variable con el nombre '%1' ya existe."
     },
@@ -166,6 +169,7 @@
       "PROCEDURES_DEFNORETURN_TITLE": "función",
       "PROCEDURES_DEFNORETURN_DO": "hacer",
       "PROCEDURES_MUTATORCONTAINER_TITLE": "entradas",
+      "PROCEDURES_BEFORE_PARAMS": "con:",
       "PROCEDURES_MUTATORARG_TITLE": "nombre de la entrada",
       "Blocks": {
         "CALL": "llamar a %1",

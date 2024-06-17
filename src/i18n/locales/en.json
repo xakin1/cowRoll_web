@@ -123,12 +123,8 @@
     },
     "Logic": {
       "MODULE_NAME": "Logic",
-      "LOGIC_COMPARE_TOOLTIP_EQ": "Return true if both inputs equal each other.",
-      "LOGIC_COMPARE_TOOLTIP_NEQ": "Return true if both inputs are not equal to each other.",
-      "LOGIC_COMPARE_TOOLTIP_LT": "Return true if the first input is smaller than the second input.",
-      "LOGIC_COMPARE_TOOLTIP_LTE": "Return true if the first input is smaller than or equal to the second input.",
-      "LOGIC_COMPARE_TOOLTIP_GT": "Return true if the first input is greater than the second input.",
-      "LOGIC_COMPARE_TOOLTIP_GTE": "Return true if the first input is greater than or equal to the second input.",
+      "LOGIC_OPERATION_AND": "and",
+      "LOGIC_OPERATION_OR": "or",
       "LOGIC_BOOLEAN_TRUE": "true",
       "LOGIC_BOOLEAN_FALSE": "false",
       "LOGIC_NEGATE_TITLE": "not %1",
@@ -187,6 +183,7 @@
     "Variables": {
       "MODULE_NAME": "Variables",
       "CREATE_VAR": "Create variable...",
+      "SET": "set %1 to %2",
       "NEW_VARIABLE_TITLE": "New variable name:",
       "VARIABLE_ALREADY_EXISTS": "A variable named '%1' already exists."
     },
@@ -196,6 +193,8 @@
       "PROCEDURES_DEFNORETURN_DO": "do",
       "PROCEDURES_MUTATORCONTAINER_TITLE": "inputs",
       "PROCEDURES_MUTATORARG_TITLE": "input name",
+      "PROCEDURES_BEFORE_PARAMS": "with:",
+
       "MODULE_NAME": "Functions",
       "Blocks": {
         "CALL": "call %1",
