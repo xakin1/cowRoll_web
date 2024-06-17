@@ -72,6 +72,7 @@ const BlocklyEditor = () => {
   `;
 
   useEffect(() => {
+    if (!blocklyDiv.current) return;
     const workspace = Blockly.inject(blocklyDiv.current, {
       toolbox: toolboxXml,
       theme: blocklyTheme,
@@ -141,7 +142,6 @@ const BlocklyEditor = () => {
   const generateCode = () => {
     const workspace = Blockly.getMainWorkspace();
     const code = cowRollGenerator.workspaceToCode(workspace);
-    console.log(code);
     dispatch(updateSelectedFileContent(code));
   };
 

@@ -22,10 +22,10 @@ const Order = {
 };
 
 cowRollGenerator.scrub_ = function (block, code, thisOnly) {
-  const comment = block.getCommentText(); // Get the comment text from the block
+  const comment = block.getCommentText();
   let commentCode = "";
   if (comment) {
-    commentCode = "# " + comment + "\n"; // Format the comment for the target language (JavaScript style)
+    commentCode = "# " + comment + "\n";
   }
 
   const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
@@ -92,7 +92,7 @@ cowRollGenerator.forBlock["math_custom_arithmetic"] = function (block) {
       throw new Error("Operador aritmético no soportado: " + operator);
   }
 
-  const order = cowRollGenerator.getOrderForOperator(op);
+  const order = getOrderForOperator(op);
   const argument0 = cowRollGenerator.valueToCode(block, "A", order) || "0";
   const argument1 = cowRollGenerator.valueToCode(block, "B", order) || "0";
   const code = `${argument0} ${op} ${argument1}`;
@@ -100,8 +100,8 @@ cowRollGenerator.forBlock["math_custom_arithmetic"] = function (block) {
 };
 
 cowRollGenerator.forBlock["for_with_var"] = function (block) {
-  const variable = block.getField("VAR").getText();
-  const enumerable = block.getField("ENUMERABLE_VAR").getText();
+  const variable = block.getField("VAR")?.getText() ?? "i";
+  const enumerable = block.getField("ENUMERABLE_VAR")?.getText() || "enum";
   const statements = cowRollGenerator.statementToCode(block, "DO");
 
   const code = `for ${variable} <- ${enumerable} do\n${statements}\nend`;
@@ -109,7 +109,7 @@ cowRollGenerator.forBlock["for_with_var"] = function (block) {
 };
 
 cowRollGenerator.forBlock["for"] = function (block) {
-  const variable = block.getField("VAR").getText();
+  const variable = block.getField("VAR")?.getText() ?? "i";
   const enumerable = cowRollGenerator.valueToCode(
     block,
     "ENUMERABLE",
@@ -122,7 +122,7 @@ cowRollGenerator.forBlock["for"] = function (block) {
 };
 
 cowRollGenerator.forBlock["for_with_range"] = function (block) {
-  const variable = block.getField("VAR").getText();
+  const variable = block.getField("VAR")?.getText() ?? "i";
   const range1 = cowRollGenerator.valueToCode(
     block,
     "RANGE1",
@@ -174,14 +174,14 @@ cowRollGenerator.forBlock["map_field"] = function (block) {
 
 cowRollGenerator.forBlock["variables_get"] = function (block) {
   // Obtiene el nombre de la variable
-  const variableName = block.getField("VAR").getText();
+  const variableName = block.getField("VAR")?.getText() ?? "x";
   const code = variableName;
   return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["variables_set"] = function (block) {
   // Obtiene el nombre de la variable
-  const variableName = block.getField("VAR").getText();
+  const variableName = block.getField("VAR")?.getText() ?? "x";
   // Obtiene el valor que se va a asignar
   const value = cowRollGenerator.valueToCode(
     block,
@@ -193,7 +193,7 @@ cowRollGenerator.forBlock["variables_set"] = function (block) {
 };
 
 cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {
-  const functionName = block.getField("NAME").getText();
+  const functionName = block.getField("NAME")?.getText() ?? "unnamed";
   const args = block.getVars(); // Obtiene los nombres de los parámetros
   console.log(args);
   const branch = cowRollGenerator.statementToCode(block, "STACK");
@@ -218,7 +218,8 @@ cowRollGenerator.forBlock["custom_procedures_callnoreturn"] = function (block) {
 
   const paramValues = [];
   if (functionBlock) {
-    const paramNames = functionBlock.arguments_;
+    // Use the getVars() method to get the parameter names
+    const paramNames = functionBlock.getVars();
     for (let i = 0; i < paramNames.length; i++) {
       const paramValue = cowRollGenerator.valueToCode(
         block,
@@ -240,7 +241,7 @@ cowRollGenerator.forBlock["logic_boolean"] = function (block) {
 
 cowRollGenerator.forBlock["logic_operation"] = function (block) {
   const operator = block.getFieldValue("OP") === "AND" ? "and" : "or";
-  const order = cowRollGenerator.getOrderForOperator(operator);
+  const order = getOrderForOperator(operator);
   const argument0 = cowRollGenerator.valueToCode(block, "A", order) || "false";
   const argument1 = cowRollGenerator.valueToCode(block, "B", order) || "false";
   const code = `${argument0} ${operator} ${argument1}`;
@@ -248,7 +249,7 @@ cowRollGenerator.forBlock["logic_operation"] = function (block) {
 };
 
 cowRollGenerator.forBlock["logic_compare"] = function (block) {
-  const OPERATORS = {
+  const OPERATORS: { [key: string]: string } = {
     EQ: "==",
     NEQ: "!=",
     LT: "<",
@@ -257,7 +258,7 @@ cowRollGenerator.forBlock["logic_compare"] = function (block) {
     GTE: ">=",
   };
   const operator = OPERATORS[block.getFieldValue("OP")];
-  const order = cowRollGenerator.getOrderForOperator(operator);
+  const order = getOrderForOperator(operator);
   const argument0 = cowRollGenerator.valueToCode(block, "A", order) || "false";
   const argument1 = cowRollGenerator.valueToCode(block, "B", order) || "false";
   const code = `${argument0} ${operator} ${argument1}`;
@@ -305,7 +306,7 @@ cowRollGenerator.forBlock["custom_if"] = function (block) {
   return code + "\n";
 };
 
-cowRollGenerator.getOrderForOperator = function (operator) {
+function getOrderForOperator(operator: string) {
   switch (operator) {
     case "+":
     case "-":
@@ -331,4 +332,4 @@ cowRollGenerator.getOrderForOperator = function (operator) {
     default:
       return Order.ORDER_ATOMIC;
   }
-};
+}

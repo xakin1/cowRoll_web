@@ -56,55 +56,59 @@ Blockly.Extensions.registerMutator(
   "custom_if_mutator",
   {
     mutationToDom: function () {
-      var container = document.createElement("mutation");
-      container.setAttribute("elseif", this.elseifCount_);
-      container.setAttribute("else", this.elseCount_);
+      const container = document.createElement("mutation");
+      container.setAttribute("elseif", String(this.elseifCount_));
+      container.setAttribute("else", String(this.elseCount_));
       return container;
     },
-    domToMutation: function (xmlElement) {
-      this.elseifCount_ = parseInt(xmlElement.getAttribute("elseif"), 10);
-      this.elseCount_ = parseInt(xmlElement.getAttribute("else"), 10);
+    domToMutation: function (xmlElement: Element) {
+      this.elseifCount_ = parseInt(
+        xmlElement.getAttribute("elseif") || "0",
+        10
+      );
+      this.elseCount_ = parseInt(xmlElement.getAttribute("else") || "0", 10);
       this.updateShape_();
     },
-    decompose: function (workspace) {
-      var containerBlock = workspace.newBlock("custom_if_mutator");
+    decompose: function (workspace: Blockly.Workspace) {
+      const containerBlock = workspace.newBlock("custom_if_mutator");
+      //Realmente existe pero por alguna razón pone que no
       containerBlock.initSvg();
-      var connection = containerBlock.nextConnection;
-      for (var i = 1; i <= this.elseifCount_; i++) {
-        var elseifBlock = workspace.newBlock("custom_elseif_mutator");
-        elseifBlock.initSvg();
-        connection.connect(elseifBlock.previousConnection);
+      let connection = containerBlock.nextConnection;
+      for (let i = 1; i <= this.elseifCount_; i++) {
+        const elseifBlock = workspace.newBlock("custom_elseif_mutator");
+        if (elseifBlock.previousConnection)
+          connection?.connect(elseifBlock.previousConnection);
         connection = elseifBlock.nextConnection;
       }
       if (this.elseCount_) {
-        var elseBlock = workspace.newBlock("custom_else_mutator");
-        elseBlock.initSvg();
-        connection.connect(elseBlock.previousConnection);
+        const elseBlock = workspace.newBlock("custom_else_mutator");
+        if (elseBlock.previousConnection)
+          connection?.connect(elseBlock.previousConnection);
       }
       return containerBlock;
     },
-    compose: function (containerBlock) {
-      var clauseBlock = containerBlock.nextConnection.targetBlock();
+    compose: function (containerBlock: Blockly.Block) {
+      let clauseBlock = containerBlock.nextConnection?.targetBlock() || null;
       this.elseifCount_ = 0;
       this.elseCount_ = 0;
-      var valueConnections = [null];
-      var statementConnections = [null];
-      var elseStatementConnection = null;
-      var i = 1;
+      const valueConnections: (Blockly.Connection | null)[] = [null];
+      const statementConnections: (Blockly.Connection | null)[] = [null];
+      let elseStatementConnection: Blockly.Connection | null = null;
+      let i = 1;
       while (clauseBlock) {
         switch (clauseBlock.type) {
           case "custom_elseif_mutator":
             this.elseifCount_++;
-            valueConnections[i] = clauseBlock.valueConnection_;
-            statementConnections[i] = clauseBlock.statementConnection_;
+            valueConnections[i] = (clauseBlock as any).valueConnection_;
+            statementConnections[i] = (clauseBlock as any).statementConnection_;
             i++;
             break;
           case "custom_else_mutator":
             this.elseCount_++;
-            elseStatementConnection = clauseBlock.statementConnection_;
+            elseStatementConnection = (clauseBlock as any).statementConnection_;
             break;
           default:
-            throw "Unknown block type.";
+            throw new Error("Unknown block type.");
         }
         clauseBlock =
           clauseBlock.nextConnection &&
@@ -116,11 +120,11 @@ Blockly.Extensions.registerMutator(
       if (this.getInput("ELSE")) {
         this.removeInput("ELSE");
       }
-      for (var i = 1; this.getInput("IF" + i); i++) {
+      for (let i = 1; this.getInput("IF" + i); i++) {
         this.removeInput("IF" + i);
         this.removeInput("DO" + i);
       }
-      for (var i = 1; i <= this.elseifCount_; i++) {
+      for (let i = 1; i <= this.elseifCount_; i++) {
         this.appendValueInput("IF" + i)
           .setCheck("Boolean")
           .appendField(i18n.t("Blocky.Logic.Blocks.ELSEIF"));
@@ -135,6 +139,6 @@ Blockly.Extensions.registerMutator(
       }
     },
   },
-  null,
+  undefined,
   ["custom_elseif_mutator", "custom_else_mutator"]
 );

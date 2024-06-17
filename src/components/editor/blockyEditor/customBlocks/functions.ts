@@ -19,37 +19,38 @@ Blockly.defineBlocksWithJsonArray([
   },
 ]);
 
-Blockly.Blocks["custom_procedures_callnoreturn"].updateFunctions = function () {
-  const workspace = Blockly.getMainWorkspace();
-  const blocks = workspace.getAllBlocks();
-  const functionList = [];
+Blockly.Blocks["custom_procedures_callnoreturn"].updateFunctions =
+  function (): [string, string][] {
+    const workspace = Blockly.getMainWorkspace();
+    const blocks = workspace.getAllBlocks();
+    const functionList: [string, string][] = [];
 
-  blocks.forEach((block) => {
-    if (block.type === "procedures_defnoreturn") {
-      const name = block.getFieldValue("NAME");
-      functionList.push([name, name]);
-    }
-  });
+    blocks.forEach((block: Blockly.Block) => {
+      if (block.type === "procedures_defnoreturn") {
+        const name = block.getFieldValue("NAME");
+        functionList.push([name, name]);
+      }
+    });
 
-  return functionList.length ? functionList : [["", ""]];
-};
+    return functionList.length ? functionList : [["", ""]];
+  };
 
 Blockly.Blocks["custom_procedures_callnoreturn"].updateShape_ = function (
-  block
-) {
+  block: Blockly.Block
+): void {
   const functionName = block.getFieldValue("FUNCTION_NAME");
   const workspace = block.workspace;
   const functionBlock = workspace
     .getAllBlocks()
     .find(
-      (blk) =>
+      (blk: Blockly.Block) =>
         blk.type === "procedures_defnoreturn" &&
         blk.getFieldValue("NAME") === functionName
     );
 
   // Store current input connections
-  const connections = {};
-  block.inputList.forEach((input) => {
+  const connections: { [key: string]: Blockly.Connection } = {};
+  block.inputList.forEach((input: Blockly.Input) => {
     if (input.connection && input.connection.targetConnection) {
       connections[input.name] = input.connection.targetConnection;
     }
@@ -61,7 +62,7 @@ Blockly.Blocks["custom_procedures_callnoreturn"].updateShape_ = function (
   }
 
   if (functionBlock) {
-    const paramNames = functionBlock.arguments_;
+    const paramNames = functionBlock.getVars();
     for (let i = 0; i < paramNames.length; i++) {
       const input = block
         .appendValueInput(paramNames[i])
@@ -70,13 +71,15 @@ Blockly.Blocks["custom_procedures_callnoreturn"].updateShape_ = function (
 
       // Reconnect previous connections if available
       if (connections[paramNames[i]]) {
-        input.connection.connect(connections[paramNames[i]]);
+        input.connection?.connect(connections[paramNames[i]]);
       }
     }
   }
 };
 
-Blockly.Blocks["custom_procedures_callnoreturn"].onchange = function (event) {
+Blockly.Blocks["custom_procedures_callnoreturn"].onchange = function (
+  event: Event
+) {
   if (
     event.type === Blockly.Events.BLOCK_CREATE ||
     event.type === Blockly.Events.BLOCK_DELETE ||
@@ -88,7 +91,7 @@ Blockly.Blocks["custom_procedures_callnoreturn"].onchange = function (event) {
     dropdown.menuGenerator_ = options;
     if (
       !dropdown.getValue() ||
-      options.every((option) => option[1] !== dropdown.getValue())
+      options.every((option: string) => option[1] !== dropdown.getValue())
     ) {
       dropdown.setValue(options[0][1]);
     }
