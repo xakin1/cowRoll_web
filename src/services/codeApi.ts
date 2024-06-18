@@ -178,7 +178,7 @@ export async function executeCode(code: string): Promise<FetchRun<any>> {
 }
 
 export async function insertContent(
-  file: any
+  file: FileProps
 ): Promise<FetchInsertContent<string>> {
   try {
     const response = await fetch(apiUrl + "api/insertContent", {

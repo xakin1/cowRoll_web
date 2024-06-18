@@ -2,6 +2,7 @@ export interface FileProps {
   name: string;
   directoryId: Id;
   content?: string;
+  contentSchema?: string;
   id: Id;
   type: "File";
 }

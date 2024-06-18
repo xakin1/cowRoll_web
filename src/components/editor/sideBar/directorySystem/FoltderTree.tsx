@@ -1,21 +1,28 @@
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addFile, selectFile } from "../../../redux/slice/fileSlide";
+import { addFile, selectFile } from "../../../../redux/slice/fileSlide";
 import type {
   DirectoryProps,
   FileProps,
   Items,
   NodeTree,
-} from "../../../utils/types/ApiTypes";
-import { ContextMenu } from "./ContextMenu";
+} from "../../../../utils/types/ApiTypes";
+import { ContextMenu } from "../directorySystem/ContextMenu";
 
-import { useAppSelector } from "../../../hooks/customHooks";
-import type { RootState } from "../../../redux/store";
-import { editDirectory, editFile, getFiles } from "../../../services/codeApi";
-import type { ContextMenuProps, ModalConfig } from "../../../utils/types/types";
-import Modal from "../../modal";
-import { CustomTreeItem } from "./BorderedTreeView";
+import { useAppSelector } from "../../../../hooks/customHooks";
+import type { RootState } from "../../../../redux/store";
+import {
+  editDirectory,
+  editFile,
+  getFiles,
+} from "../../../../services/codeApi";
+import type {
+  ContextMenuProps,
+  ModalConfig,
+} from "../../../../utils/types/types";
+import Modal from "../../../modal";
+import { CustomTreeItem } from "../directorySystem/BorderedTreeView";
 import "./folderTree.css";
 
 function FolderTree() {

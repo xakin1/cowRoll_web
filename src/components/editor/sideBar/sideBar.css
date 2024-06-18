@@ -34,15 +34,15 @@ img {
   fill: white;
 }
 
-.icon {
+.icon-sidebar {
   scale: 1.5;
   margin: 10px;
-  fill: #fff;
-  color: #fff;
+  fill: var(--text-color, #ffffff);
+  color: var(--text-color, #ffffff);
 }
 
 .sidebar ul li a {
-  color: var(--output-text-color, #ffffff);
+  color: #fff;
   list-style: inside;
   text-decoration: none;
 }

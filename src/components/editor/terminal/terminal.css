@@ -10,22 +10,19 @@
 }
 
 .sidebar {
-  flex: 0 0 20%;
-  background-color: var(--output-background-color, #1e1e1e);
   border-right: 1px solid #ccc;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Full viewport height */
   width: 100%;
 }
 .top-section {
   display: flex;
   flex-direction: row;
-  flex-grow: 2; /* Increased flex-grow value to give more space */
-  margin-bottom: 10px; /* Adjust this margin as necessary */
+  flex-grow: 2;
+  margin-bottom: 10px;
   overflow: hidden;
   max-height: 400px;
 }
@@ -34,7 +31,7 @@
   display: flex;
   padding: 10px;
   flex-direction: column;
-  flex-grow: 1; /* Reduced flex-grow value to give less space */
+  flex-grow: 1;
   overflow: hidden;
 }
 .section {
@@ -43,7 +40,7 @@
   border-radius: 8px;
   padding: 10px;
   overflow: auto;
-  flex: 1; /* Allow flex-grow to take available space */
+  flex: 1;
 }
 
 .editorSection {
@@ -55,7 +52,7 @@
 }
 
 .blocklySection {
-  flex: 2; /* Ensure this takes up more space */
+  flex: 2;
   overflow: hidden;
 }
 
@@ -63,7 +60,7 @@
   display: flex;
   flex-direction: row;
   flex-grow: 1;
-  margin-bottom: 10px; /* Adjust this margin as necessary */
+  margin-bottom: 10px;
   overflow: hidden;
 }
 
@@ -77,12 +74,12 @@
 
 .editorSection {
   flex: 2;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .outputSection {
   flex: 1;
-  flex-grow: 1; /* Allow outputSection to grow */
+  flex-grow: 1;
   overflow: auto;
 }
 
@@ -94,7 +91,8 @@
   border: 1px solid #ddd;
   overflow: auto;
   max-height: 75%;
-  width: 100%; /* Ensure output-area takes full width */
+  width: 100%;
+  height: 100%;
 }
 
 .blockly-editor {
@@ -117,6 +115,14 @@
 
 .header h1 {
   justify-self: start;
+}
+
+.no-file-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.5em;
 }
 
 @media screen and (max-width: 768px) {

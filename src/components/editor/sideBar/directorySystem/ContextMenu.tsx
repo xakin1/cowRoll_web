@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import { toast, type ToastOptions } from "react-toastify";
-import { getI18N } from "../../../i18n";
-import { getLang } from "../../../i18n/utils";
+import { getI18N } from "../../../../i18n";
+import { getLang } from "../../../../i18n/utils";
 import {
   createDirectory,
   createFile,
@@ -9,8 +9,8 @@ import {
   deleteFile,
   editDirectory,
   editFile,
-} from "../../../services/codeApi";
-import type { ContextMenuProps } from "../../../utils/types/types";
+} from "../../../../services/codeApi";
+import type { ContextMenuProps } from "../../../../utils/types/types";
 import "./contextMenu.css";
 
 const i18n = getI18N({ currentLocale: getLang() });

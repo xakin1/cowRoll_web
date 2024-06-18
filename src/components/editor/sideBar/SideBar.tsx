@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addFile } from "../../../redux/slice/fileSlide";
 import { getFiles } from "../../../services/codeApi";
-import FolderTree from "./FoltderTree";
+import FolderTree from "./directorySystem/FoltderTree";
 import "./sideBar.css";
 
 function Sidebar() {
@@ -43,7 +43,7 @@ function Sidebar() {
           viewBox="0 0 24 24"
           stroke="currentColor"
           onClick={toggleSidebar}
-          className="icon icon-tabler icons-tabler-outline icon-tabler-code"
+          className="icon-sidebar icon-tabler icons-tabler-outline icon-tabler-code"
         >
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M7 8l-4 4l4 4" />

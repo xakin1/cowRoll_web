@@ -75,46 +75,44 @@ function Terminal() {
       <div className="container-page">
         <Sidebar></Sidebar>
         <main className="container">
-          <div className="top-section">
-            <section className="section editorSection">
-              <header className="header">
-                <h1>{i18n.t("Code.code")}</h1>
-                <button
-                  className="run-button"
-                  onClick={handleExecuteClick}
-                  aria-label="Ejecutar código en el editor"
-                >
-                  {i18n.t("Code.run")}
-                </button>
-              </header>
-              {file ? (
-                <>
+          {file ? (
+            <>
+              <div className="top-section">
+                <section className="section editorSection">
+                  <header className="header">
+                    <h1>{i18n.t("Code.code")}</h1>
+                    <button
+                      className="run-button"
+                      onClick={handleExecuteClick}
+                      aria-label="Ejecutar código en el editor"
+                    >
+                      {i18n.t("Code.run")}
+                    </button>
+                  </header>
                   <CodeEditor {...file}></CodeEditor>
-                </>
-              ) : (
-                <span> {i18n.t("General.selectFile")}</span>
-              )}
-            </section>
-            {!file ? (
-              <></>
-            ) : (
-              <section className="section">
-                <header className="header">
-                  <h1>{i18n.t("Code.output")}</h1>
-                </header>
-                <div
-                  aria-label="Code Output"
-                  id="OutputDisplay"
-                  className="output-area"
-                >
-                  {formatOutput(output, error)}
-                </div>
+                </section>
+                <section className="section outputSection">
+                  <header className="header">
+                    <h1>{i18n.t("Code.output")}</h1>
+                  </header>
+                  <div
+                    aria-label="Code Output"
+                    id="OutputDisplay"
+                    className="output-area"
+                  >
+                    {formatOutput(output, error)}
+                  </div>
+                </section>
+              </div>
+              <section className="blocklySection">
+                <BlocklyEditor></BlocklyEditor>
               </section>
-            )}
-          </div>
-          <section className="blocklySection">
-            <BlocklyEditor></BlocklyEditor>
-          </section>
+            </>
+          ) : (
+            <div className="no-file-selected">
+              <span>{i18n.t("General.selectFile")}</span>
+            </div>
+          )}
         </main>
         <div id="portal-root"></div>
       </div>

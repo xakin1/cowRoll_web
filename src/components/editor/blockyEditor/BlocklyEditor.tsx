@@ -8,8 +8,11 @@ import "blockly/php";
 import "blockly/python";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../../hooks/customHooks";
 import i18n from "../../../i18n/i18n";
 import { updateSelectedFileContent } from "../../../redux/slice/fileSlide";
+import type { RootState } from "../../../redux/store";
+import { saveContent } from "../../../services/codeApi";
 import "./BlocklyEditor.css";
 import { cowRollGenerator } from "./generators/cowRoll";
 import "./index";
@@ -27,6 +30,9 @@ const BlocklyEditor = () => {
   };
 
   const dispatch = useDispatch();
+  const file = useAppSelector(
+    (state: RootState) => state.directorySystem.selectedFile
+  );
   const [blocklyTheme, setBlocklyTheme] = useState(getInitialTheme); // Default theme
   const blocklyDiv = useRef(null);
   const toolboxXml = `
@@ -71,6 +77,20 @@ const BlocklyEditor = () => {
     </xml>
   `;
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        generateCode();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
   useEffect(() => {
     if (!blocklyDiv.current) return;
     const workspace = Blockly.inject(blocklyDiv.current, {
@@ -143,6 +163,13 @@ const BlocklyEditor = () => {
     const workspace = Blockly.getMainWorkspace();
     const code = cowRollGenerator.workspaceToCode(workspace);
     dispatch(updateSelectedFileContent(code));
+    if (file) {
+      file.content = code;
+      file.contentSchema = JSON.stringify(
+        Blockly.Xml.workspaceToDom(workspace)
+      );
+      saveContent(file);
+    }
   };
 
   return (
