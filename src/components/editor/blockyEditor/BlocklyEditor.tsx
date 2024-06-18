@@ -178,7 +178,7 @@ const BlocklyEditor = () => {
       resizeObserver.disconnect();
       document.removeEventListener("themeChanged", handleThemeChange);
     };
-  }, []);
+  }, [blocklyTheme, toolboxXml, file]);
 
   const generateCode = () => {
     const workspace = Blockly.getMainWorkspace();
