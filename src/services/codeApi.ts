@@ -187,6 +187,7 @@ export async function insertContent(
       credentials: "include",
       body: JSON.stringify(file),
     });
+    console.log(file);
     if (response.ok) {
       return await response.json();
     } else {
@@ -207,6 +208,8 @@ export async function saveContent(
     credentials: "include",
     body: JSON.stringify(file),
   });
+  console.log(file);
+
   if (response.ok) {
     return response.json();
   } else {

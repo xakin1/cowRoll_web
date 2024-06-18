@@ -143,6 +143,8 @@ const BlocklyEditor = () => {
       }
     );
     const handleThemeChange = (event: Event) => {
+      Blockly.svgResize(workspace);
+
       const customEvent = event as CustomEvent<{ theme: string }>;
       const newTheme = customEvent.detail.theme;
       setBlocklyTheme(newTheme === "dark" ? darkTheme : Blockly.Themes.Classic);
@@ -153,8 +155,27 @@ const BlocklyEditor = () => {
 
     document.addEventListener("themeChanged", handleThemeChange);
 
+    const handleResize = () => {
+      Blockly.svgResize(workspace);
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+
+    if (blocklyDiv.current) {
+      resizeObserver.observe(blocklyDiv.current);
+    }
+    if (file && file.contentSchema) {
+      console.log(file.contentSchema);
+      const xml = Blockly.utils.xml.textToDom(file.contentSchema);
+      Blockly.Xml.domToWorkspace(xml, workspace);
+    }
+
     return () => {
       workspace.dispose();
+      window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
       document.removeEventListener("themeChanged", handleThemeChange);
     };
   }, []);
@@ -163,22 +184,24 @@ const BlocklyEditor = () => {
     const workspace = Blockly.getMainWorkspace();
     const code = cowRollGenerator.workspaceToCode(workspace);
     dispatch(updateSelectedFileContent(code));
+
     if (file) {
-      file.content = code;
-      file.contentSchema = JSON.stringify(
-        Blockly.Xml.workspaceToDom(workspace)
-      );
-      saveContent(file);
+      const dom = Blockly.Xml.workspaceToDom(workspace);
+      const xmlText = Blockly.Xml.domToText(dom);
+      const updatedFile = {
+        ...file,
+        content: code,
+        contentSchema: xmlText,
+      };
+
+      saveContent(updatedFile);
     }
   };
 
   return (
     <>
       <div className="parent-container">
-        <div
-          ref={blocklyDiv}
-          style={{ height: "100%", width: "100%", backgroundColor: "#f5f5f5" }}
-        ></div>
+        <div ref={blocklyDiv} className="blocklyDiv"></div>
         <button className="generator-button" onClick={generateCode}>
           {i18n.t("Blocky.GENERATE_CODE")}
         </button>
