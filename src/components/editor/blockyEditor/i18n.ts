@@ -168,4 +168,7 @@ Blockly.Msg.PROCEDURES_DEFNORETURN_TITLE = i18n.t(
 Blockly.Msg.PROCEDURES_BEFORE_PARAMS = i18n.t(
   "Blocky.Functions.PROCEDURES_BEFORE_PARAMS"
 );
+Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = i18n.t(
+  "Blocky.Functions.PROCEDURES_BEFORE_PARAMS"
+);
 Blockly.Msg.VARIABLES_SET = i18n.t("Blocky.Variables.SET");

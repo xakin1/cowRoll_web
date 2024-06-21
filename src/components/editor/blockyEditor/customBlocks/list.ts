@@ -17,6 +17,51 @@ Blockly.defineBlocksWithJsonArray([
     helpUrl: "",
   },
   {
+    type: "array_set",
+    message0: "set %1 index %2 to %3",
+    args0: [
+      {
+        type: "field_variable",
+        name: "ARRAY",
+      },
+      {
+        type: "input_value",
+        name: "INDEX",
+        check: "Number",
+      },
+      {
+        type: "input_value",
+        name: "VALUE",
+      },
+    ],
+    inputsInline: true,
+    previousStatement: null,
+    nextStatement: null,
+    colour: 230,
+    tooltip: "Sets the value at a specified index of an array",
+    helpUrl: "",
+  },
+  {
+    type: "array_get",
+    message0: "get %1 index %2",
+    args0: [
+      {
+        type: "field_variable",
+        name: "ARRAY",
+      },
+      {
+        type: "input_value",
+        name: "INDEX",
+        check: "Number",
+      },
+    ],
+    inputsInline: true,
+    output: null,
+    colour: 230,
+    tooltip: "Gets the value at a specified index of an array",
+    helpUrl: "",
+  },
+  {
     type: "array_element",
     message0: i18n.t("Blocky.Lists.Blocks.ARRAY_ELEMENT"),
     args0: [

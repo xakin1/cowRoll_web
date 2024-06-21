@@ -1,100 +1,77 @@
 import * as Blockly from "blockly";
-import i18n from "../../../../i18n/i18n";
 
-Blockly.defineBlocksWithJsonArray([
-  {
-    type: "custom_procedures_callnoreturn",
-    message0: i18n.t("Blocky.Functions.Blocks.CALL"),
-    args0: [
-      {
-        type: "field_dropdown",
-        name: "FUNCTION_NAME",
-        options: [["", ""]],
-      },
-    ],
-    output: null,
-    colour: Blockly.Msg.PROCEDURES_HUE,
-    tooltip: i18n.t("Blocky.Functions.Blocks.CALL_TOOLTIP"),
-    helpUrl: "",
-  },
-]);
-
-Blockly.Blocks["custom_procedures_callnoreturn"].updateFunctions =
-  function (): [string, string][] {
-    const workspace = Blockly.getMainWorkspace();
-    const blocks = workspace.getAllBlocks();
-    const functionList: [string, string][] = [];
-
-    blocks.forEach((block: Blockly.Block) => {
-      if (block.type === "procedures_defnoreturn") {
-        const name = block.getFieldValue("NAME");
-        functionList.push([name, name]);
-      }
-    });
-
-    return functionList.length ? functionList : [["", ""]];
-  };
-
-Blockly.Blocks["custom_procedures_callnoreturn"].updateShape_ = function (
-  block: Blockly.Block
-): void {
-  const functionName = block.getFieldValue("FUNCTION_NAME");
-  const workspace = block.workspace;
-  const functionBlock = workspace
-    .getAllBlocks()
-    .find(
-      (blk: Blockly.Block) =>
-        blk.type === "procedures_defnoreturn" &&
-        blk.getFieldValue("NAME") === functionName
+Blockly.Blocks["procedures_callnoreturn_as_return"] = {
+  init: function () {
+    this.appendDummyInput().appendField(
+      new Blockly.FieldLabelSerializable("call"),
+      "NAME"
     );
-
-  // Store current input connections
-  const connections: { [key: string]: Blockly.Connection } = {};
-  block.inputList.forEach((input: Blockly.Input) => {
-    if (input.connection && input.connection.targetConnection) {
-      connections[input.name] = input.connection.targetConnection;
+    this.arguments_ = [];
+    this.setOutput(true, null);
+    this.setColour(290);
+    this.setTooltip("");
+    this.setHelpUrl("");
+    this.procName_ = "";
+  },
+  getProcedureCall: function () {
+    return this.procName_;
+  },
+  renameProcedure: function (oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.procName_)) {
+      this.procName_ = newName;
+      this.setFieldValue(newName, "NAME");
     }
-  });
-
-  // Remove existing input fields
-  while (block.inputList.length > 1) {
-    block.removeInput(block.inputList[block.inputList.length - 1].name);
-  }
-
-  if (functionBlock) {
-    const paramNames = functionBlock.getVars();
+  },
+  setProcedureParameters_: function (paramNames, paramIds) {
+    // Remove all inputs.
+    for (let i = 0; this.getInput("ARG" + i); i++) {
+      this.removeInput("ARG" + i);
+    }
+    // Rebuild the inputs.
     for (let i = 0; i < paramNames.length; i++) {
-      const input = block
-        .appendValueInput(paramNames[i])
-        .setCheck(null)
+      const input = this.appendValueInput("ARG" + i)
+        .setAlign(Blockly.ALIGN_RIGHT)
         .appendField(paramNames[i]);
-
-      // Reconnect previous connections if available
-      if (connections[paramNames[i]]) {
-        input.connection?.connect(connections[paramNames[i]]);
+    }
+    this.arguments_ = [].concat(paramNames);
+  },
+  mutationToDom: function () {
+    const container = document.createElement("mutation");
+    container.setAttribute("name", this.procName_);
+    for (let i = 0; i < this.arguments_.length; i++) {
+      const parameter = document.createElement("arg");
+      parameter.setAttribute("name", this.arguments_[i]);
+      container.appendChild(parameter);
+    }
+    return container;
+  },
+  domToMutation: function (xmlElement) {
+    const name = xmlElement.getAttribute("name");
+    this.procName_ = name;
+    this.setFieldValue(name, "NAME");
+    const args = [];
+    for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
+      if (childNode.nodeName === "arg") {
+        args.push(childNode.getAttribute("name"));
       }
     }
-  }
-};
-
-Blockly.Blocks["custom_procedures_callnoreturn"].onchange = function (
-  event: Event
-) {
-  if (
-    event.type === Blockly.Events.BLOCK_CREATE ||
-    event.type === Blockly.Events.BLOCK_DELETE ||
-    event.type === Blockly.Events.BLOCK_CHANGE ||
-    event.type === Blockly.Events.UI
-  ) {
-    const options = this.updateFunctions();
-    const dropdown = this.getField("FUNCTION_NAME");
-    dropdown.menuGenerator_ = options;
-    if (
-      !dropdown.getValue() ||
-      options.every((option: string) => option[1] !== dropdown.getValue())
-    ) {
-      dropdown.setValue(options[0][1]);
-    }
-    this.updateShape_(this);
-  }
+    this.setProcedureParameters_(args, null);
+  },
+  getVars: function () {
+    return this.arguments_;
+  },
+  customContextMenu: function (options) {
+    const option = { enabled: true };
+    const name = this.getProcedureCall();
+    option.text = "Set as return value: " + name;
+    const xmlMutation = Blockly.utils.xml.createElement("mutation");
+    xmlMutation.setAttribute("name", name);
+    const block = Blockly.utils.xml.createElement("block");
+    block.setAttribute("type", this.type);
+    block.appendChild(xmlMutation);
+    option.callback = function () {
+      Blockly.ContextMenu.callbackFactory(this, xmlMutation)();
+    };
+    options.push(option);
+  },
 };

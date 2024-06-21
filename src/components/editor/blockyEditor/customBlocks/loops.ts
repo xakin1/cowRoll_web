@@ -17,7 +17,7 @@ Blockly.defineBlocksWithJsonArray([
       },
       {
         type: "input_value",
-        name: "RANGE12",
+        name: "RANGE2",
         check: ["Number"],
       },
       {

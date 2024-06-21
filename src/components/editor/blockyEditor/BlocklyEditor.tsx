@@ -10,7 +10,10 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../hooks/customHooks";
 import i18n from "../../../i18n/i18n";
-import { updateSelectedFileContent } from "../../../redux/slice/fileSlide";
+import {
+  updateSelectedFile,
+  updateSelectedFileContent,
+} from "../../../redux/slice/fileSlide";
 import type { RootState } from "../../../redux/store";
 import { saveContent } from "../../../services/codeApi";
 import "./BlocklyEditor.css";
@@ -19,6 +22,34 @@ import "./index";
 import { darkTheme } from "./themes/darkTheme";
 
 const BlocklyEditor = () => {
+  const proceduresFlyoutCallback = function (workspace) {
+    const xmlList = [];
+
+    // Agregar bloque de definición de procedimiento sin retorno
+    const blockDef = Blockly.utils.xml.createElement("block");
+    blockDef.setAttribute("type", "procedures_defnoreturn");
+    xmlList.push(blockDef);
+
+    // Obtener todos los procedimientos sin retorno
+    const procedures = Blockly.Procedures.allProcedures(workspace)[0];
+    for (const procedure of procedures) {
+      const blockCall = Blockly.utils.xml.createElement("block");
+      blockCall.setAttribute("type", "procedures_callnoreturn_as_return");
+      const mutation = Blockly.utils.xml.createElement("mutation");
+      mutation.setAttribute("name", procedure[0]);
+      const argNames = procedure[1];
+      for (let i = 0; i < argNames.length; i++) {
+        const arg = Blockly.utils.xml.createElement("arg");
+        arg.setAttribute("name", argNames[i]);
+        mutation.appendChild(arg);
+      }
+      blockCall.appendChild(mutation);
+      xmlList.push(blockCall);
+    }
+
+    return xmlList;
+  };
+
   const getInitialTheme = () => {
     const userPreferredTheme = localStorage.getItem("theme");
     const systemPreference = window.matchMedia("(prefers-color-scheme: dark)")
@@ -61,17 +92,16 @@ const BlocklyEditor = () => {
       <category name="${i18n.t("Blocky.Lists.MODULE_NAME")}" colour="#745CA6">
         <block type="array"></block>
         <block type="array_element"></block>
+        <block type="array_set"></block>
+        <block type="array_get"></block>
         <block type="map"></block>
         <block type="map_field"></block>
       </category>
-     <category name="${i18n.t("Blocky.Variables.MODULE_NAME")}" colour="#A65C81" custom="VARIABLE_CUSTOM">
+      <category name="${i18n.t("Blocky.Variables.MODULE_NAME")}" colour="#A65C81" custom="VARIABLE_CUSTOM">
         <button text="Create Variable" callbackKey="CREATE_VARIABLE"></button>
       </category>
-      <category name="${i18n.t("Blocky.Functions.MODULE_NAME")}"  colour="#9A5CA6">
-          <block type="procedures_defnoreturn"></block>
-          <block type="custom_procedures_callnoreturn"></block>
-      </category>
-      <category name="${i18n.t("Blocky.General.MODULE_NAME")}"  colour="#800">
+      <category name="${i18n.t("Blocky.Functions.MODULE_NAME")}" colour="#9A5CA6" custom="PROCEDURE_CUSTOM"></category>
+      <category name="${i18n.t("Blocky.General.MODULE_NAME")}" colour="#800">
         <block type="return"></block>
       </category>
     </xml>
@@ -91,8 +121,10 @@ const BlocklyEditor = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   });
+
   useEffect(() => {
     if (!blocklyDiv.current) return;
+
     const workspace = Blockly.inject(blocklyDiv.current, {
       toolbox: toolboxXml,
       theme: blocklyTheme,
@@ -114,6 +146,12 @@ const BlocklyEditor = () => {
         button.getTargetWorkspace()
       );
     });
+
+    // Register the custom procedure category callback
+    workspace.registerToolboxCategoryCallback(
+      "PROCEDURE_CUSTOM",
+      proceduresFlyoutCallback
+    );
 
     // Define a custom flyoutCallback for the variables category
     workspace.registerToolboxCategoryCallback(
@@ -142,6 +180,7 @@ const BlocklyEditor = () => {
         return xmlList;
       }
     );
+
     const handleThemeChange = (event: Event) => {
       Blockly.svgResize(workspace);
 
@@ -167,7 +206,6 @@ const BlocklyEditor = () => {
       resizeObserver.observe(blocklyDiv.current);
     }
     if (file && file.contentSchema) {
-      console.log(file.contentSchema);
       const xml = Blockly.utils.xml.textToDom(file.contentSchema);
       Blockly.Xml.domToWorkspace(xml, workspace);
     }
@@ -193,7 +231,7 @@ const BlocklyEditor = () => {
         content: code,
         contentSchema: xmlText,
       };
-
+      dispatch(updateSelectedFile(updatedFile));
       saveContent(updatedFile);
     }
   };

@@ -128,10 +128,9 @@ cowRollGenerator.forBlock["for_with_range"] = function (block) {
     "RANGE1",
     Order.ORDER_ATOMIC
   );
-
   const range2 = cowRollGenerator.valueToCode(
     block,
-    "RANGE1",
+    "RANGE2",
     Order.ORDER_ATOMIC
   );
   const statements = cowRollGenerator.statementToCode(block, "DO");
@@ -143,7 +142,8 @@ cowRollGenerator.forBlock["for_with_range"] = function (block) {
 cowRollGenerator.forBlock["array"] = function (block) {
   const elements = cowRollGenerator
     .statementToCode(block, "ELEMENTS")
-    .replace(/[\n\s]/g, "");
+    .replace(/\n/g, ",")
+    .replace(/\s/g, "");
 
   const code = `[${elements.trim()}]`;
   return [code, Order.ORDER_LIST];
@@ -192,6 +192,23 @@ cowRollGenerator.forBlock["variables_set"] = function (block) {
   return code;
 };
 
+cowRollGenerator.forBlock["array_set"] = function (block) {
+  var array = block.getField("ARRAY")?.getText() ?? "i";
+  var index = cowRollGenerator.valueToCode(block, "INDEX", Order.ORDER_NONE);
+  var value = cowRollGenerator.valueToCode(block, "VALUE", Order.ORDER_ATOMIC);
+
+  var code = array + "[" + index + "] = " + value;
+  return code;
+};
+
+cowRollGenerator.forBlock["array_get"] = function (block) {
+  var array = block.getField("ARRAY")?.getText() ?? "i";
+  var index = cowRollGenerator.valueToCode(block, "INDEX", Order.ORDER_NONE);
+
+  var code = array + "[" + index + "]";
+  return code;
+};
+
 cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {
   const functionName = block.getField("NAME")?.getText() ?? "unnamed";
   const args = block.getVars(); // Obtiene los nombres de los parámetros
@@ -201,36 +218,21 @@ cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {
   // Construcción de la lista de parámetros
   const params = args.join(", ");
 
-  const code = `function ${functionName} (${params}) do\n${branch}\nend`;
+  const code = `function ${functionName} (${params}) do\n${branch}\nend\n`;
   return code;
 };
 
-cowRollGenerator.forBlock["custom_procedures_callnoreturn"] = function (block) {
-  const functionName = block.getFieldValue("FUNCTION_NAME");
-  const workspace = block.workspace;
-  const functionBlock = workspace
-    .getAllBlocks()
-    .find(
-      (block) =>
-        block.type === "procedures_defnoreturn" &&
-        block.getFieldValue("NAME") === functionName
+cowRollGenerator.forBlock["procedures_callnoreturn_as_return"] = function (
+  block
+) {
+  const funcName = block.getFieldValue("NAME");
+  const args = [];
+  for (let i = 0; i < block.arguments_.length; i++) {
+    args.push(
+      cowRollGenerator.valueToCode(block, "ARG" + i, Order.ORDER_NONE) || ""
     );
-
-  const paramValues = [];
-  if (functionBlock) {
-    // Use the getVars() method to get the parameter names
-    const paramNames = functionBlock.getVars();
-    for (let i = 0; i < paramNames.length; i++) {
-      const paramValue = cowRollGenerator.valueToCode(
-        block,
-        paramNames[i],
-        Order.ORDER_ATOMIC
-      );
-      paramValues.push(paramValue || "null");
-    }
   }
-
-  const code = `${functionName}(${paramValues.join(", ")});\n`;
+  const code = funcName + "(" + args.join(", ") + ")";
   return [code, Order.ORDER_NONE];
 };
 
@@ -289,11 +291,7 @@ cowRollGenerator.forBlock["custom_if"] = function (block) {
       cowRollGenerator.valueToCode(block, "IF" + n, order) || "false";
     branchCode = cowRollGenerator.statementToCode(block, "DO" + n);
     code +=
-      (n === 0 ? "if " : "elseif ") +
-      conditionCode +
-      " then\n" +
-      branchCode +
-      "\n";
+      (n === 0 ? "if " : "elseif ") + conditionCode + " then\n" + branchCode;
     n++;
   } while (block.getInput("IF" + n));
 
@@ -302,8 +300,8 @@ cowRollGenerator.forBlock["custom_if"] = function (block) {
     code += "else\n" + branchCode;
   }
 
-  code += "end";
-  return code + "\n";
+  code += "\nend";
+  return code;
 };
 
 function getOrderForOperator(operator: string) {
