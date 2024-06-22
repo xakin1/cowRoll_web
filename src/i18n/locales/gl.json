@@ -69,6 +69,7 @@
       "INLINE_INPUTS": "Entradas en liña",
       "HORIZONTAL_PARAMETERS": "Parámetros horizontais",
       "VERTICAL_PARAMETERS": "Parámetros verticais",
+      "PROCEDURES_CREATE_DO": "Crear \"%1\"",
       "DELETE_BLOCK": "Eliminar bloque",
       "DELETE_X_BLOCKS": "Eliminar %1 bloques",
       "DISABLE_BLOCK": "Deshabilitar bloque",
@@ -183,7 +184,16 @@
         "RETURN_TOOLTIP": "Devolve o valor especificado"
       }
     },
-    "GENERATE_CODE": "Xerar código"
+    "Backpack": {
+      "EMPTY_BACKPACK": "Vaciar",
+      "REMOVE_FROM_BACKPACK": "Eliminar da mochila",
+      "COPY_TO_BACKPACK": "Copiar na mochila",
+      "COPY_ALL_TO_BACKPACK": "Copiar todos os bloques na mochila",
+      "PASTE_ALL_FROM_BACKPACK": "Pegar todos os bloques da mochila"
+    },
+    "GENERATE_CODE": "Xerar código",
+    "COPY": "Copiar",
+    "PASTE": "Pegar"
   },
   "Errors": {
     "EMPTY_FOLDER_NAME": "O nome do cartafol non pode estar vavaleirocío",

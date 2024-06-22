@@ -172,3 +172,21 @@ Blockly.Msg.PROCEDURES_CALL_BEFORE_PARAMS = i18n.t(
   "Blocky.Functions.PROCEDURES_BEFORE_PARAMS"
 );
 Blockly.Msg.VARIABLES_SET = i18n.t("Blocky.Variables.SET");
+
+Blockly.Msg.EMPTY_BACKPACK = i18n.t("Blocky.Backpack.EMPTY_BACKPACK");
+Blockly.Msg.REMOVE_FROM_BACKPACK = i18n.t(
+  "Blocky.Backpack.REMOVE_FROM_BACKPACK"
+);
+Blockly.Msg.COPY_TO_BACKPACK = i18n.t("Blocky.Backpack.COPY_TO_BACKPACK");
+Blockly.Msg.COPY_ALL_TO_BACKPACK = i18n.t(
+  "Blocky.Backpack.COPY_ALL_TO_BACKPACK"
+);
+Blockly.Msg.PASTE_ALL_FROM_BACKPACK = i18n.t(
+  "Blocky.Backpack.PASTE_ALL_FROM_BACKPACK"
+);
+
+Blockly.Msg["CROSS_TAB_COPY"] = i18n.t("Blocky.COPY");
+Blockly.Msg["CROSS_TAB_PASTE"] = i18n.t("Blocky.PASTE");
+Blockly.Msg.PROCEDURES_CREATE_DO = i18n.t(
+  "Blocky.ContextualMenu.PROCEDURES_CREATE_DO"
+);

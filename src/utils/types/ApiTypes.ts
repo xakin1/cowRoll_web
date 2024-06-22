@@ -3,6 +3,7 @@ export interface FileProps {
   directoryId: Id;
   content?: string;
   contentSchema?: string;
+  backpackSchema?: string[];
   id: Id;
   type: "File";
 }

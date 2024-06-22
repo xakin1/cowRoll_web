@@ -68,6 +68,7 @@
       "REMOVE_COMMENT": "Eliminar comentario",
       "EXTERNAL_INPUTS": "Entradas externas",
       "INLINE_INPUTS": "Entradas en linea",
+      "PROCEDURES_CREATE_DO": "Crear \"%1\"",
       "HORIZONTAL_PARAMETERS": "Parámetros horizontales",
       "VERTICAL_PARAMETERS": "Parámetros verticales",
       "DELETE_BLOCK": "Eliminar bloque",
@@ -183,7 +184,17 @@
         "RETURN_TOOLTIP": "Devuelve el valor especificado"
       }
     },
-    "GENERATE_CODE": "Generar código"
+
+    "Backpack": {
+      "EMPTY_BACKPACK": "Vaciar",
+      "REMOVE_FROM_BACKPACK": "Eliminar de la mochila",
+      "COPY_TO_BACKPACK": "Copiar en la mochila",
+      "COPY_ALL_TO_BACKPACK": "Copiar todos los bloques en la mochila",
+      "PASTE_ALL_FROM_BACKPACK": "Pegar todos los bloques de la mochila"
+    },
+    "GENERATE_CODE": "Generar código",
+    "COPY": "Copiar",
+    "PASTE": "Pegar"
   },
   "Errors": {
     "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",

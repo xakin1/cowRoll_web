@@ -1,3 +1,5 @@
+import { CrossTabCopyPaste } from "@blockly/plugin-cross-tab-copy-paste";
+import { Backpack } from "@blockly/workspace-backpack";
 import * as Blockly from "blockly";
 import "blockly/blocks";
 import "blockly/dart";
@@ -22,7 +24,14 @@ import "./index";
 import { darkTheme } from "./themes/darkTheme";
 
 const BlocklyEditor = () => {
-  const proceduresFlyoutCallback = function (workspace) {
+  const dispatch = useDispatch();
+  const file = useAppSelector(
+    (state: RootState) => state.directorySystem.selectedFile
+  );
+  const blocklyDiv = useRef(null);
+  const backpackContentRef = useRef<string[]>([]); // useRef to store backpack contents
+
+  const proceduresFlyoutCallback = function (workspace: Blockly.Workspace) {
     const xmlList = [];
 
     // Agregar bloque de definición de procedimiento sin retorno
@@ -59,13 +68,8 @@ const BlocklyEditor = () => {
     const themeToApply = userPreferredTheme || systemPreference;
     return themeToApply === "dark" ? darkTheme : Blockly.Themes.Classic;
   };
-
-  const dispatch = useDispatch();
-  const file = useAppSelector(
-    (state: RootState) => state.directorySystem.selectedFile
-  );
   const [blocklyTheme, setBlocklyTheme] = useState(getInitialTheme); // Default theme
-  const blocklyDiv = useRef(null);
+
   const toolboxXml = `
     <xml id="toolbox" style="display: none">
       <category name="${i18n.t("Blocky.Logic.MODULE_NAME")}" colour="#5C81A6">
@@ -108,21 +112,6 @@ const BlocklyEditor = () => {
   `;
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "s") {
-        event.preventDefault();
-        generateCode();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  });
-
-  useEffect(() => {
     if (!blocklyDiv.current) return;
 
     const workspace = Blockly.inject(blocklyDiv.current, {
@@ -140,20 +129,29 @@ const BlocklyEditor = () => {
       horizontalLayout: false,
       sounds: true,
     });
+    const options = {
+      contextMenu: true,
+      shortcut: true,
+    };
 
+    if (!Blockly.ContextMenuRegistry.registry.getItem("blockCopyToStorage")) {
+      const plugin = new CrossTabCopyPaste();
+      plugin.init(options);
+    }
+
+    const backpack = new Backpack(workspace);
+    backpack.init();
     workspace.registerButtonCallback("CREATE_VARIABLE", function (button) {
       Blockly.Variables.createVariableButtonHandler(
         button.getTargetWorkspace()
       );
     });
 
-    // Register the custom procedure category callback
     workspace.registerToolboxCategoryCallback(
       "PROCEDURE_CUSTOM",
       proceduresFlyoutCallback
     );
 
-    // Define a custom flyoutCallback for the variables category
     workspace.registerToolboxCategoryCallback(
       "VARIABLE_CUSTOM",
       function (workspace) {
@@ -182,6 +180,7 @@ const BlocklyEditor = () => {
     );
 
     const handleThemeChange = (event: Event) => {
+      backpackContentRef.current = backpack.getContents(); // Store backpack contents in ref
       Blockly.svgResize(workspace);
 
       const customEvent = event as CustomEvent<{ theme: string }>;
@@ -191,6 +190,7 @@ const BlocklyEditor = () => {
         newTheme === "dark" ? darkTheme : Blockly.Themes.Classic
       );
     };
+    backpack.setContents(backpackContentRef.current); // Restore backpack contents
 
     document.addEventListener("themeChanged", handleThemeChange);
 
@@ -209,11 +209,32 @@ const BlocklyEditor = () => {
       const xml = Blockly.utils.xml.textToDom(file.contentSchema);
       Blockly.Xml.domToWorkspace(xml, workspace);
     }
+    console.log(file.backpackSchema);
+
+    if (file && file.backpackSchema) {
+      backpack.setContents(file.backpackSchema);
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const workspace = Blockly.getMainWorkspace();
+      if (event.ctrlKey && event.key === "s") {
+        backpackContentRef.current = backpack.getContents();
+        event.preventDefault();
+        generateCode();
+      } else if (event.ctrlKey && event.key === "c") {
+        event.preventDefault();
+        Blockly.clipboard.copy(workspace);
+      } else if (event.ctrlKey && event.key === "v") {
+        event.preventDefault();
+        Blockly.clipboard.paste(workspace);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       workspace.dispose();
       window.removeEventListener("resize", handleResize);
       resizeObserver.disconnect();
+      document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("themeChanged", handleThemeChange);
     };
   }, [blocklyTheme, toolboxXml, file]);
@@ -226,11 +247,14 @@ const BlocklyEditor = () => {
     if (file) {
       const dom = Blockly.Xml.workspaceToDom(workspace);
       const xmlText = Blockly.Xml.domToText(dom);
+      console.log(String(backpackContentRef.current));
       const updatedFile = {
         ...file,
         content: code,
         contentSchema: xmlText,
+        backpackSchema: backpackContentRef.current,
       };
+      console.log(updatedFile);
       dispatch(updateSelectedFile(updatedFile));
       saveContent(updatedFile);
     }
