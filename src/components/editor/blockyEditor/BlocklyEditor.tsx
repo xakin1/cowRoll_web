@@ -247,14 +247,12 @@ const BlocklyEditor = () => {
     if (file) {
       const dom = Blockly.Xml.workspaceToDom(workspace);
       const xmlText = Blockly.Xml.domToText(dom);
-      console.log(String(backpackContentRef.current));
       const updatedFile = {
         ...file,
         content: code,
         contentSchema: xmlText,
         backpackSchema: backpackContentRef.current,
       };
-      console.log(updatedFile);
       dispatch(updateSelectedFile(updatedFile));
       saveContent(updatedFile);
     }
