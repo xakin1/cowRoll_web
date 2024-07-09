@@ -1,3 +1,5 @@
+import type { DirectorySystemTypes, Id } from "./ApiTypes";
+
 // types.ts
 export interface Token {
   type: string;
@@ -22,11 +24,13 @@ export type ModalConfig = {
   showInput?: boolean;
 };
 
+export type Items = { id: Id; name: string; type: DirectorySystemTypes };
+
 export type ContextMenuProps = {
   x: number;
   y: number;
   visible?: boolean;
-  items: { id: number; name: string; type: "File" | "Directory" }[];
+  items: Items[];
   onClose: () => void;
   onAddNode: () => void;
   handleOpenModal: (config: ModalConfig) => void;

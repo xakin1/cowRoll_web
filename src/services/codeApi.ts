@@ -2,6 +2,7 @@ import { cookiesEnabled } from "../utils/functions/utils";
 import type {
   CreateFileProps,
   DirectoryProps,
+  EditFileProps,
   FetchError,
   FetchInsertContent,
   FetchRun,
@@ -33,7 +34,7 @@ export async function getFiles(): Promise<
 }
 
 export async function editFile(
-  file: FileProps
+  file: EditFileProps
 ): Promise<FetchSuccess<FileProps> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/file/edit", {
     method: "POST",
@@ -68,7 +69,7 @@ export async function createFile(
 }
 
 export async function saveFile(
-  file: FileProps
+  file: CreateFileProps
 ): Promise<FetchInsertContent<string>> {
   try {
     const response = await fetch(apiUrl + "api/file/save", {
@@ -218,7 +219,7 @@ export async function executeCode(code: string): Promise<FetchRun<any>> {
 }
 
 export async function deleteDirectory(
-  directoryId: number
+  directoryId: Id
 ): Promise<FetchSuccess<string> | Response | undefined> {
   const response = await fetch(apiUrl + "api/directory/delete/" + directoryId, {
     method: "DELETE",

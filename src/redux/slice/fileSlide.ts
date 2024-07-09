@@ -1,5 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { CodeProps, DirectoryProps } from "../../utils/types/ApiTypes";
+import {
+  FileSystemENum,
+  type CodeProps,
+  type DirectoryProps,
+} from "../../utils/types/ApiTypes";
 
 interface DirectorySystem {
   directorySystem: DirectoryProps;
@@ -8,9 +12,9 @@ interface DirectorySystem {
 const initialState: DirectorySystem = {
   directorySystem: {
     name: "Root",
-    type: "Directory",
+    type: FileSystemENum.Directory,
     children: [],
-    id: -1,
+    id: "",
   },
   selectedFile: undefined,
 };

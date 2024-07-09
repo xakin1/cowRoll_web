@@ -1,15 +1,14 @@
 ---
 import Layout from '../../layouts/Layout.astro'
-import LoadData from '../rol'
+import LoadData from '../rol/rol'
 ---
 <Layout title="CowRoll">
   <html>
-<head>
-  <title>Página para Rol</title>
-</head>
-<body>
-  <LoadData client:only="react"/>
-</body>
-</html>
-
+  <head>
+    <title>Página para Rol</title>
+  </head>
+  <body>
+    <LoadData client:only="react"/>
+  </body>
+  </html>
 </Layout>

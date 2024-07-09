@@ -31,38 +31,12 @@ const { currentLocale } = Astro;
       document.body.setAttribute('data-theme', themeToApply);
       localStorage.setItem('theme', themeToApply);
       document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeToApply } }));
-      updateThemeIcon(themeToApply);
     }
 
-    function updateThemeIcon(theme: string) {
-      const moonIcon = document.getElementById('moon-icon');
-      const sunIcon = document.getElementById('sun-icon');
-      if (moonIcon && sunIcon) {
-        if (theme === 'dark') {
-          moonIcon.style.display = 'block';
-          sunIcon.style.display = 'none';
-        } else {
-          moonIcon.style.display = 'none';
-          sunIcon.style.display = 'block';
-        }
-      }
-    }
 
     document.addEventListener('DOMContentLoaded', function() {
       loadTheme();
-      const themeToggleButton = document.getElementById('themeToggle');
-      if (themeToggleButton) {
-        themeToggleButton.onclick = function() {
-          const currentTheme = document.body.getAttribute('data-theme');
-          const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-          document.body.setAttribute('data-theme', newTheme);
-          localStorage.setItem('theme', newTheme);
-          document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
-          updateThemeIcon(newTheme);
-        };
-      } else {
-        console.error('Theme toggle button not found!');
-      }
+
     });
   </script>
 </body>

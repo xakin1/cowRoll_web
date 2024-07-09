@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import Sidebar from "../../../src/components/editor/sideBar/SideBar";
+import Sidebar from "../../../src/components/rol/editor/sideBar/SideBar";
 
 describe("Sidebar component", () => {
   it("renders correctly with initial open state", () => {

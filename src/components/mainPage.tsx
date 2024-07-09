@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { createFile, getFiles } from "../services/codeApi";
-import type { CreateRolProps, RolProps } from "../utils/types/ApiTypes";
+import {
+  FileSystemENum,
+  type CreateRolProps,
+  type RolProps,
+} from "../utils/types/ApiTypes";
 import PhotoCard from "./photoCard/PhotoCard";
 
 type MainPageProps = {
@@ -31,7 +35,7 @@ const onAddClick = async (
   event: React.MouseEvent<HTMLDivElement, MouseEvent>
 ): Promise<void> => {
   const file: CreateRolProps = {
-    type: "Rol",
+    type: FileSystemENum.Rol,
     name: generateRandomName(),
     description: generateRandomText(20),
     image: generateRandomImage(200, 250),
