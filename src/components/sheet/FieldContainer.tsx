@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useDrop } from "react-dnd";
 
 import { CharacterSheetContext } from "./CharacterSheetContext";
@@ -7,7 +7,7 @@ import "./styles.css";
 import type { Field, FieldWithoutId } from "./types";
 
 const FieldContainer: React.FC = () => {
-  const { fields, addField, updateFieldPosition } = useContext(
+  const { fields, addField, saveSheet, updateFieldPosition } = useContext(
     CharacterSheetContext
   )!;
 
@@ -15,7 +15,6 @@ const FieldContainer: React.FC = () => {
     () => ({
       accept: ["field", "menuItem"],
       drop: (item: Field | FieldWithoutId, monitor) => {
-        //diferencia entre la posición actual del cursor del ratón y la posición inicial del cursor cuando comenzó a arrastrarse el elemento.
         const delta = monitor.getDifferenceFromInitialOffset();
         const containerRect = document
           .querySelector(".containerDrop")
@@ -31,7 +30,7 @@ const FieldContainer: React.FC = () => {
         };
 
         if (monitor.getItemType() === "menuItem") {
-          addField({ ...item, position }, position);
+          addField(item, position, item.size);
         } else {
           updateFieldPosition((item as Field).id, position);
         }
@@ -40,12 +39,28 @@ const FieldContainer: React.FC = () => {
     [addField, updateFieldPosition]
   );
 
+  useEffect(() => {
+    const handleSave = async (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        await saveSheet();
+      }
+    };
+
+    window.addEventListener("keydown", handleSave);
+    return () => window.removeEventListener("keydown", handleSave);
+  }, [saveSheet]);
+
   return (
-    <div ref={drop} className="containerDrop">
-      {fields.map((field) => (
-        <DraggableField key={field.id} {...field} />
-      ))}
-    </div>
+    <>
+      <button onClick={saveSheet}>Guardar</button>
+
+      <div ref={drop} className="containerDrop">
+        {fields.map((field) => (
+          <DraggableField key={field.id} {...field} />
+        ))}
+      </div>
+    </>
   );
 };
 

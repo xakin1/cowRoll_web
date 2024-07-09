@@ -1,12 +1,14 @@
 import React, { createContext, useState, type ReactNode } from "react";
+import { saveSheet } from "../../services/codeApi";
 import type { Field, FieldWithoutId, Position, Size } from "./types";
 
 interface CharacterSheetContextProps {
   fields: Field[];
-  addField: (field: FieldWithoutId, position: Position) => void;
+  addField: (field: FieldWithoutId, position: Position, size: Size) => void;
   updateFieldPosition: (id: number, position: Position) => void;
   updateFieldSize: (id: number, size: Size) => void;
   removeField: (id: number) => void;
+  saveSheet: (fields: Field[]) => Promise<void>;
 }
 
 export const CharacterSheetContext = createContext<
@@ -22,15 +24,11 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
 }) => {
   const [fields, setFields] = useState<Field[]>([]);
 
-  const addField = (field: FieldWithoutId, position: Position) => {
-    setFields([
-      ...fields,
-      { ...field, id: Date.now(), position, size: { width: 100, height: 100 } },
-    ]);
+  const addField = (field: FieldWithoutId, position: Position, size: Size) => {
+    setFields([...fields, { ...field, id: Date.now(), position, size }]);
   };
 
   const updateFieldPosition = (id: number, position: Position) => {
-    console.log("a");
     setFields((prevFields) =>
       prevFields.map((field) =>
         field.id === id ? { ...field, position } : field
@@ -56,6 +54,7 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
         updateFieldPosition,
         updateFieldSize,
         removeField,
+        saveSheet,
       }}
     >
       {children}

@@ -85,7 +85,11 @@ const RenderField: React.FC<RenderFieldProps> = ({
         );
       case "inputCheck":
         return (
-          <div style={{ ...style }} ref={targetRef} className="inputCheck">
+          <div
+            style={{ ...style, width: 100 }}
+            ref={targetRef}
+            className="inputCheck"
+          >
             <input type="checkbox" />
             <input
               type="text"
@@ -171,7 +175,7 @@ const RenderField: React.FC<RenderFieldProps> = ({
           onScaleStart={helper.onScaleStart}
           onScale={(e) => {
             helper.onScale(e);
-            const { target, delta } = e;
+            const { target } = e;
             if (target instanceof HTMLElement) {
               const rect = target.getBoundingClientRect();
               const width = rect.width;
