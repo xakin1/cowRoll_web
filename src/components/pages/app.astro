@@ -1,18 +1,20 @@
 ---
+import Layout from "../../layouts/Layout.astro"
 import ConsoleApp from "../ConsoleApp"
 
 const {currentLocale} = Astro
 ---
-					
-<html lang={currentLocale}>
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<Layout title="CowRoll">		
+  <html lang={currentLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-</head>
-<body>
-  <main>
-    <ConsoleApp client:only="react"/> 
-  </main>
-</body>
-</html>
+  </head>
+  <body>
+    <main>
+      <ConsoleApp client:only="react"/> 
+    </main>
+  </body>
+  </html>
+</Layout>

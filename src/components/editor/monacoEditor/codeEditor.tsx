@@ -5,10 +5,9 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/customHooks";
 import { addCompileErrors, clearErrors } from "../../../redux/slice/codeSlide";
 import { selectFile } from "../../../redux/slice/fileSlide";
 import type { RootState } from "../../../redux/store";
-import { insertContent } from "../../../services/codeApi";
 import {
   isFetchCodeError,
-  type FileProps,
+  type CodeProps,
 } from "../../../utils/types/ApiTypes";
 import type { monaco } from "../../../utils/types/codeEditorType";
 import { setupEditorCommands } from "./languages/cowRoll/config/commands";
@@ -18,7 +17,7 @@ import defineCowRollLanguage from "./languages/cowRoll/language";
 import defineDarkTheme from "./languages/cowRoll/themes/dark";
 import defineLightTheme from "./languages/cowRoll/themes/light";
 
-const CodeEditor = (file: FileProps) => {
+const CodeEditor = (file: CodeProps) => {
   const [theme, setTheme] = useState(
     window.localStorage.getItem("theme") || "dark"
   );
@@ -29,11 +28,11 @@ const CodeEditor = (file: FileProps) => {
 
   const dispatch = useAppDispatch();
 
-  const saveDocumentRef = useRef<(file: FileProps) => void>();
+  const saveDocumentRef = useRef<(file: CodeProps) => void>();
 
   // Define the saveDocument function
-  saveDocumentRef.current = async (file: FileProps) => {
-    const response = await insertContent(file);
+  saveDocumentRef.current = async (file: CodeProps) => {
+    const response = await saveCodeFile(file);
     if (isFetchCodeError(response)) dispatch(addCompileErrors(response));
     else dispatch(clearErrors());
   };

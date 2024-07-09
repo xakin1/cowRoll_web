@@ -35,7 +35,7 @@ describe("test Api", () => {
   // });
   // it("insertContent /insertContent/:id", async () => {
   //   const fileName = "Test";
-  //   const file: insertFileProps = { name: fileName };
+  //   const file: insertCodeProps = { name: fileName };
 
   //   const response = await createFile(file);
   //   if (response && "message" in response) {
@@ -43,7 +43,7 @@ describe("test Api", () => {
   //       id: response.message,
   //       content: "1+1",
   //     };
-  //     const responseContent = await insertContent(content);
+  //     const responseContent = await saveCodeFile(content);
 
   //     expect(responseContent).toBeDefined();
 
@@ -55,8 +55,8 @@ describe("test Api", () => {
   //   }
   // });
 
-  // it("getFiles /file/:id", async () => {
-  //   const response = await getFiles();
+  // it("getCodeFiles /file/:id", async () => {
+  //   const response = await getCodeFiles();
   //   const files = {
   //     children: [
   //       {
@@ -74,7 +74,7 @@ describe("test Api", () => {
   //     if (response.message.children && response.message.children.length > 0) {
   //       const firstChild = response.message.children[0];
   //       const expectedChild = files.children[0];
-  //       // Check if the first child is of type FileProps
+  //       // Check if the first child is of type CodeProps
   //       if ("content" in firstChild && "content" in expectedChild) {
   //         expect(firstChild.content).toBe(expectedChild.content);
   //         expect(firstChild.name).toBe(expectedChild.name);
@@ -88,8 +88,8 @@ describe("test Api", () => {
   //     expect(false).toBe(true);
   //   }
   // });
-  // it("getFilesById /file/:id/:fileId", async () => {
-  //   const expectedFile: insertFileProps = {
+  // it("getCodeFilesById /file/:id/:fileId", async () => {
+  //   const expectedFile: insertCodeProps = {
   //     content: "1+1",
   //     name: "Test",
   //   };
@@ -101,7 +101,7 @@ describe("test Api", () => {
   //     expect(false).toBe(true);
   //   }
   // });
-  // it("getFilesById with a not existing id /file/:id/:fileId", async () => {
+  // it("getCodeFilesById with a not existing id /file/:id/:fileId", async () => {
   //   const fileId = -142;
 
   //   const response = await getFileById(fileId);
@@ -112,7 +112,7 @@ describe("test Api", () => {
   //   }
   // });
   // it("editFile /editFile/:id", async () => {
-  //   const file: editFileProps = {
+  //   const file: editCodeProps = {
   //     content: "1+1",
   //     id: fileId,
   //     name: "Test42",
@@ -127,7 +127,7 @@ describe("test Api", () => {
   //   }
   // });
   // it("editFile with no existing file /editFile/:id", async () => {
-  //   const file: editFileProps = {
+  //   const file: editCodeProps = {
   //     content: "1+1",
   //     id: -142,
   //     name: "Test",
@@ -142,7 +142,7 @@ describe("test Api", () => {
   // });
   // it("deleteFile /deleteFile", async () => {
   //   const fileName = "Test2";
-  //   const file: insertFileProps = { name: fileName };
+  //   const file: insertCodeProps = { name: fileName };
   //   const responseCreate = await createFile(file);
 
   //   if (responseCreate && "message" in responseCreate) {
@@ -190,7 +190,7 @@ describe("test Api", () => {
   //   const response = await createDirectory(directory);
 
   //   // Retrieve the files/directories
-  //   const files = await getFiles();
+  //   const files = await getCodeFiles();
 
   //   if (files?.message.children && "message" in files) {
   //     // Find the newly created directory in the list
@@ -225,7 +225,7 @@ describe("test Api", () => {
   //     const subdirectoryResponse = await createDirectory(subdirectory);
 
   //     // Retrieve the files/directories
-  //     const files = await getFiles();
+  //     const files = await getCodeFiles();
   //     const code2 = files?.message.children;
   //     if (code2 && code2.length > 1 && "children" in code2[1]) {
   //       const directoryTest2 = code2?.[1]?.children?.find(
@@ -253,12 +253,12 @@ describe("test Api", () => {
   // it("createFile/createFile/:id", async () => {
   //   const usrId: Id = 1;
   //   const fileName = "Code2";
-  //   const file: insertFileProps = { name: fileName };
+  //   const file: insertCodeProps = { name: fileName };
 
   //   const response = await createFile(file);
 
   //   // Retrieve the files/directories
-  //   const files = await getFiles();
+  //   const files = await getCodeFiles();
 
   //   if (files?.message.children && "message" in files) {
   //     // Find the newly created directory in the list
@@ -280,7 +280,7 @@ describe("test Api", () => {
   //   }
   // });
   // it("insertContent with an emptyName /createFile/:id", async () => {
-  //   const file: insertFileProps = { name: "" };
+  //   const file: insertCodeProps = { name: "" };
   //   const response = await createFile(file);
 
   //   // Check if the response is undefined

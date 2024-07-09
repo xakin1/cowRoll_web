@@ -1,0 +1,18 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { MainPage } from "../mainPage";
+const {currentLocale} = Astro
+---
+<Layout title="CowRoll">
+<html lang={currentLocale}>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+  </head>
+  <body>
+    <MainPage client:only="react" />
+  </body>
+</html>
+
+</Layout>

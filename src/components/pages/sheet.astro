@@ -1,10 +1,20 @@
 ---
+<<<<<<< Updated upstream
+=======
+import Layout from "../../layouts/Layout.astro"
+>>>>>>> Stashed changes
 import SheetCreation from "../sheet/Sheet"
 
 const {currentLocale} = Astro
 ---
+<<<<<<< Updated upstream
 					
 <html lang={currentLocale}>
+=======
+			
+<Layout title="CowRoll">
+  <html lang={currentLocale}>
+>>>>>>> Stashed changes
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,4 +25,9 @@ const {currentLocale} = Astro
     <SheetCreation client:only="react"/> 
   </main>
 </body>
+<<<<<<< Updated upstream
 </html>
+=======
+</html>
+</Layout>
+>>>>>>> Stashed changes

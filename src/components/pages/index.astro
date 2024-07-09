@@ -1,19 +1,21 @@
 ---
+import LayoutNoHeader from '../../layouts/LayoutNoHeader.astro';
 import Login from './login.astro';
 
 const {currentLocale} = Astro
 
 
 ---
-					
-<html lang={currentLocale}>
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-  <main>
-    <Login/>
-  </main>
-</body>
-</html>
+<LayoutNoHeader title="CowRoll">
+  <html lang={currentLocale}>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+      <main>
+        <Login/>
+      </main>
+    </body>
+  </html>
+</LayoutNoHeader>				

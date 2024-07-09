@@ -44,6 +44,9 @@ body {
   display: none;
 }
 
+.header {
+  background-color: lightgray;
+}
 .theme-toggle-button {
   background: none;
   border: none;

@@ -17,7 +17,7 @@ import {
   updateSelectedFileContent,
 } from "../../../redux/slice/fileSlide";
 import type { RootState } from "../../../redux/store";
-import { saveContent } from "../../../services/codeApi";
+import { editFile } from "../../../services/codeApi";
 import "./BlocklyEditor.css";
 import { cowRollGenerator } from "./generators/cowRoll";
 import "./index";
@@ -254,7 +254,7 @@ const BlocklyEditor = () => {
         backpackSchema: backpackContentRef.current,
       };
       dispatch(updateSelectedFile(updatedFile));
-      saveContent(updatedFile);
+      editFile(updatedFile);
     }
   };
 

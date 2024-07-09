@@ -1,9 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { DirectoryProps, FileProps } from "../../utils/types/ApiTypes";
+import type { CodeProps, DirectoryProps } from "../../utils/types/ApiTypes";
 
 interface DirectorySystem {
   directorySystem: DirectoryProps;
-  selectedFile?: FileProps;
+  selectedFile?: CodeProps;
 }
 const initialState: DirectorySystem = {
   directorySystem: {
@@ -25,7 +25,7 @@ export const directorySystemSlice = createSlice({
       }
     },
 
-    selectFile: (state, action: PayloadAction<FileProps>) => {
+    selectFile: (state, action: PayloadAction<CodeProps>) => {
       if (action.payload) {
         state.selectedFile = action.payload;
       }
@@ -35,7 +35,7 @@ export const directorySystemSlice = createSlice({
         state.selectedFile.content = action.payload;
       }
     },
-    updateSelectedFile: (state, action: PayloadAction<FileProps>) => {
+    updateSelectedFile: (state, action: PayloadAction<CodeProps>) => {
       if (state.selectedFile) {
         state.selectedFile = action.payload;
       }

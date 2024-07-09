@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addFile, selectFile } from "../../../../redux/slice/fileSlide";
 import type {
+  CodeProps,
   DirectoryProps,
-  FileProps,
   Items,
   NodeTree,
 } from "../../../../utils/types/ApiTypes";
@@ -15,7 +15,7 @@ import type { RootState } from "../../../../redux/store";
 import {
   editDirectory,
   editFile,
-  getFiles,
+  getCodeFiles,
 } from "../../../../services/codeApi";
 import type {
   ContextMenuProps,
@@ -66,7 +66,7 @@ function FolderTree() {
 
   function handleItemClick(
     event: React.MouseEvent,
-    item: FileProps | DirectoryProps
+    item: CodeProps | DirectoryProps
   ) {
     event.preventDefault();
 
@@ -107,7 +107,7 @@ function FolderTree() {
 
   const addNode = async () => {
     setSelectedItems([]);
-    const docs = await getFiles();
+    const docs = await getCodeFiles();
     if (docs?.message) dispatch(addFile(docs?.message));
   };
 
