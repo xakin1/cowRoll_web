@@ -13,7 +13,27 @@ const initialState: DirectorySystem = {
   directorySystem: {
     name: "Root",
     type: FileSystemENum.Directory,
-    children: [],
+    children: [
+      {
+        name: "Roles",
+        type: FileSystemENum.Directory,
+        children: [
+          {
+            name: "Sheets",
+            type: FileSystemENum.Directory,
+            children: [],
+            id: "",
+          },
+          {
+            name: "Codes",
+            type: FileSystemENum.Directory,
+            children: [],
+            id: "",
+          },
+        ],
+        id: "",
+      },
+    ],
     id: "",
   },
   selectedFile: undefined,
@@ -23,7 +43,7 @@ export const directorySystemSlice = createSlice({
   name: "directorySystem",
   initialState,
   reducers: {
-    addFile: (state, action: PayloadAction<DirectoryProps>) => {
+    setDirectorySystem: (state, action: PayloadAction<DirectoryProps>) => {
       if (action.payload) {
         state.directorySystem = action.payload;
       }
@@ -48,9 +68,9 @@ export const directorySystemSlice = createSlice({
 });
 
 export const {
-  addFile,
   selectFile,
   updateSelectedFileContent,
   updateSelectedFile,
+  setDirectorySystem,
 } = directorySystemSlice.actions;
 export default directorySystemSlice.reducer;

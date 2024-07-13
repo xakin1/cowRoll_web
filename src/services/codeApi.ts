@@ -18,9 +18,7 @@ const apiUrl =
     ? import.meta.env.VITE_API_URL
     : import.meta.env.PUBLIC_API_URL;
 
-export async function getFiles(): Promise<
-  FetchSuccess<DirectoryProps> | undefined
-> {
+export async function getFiles(): Promise<FetchSuccess<DirectoryProps>> {
   const response = await fetch(apiUrl + "api/file/", {
     method: "GET",
     headers: getHeaders(),
@@ -30,6 +28,7 @@ export async function getFiles(): Promise<
     return await response.json();
   } else {
     console.error("Failed to get the documents.");
+    throw new Error("Failed to fetch the files due to an error.");
   }
 }
 

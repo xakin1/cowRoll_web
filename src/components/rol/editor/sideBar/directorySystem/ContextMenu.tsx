@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { toast, type ToastOptions } from "react-toastify";
+import { toast } from "react-toastify";
 import { getI18N } from "../../../../../i18n";
 import { getLang } from "../../../../../i18n/utils";
 import {
@@ -17,6 +17,7 @@ import {
   type insertDirectoryProps,
 } from "../../../../../utils/types/ApiTypes";
 import type { ContextMenuProps } from "../../../../../utils/types/types";
+import { toastStyle } from "../../../../App";
 import "./contextMenu.css";
 
 const i18n = getI18N({ currentLocale: getLang() });
@@ -45,7 +46,7 @@ export function ContextMenu({
       if (response && "message" in response) {
         onAddNode();
       } else {
-        toast.error(i18n.t("Errors." + response?.error), tostStyle);
+        toast.error(i18n.t("Errors." + response?.error), toastStyle);
       }
     }
   };
@@ -61,7 +62,7 @@ export function ContextMenu({
       if (response && "message" in response) {
         onAddNode();
       } else {
-        toast.error(i18n.t("Errors." + response?.error), tostStyle);
+        toast.error(i18n.t("Errors." + response?.error), toastStyle);
       }
     }
   };
@@ -87,7 +88,7 @@ export function ContextMenu({
       if (response && "message" in response) {
         onAddNode();
       } else {
-        toast.error(i18n.t("Errors." + response?.error), tostStyle);
+        toast.error(i18n.t("Errors." + response?.error), toastStyle);
       }
     }
   };
@@ -174,10 +175,6 @@ export function ContextMenu({
       </li>
     </ul>
   );
-
-  const tostStyle: ToastOptions<unknown> = {
-    position: "bottom-right",
-  };
 
   const portalRoot = document.getElementById("portal-root");
   if (!portalRoot) return null;

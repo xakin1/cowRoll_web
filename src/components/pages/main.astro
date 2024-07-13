@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { MainPage } from "../mainPage";
+import AppRol from "../App";
 const {currentLocale} = Astro
 ---
 <Layout title="CowRoll">
@@ -11,7 +11,7 @@ const {currentLocale} = Astro
     <title>Main Page</title>
   </head>
   <body>
-    <MainPage client:only="react" />
+    <AppRol client:only="react" />
   </body>
 </html>
 

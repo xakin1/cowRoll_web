@@ -9,12 +9,13 @@ export enum FileSystemENum {
 
 export type FileCodeType = FileSystemENum.Code;
 export type FileSheetType = FileSystemENum.Sheet;
-export type FileRolType = FileSystemENum.Rol;
+export type DirectoryRolType = FileSystemENum.Rol;
 export type DirectoryType = FileSystemENum.Directory;
 
-export type FileTypes = FileCodeType | FileSheetType | FileRolType;
+export type FileTypes = FileCodeType | FileSheetType;
+export type DirectoryTypes = DirectoryRolType | DirectoryType;
 
-export type DirectorySystemTypes = FileTypes | DirectoryType;
+export type DirectorySystemTypes = FileTypes | DirectoryTypes;
 
 export type DirectorySystemProps = FileProps | DirectoryProps;
 export type DirectorySystem = Array<FileProps | DirectoryProps>;
@@ -30,12 +31,6 @@ export interface CodeProps extends FileProps {
   contentSchema: string;
   backpackSchema: string[];
   type: FileCodeType;
-}
-
-export interface RolProps extends FileProps {
-  description: string;
-  image: string;
-  type: FileRolType;
 }
 
 export interface SheetProps extends FileProps {
@@ -56,12 +51,6 @@ export interface EditCodeProps extends EditFileProps {
   type: FileCodeType;
 }
 
-export interface EditRolProps extends EditFileProps {
-  description?: string;
-  image?: string;
-  type: FileRolType;
-}
-
 export interface EditSheetProps extends EditFileProps {
   type: FileSheetType;
 }
@@ -79,12 +68,6 @@ export interface CreateCodeProps extends CreateFileProps {
   type: FileCodeType;
 }
 
-export interface CreateRolProps extends CreateFileProps {
-  description?: string;
-  image?: string;
-  type: FileRolType;
-}
-
 export interface CreateSheetProps extends CreateFileProps {
   type: FileSheetType;
 }
@@ -97,14 +80,14 @@ export interface insertContentProps {
 export interface insertDirectoryProps {
   name: string;
   parentId?: Id;
-  type: DirectoryType;
+  type: DirectoryTypes;
 }
 
 export interface editDirectoryProps {
   name?: string;
   parentId?: Id;
   children?: DirectorySystem;
-  type?: DirectoryType;
+  type?: DirectoryTypes;
   id: Id;
 }
 
@@ -114,7 +97,25 @@ export interface DirectoryProps {
   parentId?: Id;
   id: Id;
   children: DirectorySystem;
-  type: DirectoryType;
+  type: DirectoryTypes;
+}
+
+export interface RolProps extends DirectoryProps {
+  description: string;
+  image: string;
+  type: DirectoryRolType;
+}
+
+export interface CreateRolProps extends insertDirectoryProps {
+  description?: string;
+  image?: string;
+  type: DirectoryRolType;
+}
+
+export interface EditRolProps extends editDirectoryProps {
+  description?: string;
+  image?: string;
+  type: DirectoryRolType;
 }
 
 export type FetchCodeError = {

@@ -1,37 +1,34 @@
 import { useEffect, useState } from "react";
 
-import { useDispatch } from "react-redux";
-import { addFile } from "../../../../redux/slice/fileSlide";
+import { useDispatch, useSelector } from "react-redux";
+import { setDirectorySystem } from "../../../../redux/slice/fileSlide";
+import type { RootState } from "../../../../redux/store";
 import { getFiles } from "../../../../services/codeApi";
-import { FileSystemENum } from "../../../../utils/types/ApiTypes";
 import FolderTree from "./directorySystem/FoltderTree";
 import "./sideBar.css";
 
 function Sidebar() {
   const dispatch = useDispatch();
-
+  const directorySystem = useSelector(
+    (state: RootState) => state.directorySystem.directorySystem
+  );
+  console.log(directorySystem);
   useEffect(() => {
+    console.log(directorySystem);
     const fetchDocuments = async () => {
-      const docs = await getFiles();
-      //TODO: tengo que coger el estado inicial del redux mejor
-      dispatch(
-        addFile(
-          docs?.message || {
-            name: "Root",
-            type: FileSystemENum.Directory,
-            children: [],
-            id: "",
-          }
-        )
-      );
+      if (directorySystem.id === "") {
+        // Chequear si ya tienes los datos en el estado
+        const docs = await getFiles();
+        dispatch(setDirectorySystem(docs.message));
+      }
     };
     fetchDocuments();
-  }, []);
+  }, [directorySystem, dispatch]);
 
   const [isOpen, setIsOpen] = useState(true);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen); // Toggles the isOpen state between true and false
+    setIsOpen(!isOpen);
   };
 
   const state_nav = isOpen ? "open" : "closed";

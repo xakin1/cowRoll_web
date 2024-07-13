@@ -40,10 +40,6 @@ body {
   overflow: hidden;
 }
 
-.icon {
-  display: none;
-}
-
 .header {
   background-color: lightgray;
 }

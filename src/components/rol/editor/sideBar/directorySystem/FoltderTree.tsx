@@ -1,7 +1,10 @@
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addFile, selectFile } from "../../../../../redux/slice/fileSlide";
+import {
+  selectFile,
+  setDirectorySystem,
+} from "../../../../../redux/slice/fileSlide";
 import {
   FileSystemENum,
   isCodeFile,
@@ -110,7 +113,7 @@ function FolderTree() {
   const addNode = async () => {
     setSelectedItems([]);
     const docs = await getFiles();
-    if (docs?.message) dispatch(addFile(docs?.message));
+    if (docs?.message) dispatch(setDirectorySystem(docs?.message));
   };
 
   const handleDragStart = (
@@ -178,6 +181,7 @@ function FolderTree() {
   }, [contextMenu.visible]);
 
   function buildTreeItems(current: NodeTree): JSX.Element {
+    console.log(current);
     const nodeId = current.id + "-" + current.type;
     const isSelected = selectedItems.some((item) => item.id === current.id);
     if (isCodeFile(current)) {
