@@ -77,15 +77,15 @@ function WorkSpace() {
     <>
       <div className="container-page">
         <Sidebar></Sidebar>
-        <main className="container">
+        <main className="container-page_container_workSpace">
           {file ? (
             <>
               <div className="top-section">
                 <section className="section editorSection">
-                  <header className="header">
+                  <header className="header-workSpace">
                     <h1>{i18n.t("Code.code")}</h1>
                     <button
-                      className="run-button"
+                      className="run-button__editorSection"
                       onClick={handleExecuteClick}
                       aria-label="Ejecutar código en el editor"
                     >
@@ -95,13 +95,13 @@ function WorkSpace() {
                   <CodeEditor {...file}></CodeEditor>
                 </section>
                 <section className="section outputSection">
-                  <header className="header">
+                  <header className="header-workSpace">
                     <h1>{i18n.t("Code.output")}</h1>
                   </header>
                   <div
                     aria-label="Code Output"
                     id="OutputDisplay"
-                    className="output-area"
+                    className="outputSection__output-area"
                   >
                     {formatOutput(output, error)}
                   </div>
