@@ -1,16 +1,16 @@
 import type { Items } from "./types";
 
-export enum FileSystemENum {
+export enum FileSystemEnum {
   Code = "Code",
   Sheet = "Sheet",
   Rol = "Rol",
   Directory = "Directory",
 }
 
-export type FileCodeType = FileSystemENum.Code;
-export type FileSheetType = FileSystemENum.Sheet;
-export type DirectoryRolType = FileSystemENum.Rol;
-export type DirectoryType = FileSystemENum.Directory;
+export type FileCodeType = FileSystemEnum.Code;
+export type FileSheetType = FileSystemEnum.Sheet;
+export type DirectoryRolType = FileSystemEnum.Rol;
+export type DirectoryType = FileSystemEnum.Directory;
 
 export type FileTypes = FileCodeType | FileSheetType;
 export type DirectoryTypes = DirectoryRolType | DirectoryType;
@@ -77,7 +77,7 @@ export interface insertContentProps {
   id: Id;
 }
 
-export interface insertDirectoryProps {
+export interface CreateDirectoryProps {
   name: string;
   parentId?: Id;
   type: DirectoryTypes;
@@ -106,7 +106,7 @@ export interface RolProps extends DirectoryProps {
   type: DirectoryRolType;
 }
 
-export interface CreateRolProps extends insertDirectoryProps {
+export interface CreateRolProps extends CreateDirectoryProps {
   description?: string;
   image?: string;
   type: DirectoryRolType;
@@ -154,20 +154,83 @@ export function isFetchCodeError(error: any): error is FetchCodeError {
   return error && typeof error.error === "object" && "errorCode" in error.error;
 }
 
-export function isFile(item: any): boolean {
+export function isFile(item: any): item is FileProps {
   if (item.type)
     return (
-      item.type === FileSystemENum.Code ||
-      item.type === FileSystemENum.Sheet ||
-      item.type === FileSystemENum.Rol
+      item.type === FileSystemEnum.Code || item.type === FileSystemEnum.Sheet
     );
   else return false;
 }
 
 export function isCodeFile(item: Items): item is CodeProps {
-  return item.type === FileSystemENum.Code;
+  return item.type === FileSystemEnum.Code;
 }
 
+export const isSheetsProps = (item: any): item is SheetProps => {
+  return item.type === FileSystemEnum.Sheet;
+};
+
 export function isDirectory(item: Items): item is DirectoryProps {
-  return item.type === FileSystemENum.Directory;
+  return (
+    item.type === FileSystemEnum.Directory || item.type === FileSystemEnum.Rol
+  );
 }
+
+export const findNodeById = (
+  node: DirectorySystemProps,
+  id: Id
+): DirectorySystemProps | null => {
+  if (node.id === id) {
+    return node;
+  }
+  if (!isDirectory(node)) return null;
+  for (const child of node.children) {
+    const found = findNodeById(child, id);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+};
+
+export const getSheetsOfRol = (
+  node: DirectorySystemProps,
+  rolId: Id
+): DirectoryProps | null => {
+  const rol = findNodeById(node, rolId);
+
+  if (rol && isDirectory(rol)) {
+    const directory = rol.children.find(
+      (child) => child.name === "Sheets" && isDirectory(child)
+    );
+
+    if (directory && isDirectory(directory)) {
+      return directory;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
+
+export const getCodesOfRol = (
+  node: DirectorySystemProps,
+  rolId: Id
+): DirectoryProps | null => {
+  const rol = findNodeById(node, rolId);
+
+  if (rol && isDirectory(rol)) {
+    const directory = rol.children.find(
+      (child) => child.name === "Sheets" && isDirectory(child)
+    );
+
+    if (directory && isDirectory(directory)) {
+      return directory;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};

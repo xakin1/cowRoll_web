@@ -6,8 +6,11 @@ import {
   setDirectorySystem,
 } from "../../../../../redux/slice/fileSlide";
 import {
-  FileSystemENum,
+  FileSystemEnum,
+  findNodeById,
   isCodeFile,
+  isDirectory,
+  isFile,
   type DirectoryProps,
   type DirectorySystemProps,
   type NodeTree,
@@ -38,6 +41,19 @@ function FolderTree() {
   const directorySystem = useAppSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
+  const id = useAppSelector((state: RootState) => state.id.value);
+  const [rol, setRol] = useState<DirectoryProps>();
+
+  useEffect(() => {
+    if (id) {
+      console.log(id);
+      const rol = findNodeById(directorySystem, id);
+      console.log(rol);
+
+      if (rol && isDirectory(rol)) setRol(rol);
+    }
+  }, [directorySystem, id]);
+
   const [contextMenu, setContextMenu] = useState<ContextMenuProps>({
     visible: false,
     x: 0,
@@ -145,13 +161,13 @@ function FolderTree() {
     setSelectedItems([]);
     const items = JSON.parse(e.dataTransfer.getData("drag-item")) as NodeTree[];
     for (const item of items) {
-      if (item.type == FileSystemENum.Directory) {
+      if (item.type == FileSystemEnum.Directory) {
         await editDirectory({ id: item.id, parentId: targetDirectory.id });
       } else {
         await editFile({
           id: item.id,
           directoryId: targetDirectory.id,
-          type: FileSystemENum.Code,
+          type: FileSystemEnum.Code,
         });
       }
     }
@@ -181,10 +197,9 @@ function FolderTree() {
   }, [contextMenu.visible]);
 
   function buildTreeItems(current: NodeTree): JSX.Element {
-    console.log(current);
     const nodeId = current.id + "-" + current.type;
     const isSelected = selectedItems.some((item) => item.id === current.id);
-    if (isCodeFile(current)) {
+    if (isFile(current)) {
       return (
         <>
           <CustomTreeItem
@@ -250,7 +265,7 @@ function FolderTree() {
         </>
       );
     } else {
-      if (current.type === FileSystemENum.Directory) {
+      if (isDirectory(current)) {
         return (
           <>
             <CustomTreeItem
@@ -329,16 +344,20 @@ function FolderTree() {
 
   return (
     <>
-      <SimpleTreeView>{buildTreeItems(directorySystem)}</SimpleTreeView>
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onAccept={handleModalAccept}
-          initialText={modalConfig?.initialText ?? ""}
-          label={modalConfig?.label ?? ""}
-          showInput={modalConfig?.showInput ?? true}
-        />
+      {rol && (
+        <>
+          <SimpleTreeView>{buildTreeItems(rol)}</SimpleTreeView>
+          {isModalOpen && (
+            <Modal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onAccept={handleModalAccept}
+              initialText={modalConfig?.initialText ?? ""}
+              label={modalConfig?.label ?? ""}
+              showInput={modalConfig?.showInput ?? true}
+            />
+          )}
+        </>
       )}
     </>
   );

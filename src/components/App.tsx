@@ -10,9 +10,11 @@ import { ToastContainer, type ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "../redux/store";
+import "../styles/global.css";
 import { MainPage } from "./mainPage";
 import WorkSpace from "./rol/editor/terminal/WorkSpace";
 import Rol from "./rol/rol";
+import { HomeSheet } from "./rol/sheet/HomeSheet";
 import Sheet from "./rol/sheet/Sheet";
 export const toastStyle: ToastOptions<unknown> = {
   position: "bottom-right",
@@ -26,7 +28,8 @@ const AppRol = () => {
           <Routes>
             <Route path="/app" element={<MainPage />} />
             <Route path="/app/rol" element={<Rol />} />
-            <Route path="/app/rol/sheet" element={<Sheet />} />
+            <Route path="/app/rol/sheet" element={<HomeSheet />} />
+            <Route path="/app/rol/sheet/:sheetId" element={<Sheet />} />
             <Route path="/app/rol/editor" element={<WorkSpace />} />
             <Route path="/app/*" element={<AppRouteHandler />} />{" "}
           </Routes>

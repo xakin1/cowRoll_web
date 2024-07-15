@@ -66,13 +66,17 @@ const RenderField: React.FC<RenderFieldProps> = ({
               style={style}
               type="text"
               placeholder={label}
-              className="input"
+              className="input sheet-option"
             />
           </div>
         );
       case "contador":
         return (
-          <div style={{ ...style }} ref={targetRef} className="contador">
+          <div
+            style={{ ...style }}
+            ref={targetRef}
+            className="contador sheet-option"
+          >
             <input type="checkbox" id={`checkbox-${id}`} className="checkbox" />
             <label htmlFor={`checkbox-${id}`}></label>
           </div>
@@ -80,7 +84,11 @@ const RenderField: React.FC<RenderFieldProps> = ({
       case "textarea":
         return (
           <div style={{ ...style }} ref={targetRef}>
-            <textarea style={style} placeholder={label} className="textarea" />
+            <textarea
+              style={style}
+              placeholder={label}
+              className="textarea sheet-option"
+            />
           </div>
         );
       case "inputCheck":
@@ -102,7 +110,7 @@ const RenderField: React.FC<RenderFieldProps> = ({
         return (
           <div
             ref={targetRef}
-            className="rectangle"
+            className="rectangle sheet-option"
             style={{
               ...style,
               width: style?.width || 50,
@@ -116,7 +124,7 @@ const RenderField: React.FC<RenderFieldProps> = ({
         return (
           <div
             ref={targetRef}
-            className="target"
+            className="target sheet-option"
             style={{
               width: style?.width || 50,
               height: style?.height || 0,
@@ -128,7 +136,7 @@ const RenderField: React.FC<RenderFieldProps> = ({
         return (
           <div
             ref={targetRef}
-            className="circle"
+            className="circle sheet-option"
             style={{
               ...style,
               ...dimensions,
@@ -145,6 +153,7 @@ const RenderField: React.FC<RenderFieldProps> = ({
             id={`editable-${id}`}
             contentEditable="true"
             onInput={handleInput}
+            className="sheet-option"
             style={{
               ...style,
               ...dimensions,

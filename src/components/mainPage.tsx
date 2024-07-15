@@ -1,4 +1,3 @@
-import { Box, Modal } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,8 @@ import {
   type Id,
   type RolProps,
 } from "../utils/types/ApiTypes";
-import PhotoCard from "./photoCard/PhotoCard";
+import CustomModal from "./CustomModal";
+import PhotoCardList from "./photoCard/PhotoCardList";
 import RoleForm from "./rol/addRol";
 
 export function MainPage() {
@@ -58,48 +58,41 @@ export function MainPage() {
     navigate(`/app/rol`);
   };
 
-  const handleRoleAdded = (newRole: RolProps) => {
+  const handleRoleAdded = async (newRole: RolProps) => {
+    // Update the roles state
     setRoles((prevRoles) => [...prevRoles, newRole]);
+
+    try {
+      // Fetch the files
+      const response = await getFiles();
+
+      // Check if the response is valid and contains the message
+      if (response && response.message) {
+        // Dispatch the setDirectorySystem action with the response message
+        dispatch(setDirectorySystem(response.message));
+      } else {
+        console.error("Invalid response from getFiles:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
   };
 
   return (
     <>
-      <div className="photo-grid sibling-fade">
-        {roles.map((rol: RolProps) => (
-          <PhotoCard
-            key={rol.id}
-            handleClick={() => handleClick(rol.id)}
-            name={rol.name}
-            image={rol.image}
-          />
-        ))}
-        <div className="add-card" onClick={handleOpen}>
-          <div className="add-icon">+</div>
-          <div className="add-text">Añadir</div>
-        </div>
-      </div>
-      <button className="trash-button">Papelera</button>
-      <Modal open={showModal} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            height: "auto",
-          }}
-        >
-          <RoleForm
-            id={rolesDirectory?.id || ""}
-            onClose={handleClose}
-            onRoleAdded={handleRoleAdded}
-          />
-        </Box>
-      </Modal>
+      <PhotoCardList
+        elements={roles}
+        handleClick={handleClick}
+        handleOpen={handleOpen}
+      ></PhotoCardList>
+
+      <CustomModal open={showModal} onClose={handleClose}>
+        <RoleForm
+          id={rolesDirectory?.id || ""}
+          onClose={handleClose}
+          onRoleAdded={handleRoleAdded}
+        />
+      </CustomModal>
     </>
   );
 }

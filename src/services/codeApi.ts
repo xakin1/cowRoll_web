@@ -1,5 +1,6 @@
 import { cookiesEnabled } from "../utils/functions/utils";
 import type {
+  CreateDirectoryProps,
   CreateFileProps,
   DirectoryProps,
   EditFileProps,
@@ -10,7 +11,6 @@ import type {
   FileProps,
   Id,
   editDirectoryProps,
-  insertDirectoryProps,
 } from "../utils/types/ApiTypes";
 
 const apiUrl =
@@ -175,7 +175,7 @@ function getHeaders(): HeadersInit {
 }
 
 export async function createDirectory(
-  directory: insertDirectoryProps
+  directory: CreateDirectoryProps
 ): Promise<FetchSuccess<Id> | FetchError | undefined> {
   const response = await fetch(apiUrl + "api/directory/create", {
     method: "POST",

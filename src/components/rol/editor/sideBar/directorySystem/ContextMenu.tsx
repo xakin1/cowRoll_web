@@ -11,10 +11,13 @@ import {
   editFile,
 } from "../../../../../services/codeApi";
 import {
-  FileSystemENum,
-  isCodeFile,
+  FileSystemEnum,
+  isDirectory,
+  isFile,
   type CreateCodeProps,
-  type insertDirectoryProps,
+  type CreateDirectoryProps,
+  type EditFileProps,
+  type editDirectoryProps,
 } from "../../../../../utils/types/ApiTypes";
 import type { ContextMenuProps } from "../../../../../utils/types/types";
 import { toastStyle } from "../../../../App";
@@ -34,11 +37,12 @@ export function ContextMenu({
 
   const singleItem = items.length === 1 ? items[0] : null;
   const handleInsertFile = async (name: string) => {
-    if (singleItem && isCodeFile(singleItem)) {
+    console.log(singleItem);
+    if (singleItem && isDirectory(singleItem)) {
       const data: CreateCodeProps = {
         name: name,
         directoryId: singleItem.id,
-        type: singleItem.type,
+        type: FileSystemEnum.Code,
       };
 
       const response = await createFile(data);
@@ -52,10 +56,10 @@ export function ContextMenu({
   };
   const handleInsertDirectory = async (name: string) => {
     if (singleItem) {
-      const data: insertDirectoryProps = {
+      const data: CreateDirectoryProps = {
         name: name,
         parentId: singleItem.id,
-        type: FileSystemENum.Directory,
+        type: FileSystemEnum.Directory,
       };
 
       const response = await createDirectory(data);
@@ -75,16 +79,23 @@ export function ContextMenu({
         id: singleItem.id,
         type: singleItem.type,
       };
-      const response =
-        singleItem.type === FileSystemENum.Directory
-          ? await editDirectory({
-              ...data,
-              type: FileSystemENum.Directory, // Para que el ts no se queje
-            })
-          : await editFile({
-              ...data,
-              type: singleItem.type as FileSystemENum.Code,
-            });
+      let response;
+      if (isDirectory(singleItem)) {
+        console.log(data);
+        response = await editDirectory({
+          ...data,
+          parentId: singleItem.parentId,
+        } as editDirectoryProps);
+      } else if (isFile(singleItem)) {
+        response = await editFile({
+          ...data,
+          directoryId: singleItem.directoryId,
+        } as EditFileProps);
+      } else {
+        toast.error(i18n.t("Error desconocido"), toastStyle);
+        return;
+      }
+
       if (response && "message" in response) {
         onAddNode();
       } else {
@@ -96,7 +107,7 @@ export function ContextMenu({
   // Delete Items
   const handleDeleteItems = async () => {
     for (const item of items) {
-      if (item.type === FileSystemENum.Directory)
+      if (item.type === FileSystemEnum.Directory)
         await deleteDirectory(item.id);
       else await deleteFile(item.id);
     }
@@ -110,7 +121,7 @@ export function ContextMenu({
       onMouseDown={(e) => e.stopPropagation()}
     >
       {singleItem &&
-        singleItem.type === FileSystemENum.Directory &&
+        singleItem.type === FileSystemEnum.Directory &&
         items.length === 1 && (
           <>
             <li
@@ -159,7 +170,7 @@ export function ContextMenu({
                   items.length.toString()
                 )
               : singleItem
-                ? singleItem.type == FileSystemENum.Directory
+                ? singleItem.type == FileSystemEnum.Directory
                   ? i18n.t("ContextualMenu.Modal.deleteFolder", singleItem.name)
                   : i18n.t("ContextualMenu.Modal.deleteFile", singleItem.name)
                 : ""; //No debería llegar aquí nunca

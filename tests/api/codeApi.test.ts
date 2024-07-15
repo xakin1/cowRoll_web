@@ -185,7 +185,7 @@ describe("test Api", () => {
   // });
   // it("createDirectory /createDirectory/:id", async () => {
   //   const directoryName = "Code2";
-  //   const directory: insertDirectoryProps = { name: directoryName };
+  //   const directory: CreateDirectoryProps = { name: directoryName };
 
   //   const response = await createDirectory(directory);
 
@@ -214,11 +214,11 @@ describe("test Api", () => {
   // it("createDirectory a subdirectory /createDirectory/:id", async () => {
   //   const directoryName = "Code2";
   //   const subdirectoryName = "SubDirectory";
-  //   const directory: insertDirectoryProps = { name: directoryName };
+  //   const directory: CreateDirectoryProps = { name: directoryName };
 
   //   const response = await createDirectory(directory);
   //   if (response && "message" in response) {
-  //     const subdirectory: insertDirectoryProps = {
+  //     const subdirectory: CreateDirectoryProps = {
   //       name: subdirectoryName,
   //       parentId: response.message,
   //     };
@@ -310,7 +310,7 @@ describe("test Api", () => {
   // });
   // it("deleteDirectory /deleteDirectory", async () => {
   //   const directoryName = "code2";
-  //   const directory: insertDirectoryProps = { name: directoryName };
+  //   const directory: CreateDirectoryProps = { name: directoryName };
   //   const responseInsert = await createDirectory(directory);
 
   //   expect(responseInsert).toBeDefined();

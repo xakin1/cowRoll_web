@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useDrop } from "react-dnd";
 
-import { FileSystemENum } from "../../../utils/types/ApiTypes";
+import { FileSystemEnum } from "../../../utils/types/ApiTypes";
 import { CharacterSheetContext } from "./CharacterSheetContext";
 import DraggableField from "./DraggableField";
 import "./styles.css";
@@ -44,7 +44,7 @@ const FieldContainer: React.FC = () => {
     const handleSave = async (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "s") {
         event.preventDefault();
-        await saveFile({ name: "hola", type: FileSystemENum.Sheet });
+        await saveFile({ name: "hola", type: FileSystemEnum.Sheet });
       }
     };
 
@@ -56,7 +56,7 @@ const FieldContainer: React.FC = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-    await saveFile({ name: "hola", type: FileSystemENum.Sheet });
+    await saveFile({ name: "hola", type: FileSystemEnum.Sheet });
   };
 
   return (

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
-  FileSystemENum,
+  FileSystemEnum,
   type CodeProps,
   type DirectoryProps,
 } from "../../utils/types/ApiTypes";
@@ -12,21 +12,21 @@ interface DirectorySystem {
 const initialState: DirectorySystem = {
   directorySystem: {
     name: "Root",
-    type: FileSystemENum.Directory,
+    type: FileSystemEnum.Directory,
     children: [
       {
         name: "Roles",
-        type: FileSystemENum.Directory,
+        type: FileSystemEnum.Directory,
         children: [
           {
             name: "Sheets",
-            type: FileSystemENum.Directory,
+            type: FileSystemEnum.Directory,
             children: [],
             id: "",
           },
           {
             name: "Codes",
-            type: FileSystemENum.Directory,
+            type: FileSystemEnum.Directory,
             children: [],
             id: "",
           },

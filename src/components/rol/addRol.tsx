@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import i18n from "../../i18n/i18n";
 import { createDirectory } from "../../services/codeApi";
 import {
-  FileSystemENum,
+  FileSystemEnum,
   type CreateRolProps,
   type Id,
   type RolProps,
@@ -41,7 +41,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
       parentId: id,
       image: image,
       description: description,
-      type: FileSystemENum.Rol,
+      type: FileSystemEnum.Rol,
     };
 
     const result = await createDirectory(directory);
@@ -54,7 +54,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
         parentId: id,
         image: image,
         description: description,
-        type: FileSystemENum.Rol,
+        type: FileSystemEnum.Rol,
         children: [],
       };
       onRoleAdded(newRole);

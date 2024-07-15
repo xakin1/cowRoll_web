@@ -9,6 +9,9 @@
 * {
   box-sizing: border-box;
 }
+.custom-modal__titile {
+  color: var(--text-color);
+}
 
 [data-theme="light"] {
   --background-color: var(--background-color-light);
@@ -42,6 +45,11 @@ body {
 
 .header {
   background-color: lightgray;
+}
+
+form {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 .theme-toggle-button {
   background: none;
