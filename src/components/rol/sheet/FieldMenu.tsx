@@ -29,7 +29,12 @@ const MenuItem: React.FC<MenuItemProps> = ({ field }) => {
       className="menuItem"
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
-      <RenderField type={field.type} label={field.label} id={Date.now()} />
+      <RenderField
+        menu={true}
+        type={field.type}
+        label={field.label}
+        id={Date.now()}
+      />
     </div>
   );
 };

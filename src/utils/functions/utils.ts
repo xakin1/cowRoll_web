@@ -12,3 +12,13 @@ export function detectColorScheme(): string {
 export function cookiesEnabled(): boolean {
   return navigator.cookieEnabled;
 }
+
+export const rgbToHex = (rgb: string) => {
+  const result = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  return result
+    ? "#" +
+        ("0" + parseInt(result[1], 10).toString(16)).slice(-2) +
+        ("0" + parseInt(result[2], 10).toString(16)).slice(-2) +
+        ("0" + parseInt(result[3], 10).toString(16)).slice(-2)
+    : rgb;
+};

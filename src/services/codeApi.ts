@@ -68,7 +68,7 @@ export async function createFile(
 }
 
 export async function saveFile(
-  file: CreateFileProps
+  file: EditFileProps
 ): Promise<FetchInsertContent<string>> {
   try {
     const response = await fetch(apiUrl + "api/file/save", {

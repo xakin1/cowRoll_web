@@ -1,206 +1,211 @@
-import MoveableHelper from "moveable-helper";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import Moveable from "react-moveable";
-import { CharacterSheetContext } from "./CharacterSheetContext";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import type { RenderFieldProps } from "./types";
 
 export const fields = [
   { id: "input", type: "input", label: "Input" },
   { id: "contador", type: "contador", label: "Contador" },
   { id: "textarea", type: "textarea", label: "Text area" },
-  { id: "inputCheck", type: "inputCheck", label: "Input con check" },
+  {
+    id: "inputCheck",
+    type: "inputCheck",
+    label: "Input con check",
+  },
   { id: "rectangle", type: "rectangle", label: "Rectangle" },
-  { id: "line", type: "line", label: "Line" },
-  { id: "circle", type: "circle", label: "Circle" },
   { id: "text", type: "text", label: "Text" },
+  { id: "photo", type: "photo", label: "Photo" },
 ];
 
-const RenderField: React.FC<RenderFieldProps> = ({
-  type,
-  label,
-  id,
-  isSelected,
-  onSelect,
-  style,
-}) => {
-  const [editableContent, setEditableContent] = useState("Editable Text");
-  const targetRef = useRef<HTMLDivElement>(null);
-  const [target, setTarget] = useState<HTMLDivElement | null>(null);
-  const [helper] = useState(() => new MoveableHelper());
-  const { updateFieldSize } = useContext(CharacterSheetContext)!;
+const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
+  ({ type, label, menu, id, onSelect, style }, ref) => {
+    const [editableContent, setEditableContent] = useState("Editable Text");
+    const [photoSrc, setPhotoSrc] = useState<string>("");
+    const targetRef = useRef<HTMLElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [dimensions, setDimensions] = useState({
-    width: style?.width || 50,
-    height: style?.height || 50,
-  });
+    useImperativeHandle(ref, () => targetRef.current!);
 
-  useEffect(() => {
-    setTarget(targetRef.current);
-  }, []);
+    const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+      setEditableContent(e.currentTarget.textContent || "");
+    };
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    setEditableContent(e.currentTarget.textContent || "");
-  };
-
-  useEffect(() => {
-    if (type === "text") {
-      const div = document.getElementById(`editable-${id}`);
-      if (div) {
-        div.textContent = editableContent;
+    useEffect(() => {
+      if (type === "text") {
+        const div = document.getElementById(`editable-${id}`);
+        if (div) {
+          div.textContent = editableContent;
+        }
       }
-    }
-  }, [editableContent, type, id]);
+    }, [editableContent, type, id]);
 
-  const handleClick = () => {
-    if (onSelect) {
-      onSelect(id);
-    }
-  };
+    const handleClick = () => {
+      if (onSelect) {
+        onSelect(id);
+      }
+    };
 
-  const renderComponent = () => {
-    switch (type) {
-      case "input":
-        return (
-          <div style={{ ...style }} ref={targetRef}>
-            <input
-              style={style}
-              type="text"
-              placeholder={label}
-              className="input sheet-option"
-            />
-          </div>
-        );
-      case "contador":
-        return (
-          <div
-            style={{ ...style }}
-            ref={targetRef}
-            className="contador sheet-option"
-          >
-            <input type="checkbox" id={`checkbox-${id}`} className="checkbox" />
-            <label htmlFor={`checkbox-${id}`}></label>
-          </div>
-        );
-      case "textarea":
-        return (
-          <div style={{ ...style }} ref={targetRef}>
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPhotoSrc(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const renderComponent = () => {
+      switch (type) {
+        case "input":
+          return (
+            <div style={{ ...style }}>
+              <input
+                ref={targetRef as React.RefObject<HTMLInputElement>}
+                style={style}
+                type="text"
+                placeholder={label}
+                className="input sheet-option"
+                readOnly={menu}
+              />
+            </div>
+          );
+        case "contador":
+          return (
+            <div style={{ ...style }} className="contador sheet-option">
+              <input
+                ref={targetRef as React.RefObject<HTMLInputElement>}
+                style={{
+                  ...style,
+                  width: style?.width || "50px",
+                  height: style?.height || "50px",
+                }}
+                type="checkbox"
+                id={`checkbox-${id}`}
+                className="checkbox"
+                disabled={menu}
+              />
+              <label htmlFor={`checkbox-${id}`}></label>
+            </div>
+          );
+        case "textarea":
+          return (
             <textarea
-              style={style}
+              style={{ ...style, width: "100px" }}
               placeholder={label}
               className="textarea sheet-option"
+              readOnly={menu}
             />
-          </div>
-        );
-      case "inputCheck":
-        return (
-          <div
-            style={{ ...style, width: 100 }}
-            ref={targetRef}
-            className="inputCheck"
-          >
-            <input type="checkbox" />
-            <input
-              type="text"
-              placeholder={label}
-              className="inputInsideCheck"
-            />
-          </div>
-        );
-      case "rectangle":
-        return (
-          <div
-            ref={targetRef}
-            className="rectangle sheet-option"
-            style={{
-              ...style,
-              width: style?.width || 50,
-              height: style?.height || 50,
-              border: "1px solid lightgray",
-            }}
-            onClick={handleClick}
-          ></div>
-        );
-      case "line":
-        return (
-          <div
-            ref={targetRef}
-            className="target sheet-option"
-            style={{
-              width: style?.width || 50,
-              height: style?.height || 0,
-              border: "1px solid lightgray",
-            }}
-          ></div>
-        );
-      case "circle":
-        return (
-          <div
-            ref={targetRef}
-            className="circle sheet-option"
-            style={{
-              ...style,
-              ...dimensions,
-              borderRadius: "50%",
-              border: "1px solid lightgray",
-            }}
-            onClick={handleClick}
-          ></div>
-        );
-      case "text":
-        return (
-          <div
-            ref={targetRef}
-            id={`editable-${id}`}
-            contentEditable="true"
-            onInput={handleInput}
-            className="sheet-option"
-            style={{
-              ...style,
-              ...dimensions,
-              outline: "none",
-            }}
-            onClick={handleClick}
-          >
-            {editableContent}
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+          );
+        case "inputCheck":
+          return (
+            <div
+              style={{ ...style, width: 100 }}
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="inputCheck"
+            >
+              <input type="checkbox" disabled={menu} />
+              <input
+                type="text"
+                placeholder={label}
+                className="inputInsideCheck"
+                readOnly={menu}
+              />
+            </div>
+          );
+        case "rectangle":
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="rectangle sheet-option"
+              style={{
+                width: 50,
+                height: 50,
+                border: "1px solid lightgray",
+                ...style,
+              }}
+              onClick={handleClick}
+            ></div>
+          );
+        case "text":
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              id={`editable-${id}`}
+              contentEditable={!menu}
+              onInput={handleInput}
+              className="sheet-option"
+              style={{
+                ...style,
+                width: "50px",
+                height: "50px",
+                outline: "none",
+              }}
+              onClick={handleClick}
+            >
+              {editableContent}
+            </div>
+          );
+        case "photo":
+          console.log(photoSrc ? `url(${photoSrc})` : `url(/placeholder.png)`);
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="photo-container"
+              style={{
+                width: style?.width || 100,
+                height: style?.height || 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "1px solid lightgray",
+                cursor: "pointer",
+                backgroundImage: photoSrc
+                  ? `url(${photoSrc})`
+                  : `url(/placeholder.png)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                ...style,
+              }}
+              onClick={handleClick}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: "none" }}
+                disabled={menu}
+              />
+              {!menu && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: "0px",
+                    right: "0px",
+                  }}
+                >
+                  Browse
+                </button>
+              )}
+            </div>
+          );
+        default:
+          return null;
+      }
+    };
 
-  return (
-    <>
-      {renderComponent()}
-      {isSelected && (
-        <Moveable
-          target={target}
-          draggable={true}
-          scalable={true}
-          keepRatio={true}
-          rotatable={true}
-          onDragStart={helper.onDragStart}
-          onDrag={helper.onDrag}
-          onScaleStart={helper.onScaleStart}
-          onScale={(e) => {
-            helper.onScale(e);
-            const { target } = e;
-            if (target instanceof HTMLElement) {
-              const rect = target.getBoundingClientRect();
-              const width = rect.width;
-              const height = target.clientHeight;
-              updateFieldSize(id, {
-                width: width,
-                height: height,
-              });
-            }
-          }}
-          onRotateStart={helper.onRotateStart}
-          onRotate={helper.onRotate}
-        />
-      )}
-    </>
-  );
-};
+    return <>{renderComponent()}</>;
+  }
+);
 
 export default RenderField;

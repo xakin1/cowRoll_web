@@ -1,0 +1,34 @@
+.border-style-select {
+  position: relative;
+  width: 200px;
+}
+
+.select-header {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}
+
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  color: black;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.select-option {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.select-option:hover {
+  background-color: #f0f0f0;
+}

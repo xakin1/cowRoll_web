@@ -1,0 +1,12 @@
+.icon-button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  scale: 2;
+  margin-left: 1rem;
+}
+
+.icon-button svg {
+  width: 16px;
+  height: 16px;
+}

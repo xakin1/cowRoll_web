@@ -42,7 +42,7 @@ export interface EditFileProps {
   name?: string;
   directoryId?: Id;
   content?: string;
-  type: FileTypes;
+  type?: FileTypes;
 }
 
 export interface EditCodeProps extends EditFileProps {
@@ -51,9 +51,7 @@ export interface EditCodeProps extends EditFileProps {
   type: FileCodeType;
 }
 
-export interface EditSheetProps extends EditFileProps {
-  type: FileSheetType;
-}
+export interface EditSheetProps extends EditFileProps {}
 
 export interface CreateFileProps {
   name: string;

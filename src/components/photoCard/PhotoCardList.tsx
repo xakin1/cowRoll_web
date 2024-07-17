@@ -28,7 +28,7 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
           key={element.id}
           handleClick={() => handleClick(element.id)}
           name={element.name}
-          image={element.image || image || "public/file.svg"}
+          image={element.image || image || "/file.svg"}
         />
       ))}
       <PhotoCardAdd handleOpen={handleOpen}></PhotoCardAdd>

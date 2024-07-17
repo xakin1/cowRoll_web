@@ -1,56 +1,74 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import { CharacterSheetContext } from "./CharacterSheetContext";
 import RenderField from "./RenderFields";
 import "./styles.css";
-import type { Field } from "./types";
+import type { DraggableFieldProps } from "./types";
 
-const DraggableField: React.FC<Field> = ({
+const DraggableField: React.FC<DraggableFieldProps> = ({
   id,
   type,
   label,
-  position = { x: 0, y: 0 },
-  size,
-}: Field) => {
+  style,
+  setSelectedElement,
+  onContextMenu,
+}) => {
   const { removeField } = useContext(CharacterSheetContext)!;
 
-  const [showMenu, setShowMenu] = useState(false);
-  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
   const [isSelected, setIsSelected] = useState(false);
+  const renderFieldRef = useRef<HTMLDivElement>(null);
 
-  const [{ isDragging }, drag, preview] = useDrag(
+  const [{ isDragging }, preview] = useDrag(
     () => ({
       type: "field",
-      item: { id, type, position, size },
+      item: { id, type },
       canDrag: () => !isSelected,
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [id, type, position, isSelected]
+    [id, type, isSelected]
   );
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowMenu(true);
-    setMenuPosition({ x: e.clientX, y: e.clientY });
+  const toCamelCase = (str: string) => {
+    return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
   };
 
-  const handleDelete = () => {
-    removeField(id);
-    setShowMenu(false);
+  const getInlineStyles = () => {
+    if (renderFieldRef.current) {
+      const inlineStyles = renderFieldRef.current.style;
+      const styles: { [key: string]: string } = {};
+      for (let i = 0; i < inlineStyles.length; i++) {
+        const key = inlineStyles[i];
+        const camelCaseKey = toCamelCase(key);
+        styles[camelCaseKey] = inlineStyles.getPropertyValue(key);
+      }
+      return styles;
+    }
+    return {};
   };
 
   const handleSelect = (selectedId: number) => {
     setIsSelected(selectedId === id);
+    const styles = getInlineStyles();
+    if (setSelectedElement) {
+      setSelectedElement({
+        id,
+        type,
+        label,
+        style: {
+          ...styles,
+          position: "absolute",
+        },
+      });
+    }
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (!(event.target as HTMLElement).closest(".field")) {
+    const target = event.target as HTMLElement;
+    if (!target.closest(".field") && !target.closest(".properties-panel")) {
       setIsSelected(false);
+      setSelectedElement(null);
     }
   };
 
@@ -61,10 +79,9 @@ const DraggableField: React.FC<Field> = ({
     };
   }, []);
 
-  const style = {
-    left: position.x,
-    top: position.y,
+  const divStyle = {
     opacity: isDragging ? 0.5 : 1,
+    position: "relative",
   };
 
   return (
@@ -72,35 +89,21 @@ const DraggableField: React.FC<Field> = ({
       <div
         ref={preview}
         className={`field ${isSelected ? "selected" : ""}`}
-        style={style}
-        onContextMenu={handleContextMenu}
+        style={divStyle}
+        onContextMenu={onContextMenu(id)} // Llama a la función con el id cerrado
         onClick={(e) => {
           e.stopPropagation();
-          handleSelect(id);
         }}
       >
         <RenderField
+          ref={renderFieldRef}
           type={type}
           label={label}
-          style={{ position: "absolute", zIndex: 999 }}
+          style={{ position: "absolute", zIndex: 1, ...style }}
           id={id}
           isSelected={isSelected}
-          onSelect={handleSelect}
+          onSelect={() => handleSelect(id)}
         />
-
-        {showMenu && (
-          <div
-            className="contextMenu"
-            style={{
-              top: menuPosition.y,
-              left: menuPosition.x,
-            }}
-          >
-            <div className="menuItem" onClick={handleDelete}>
-              Delete
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

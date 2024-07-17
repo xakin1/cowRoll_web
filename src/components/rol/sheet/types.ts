@@ -6,16 +6,13 @@ export interface Position {
   x: number;
   y: number;
 }
-export interface Size {
-  height: number;
-  width: number;
-}
 
 export interface RenderFieldProps {
   id: Id;
   type: string;
   label: string;
   isSelected?: boolean;
+  menu?: boolean;
   onSelect?: (selectedId: number) => void;
   style?: any;
 }
@@ -45,8 +42,14 @@ export interface Field {
   id: Id;
   type: string;
   label: string;
-  position: Position;
-  size: Size;
+  style: { [key: string]: any };
+}
+
+export interface DraggableFieldProps extends Field {
+  setSelectedElement: (element: Field | null) => void;
+  onContextMenu: (
+    id: number
+  ) => (event: React.MouseEvent<Element, MouseEvent>) => void;
 }
 
 export interface MenuField {

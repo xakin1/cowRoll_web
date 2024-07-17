@@ -1,18 +1,17 @@
 import React, { createContext, useState, type ReactNode } from "react";
 import { saveFile } from "../../../services/codeApi";
 import type {
-  CreateSheetProps,
+  EditSheetProps,
   FetchInsertContent,
 } from "../../../utils/types/ApiTypes";
-import type { Field, FieldWithoutId, Position, Size } from "./types";
+import type { Field, FieldWithoutId } from "./types";
 
 interface CharacterSheetContextProps {
   fields: Field[];
-  addField: (field: FieldWithoutId, position: Position, size: Size) => void;
-  updateFieldPosition: (id: number, position: Position) => void;
-  updateFieldSize: (id: number, size: Size) => void;
+  addField: (field: FieldWithoutId, style?: { [key: string]: any }) => void;
+  updateFieldStyle: (id: number, style: any) => void;
   removeField: (id: number) => void;
-  saveFile: (sheet: CreateSheetProps) => Promise<FetchInsertContent<string>>;
+  saveFile: (sheet: EditSheetProps) => Promise<FetchInsertContent<string>>;
 }
 
 export const CharacterSheetContext = createContext<
@@ -28,22 +27,22 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
 }) => {
   const [fields, setFields] = useState<Field[]>([]);
 
-  const addField = (field: FieldWithoutId, position: Position, size: Size) => {
-    setFields([...fields, { ...field, id: Date.now(), position, size }]);
+  const addField = (
+    field: FieldWithoutId,
+    style: { [key: string]: any } = {}
+  ) => {
+    setFields([...fields, { ...field, id: Date.now(), style }]);
   };
 
-  const updateFieldPosition = (id: number, position: Position) => {
+  const updateFieldStyle = (id: number, style: { [key: string]: string }) => {
     setFields((prevFields) =>
       prevFields.map((field) =>
-        field.id === id ? { ...field, position } : field
+        field.id === id
+          ? { ...field, style: { ...field.style, ...style } }
+          : field
       )
     );
-  };
-
-  const updateFieldSize = (id: number, size: Size) => {
-    setFields((prevFields) =>
-      prevFields.map((field) => (field.id === id ? { ...field, size } : field))
-    );
+    console.log(id, fields, style);
   };
 
   const removeField = (id: number) => {
@@ -55,8 +54,7 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
       value={{
         fields,
         addField,
-        updateFieldPosition,
-        updateFieldSize,
+        updateFieldStyle,
         removeField,
         saveFile,
       }}
