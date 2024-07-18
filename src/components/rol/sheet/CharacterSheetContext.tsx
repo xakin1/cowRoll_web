@@ -1,11 +1,11 @@
 import React, { createContext, useState, type ReactNode } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { saveFile } from "../../../services/codeApi";
 import type {
   EditSheetProps,
   FetchInsertContent,
 } from "../../../utils/types/ApiTypes";
 import type { Field, FieldWithoutId } from "./types";
-
 interface CharacterSheetContextProps {
   fields: Field[];
   addField: (field: FieldWithoutId, style?: { [key: string]: any }) => void;
@@ -32,8 +32,8 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     style: { [key: string]: any } = {}
   ) => {
     const newField = {
-      id: Date.now(),
       ...field,
+      id: uuidv4(),
       style: { ...field.style, ...style },
     };
     setFields([...fields, newField]);
