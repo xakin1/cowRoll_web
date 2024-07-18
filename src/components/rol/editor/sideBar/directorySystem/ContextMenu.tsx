@@ -37,7 +37,6 @@ export function ContextMenu({
 
   const singleItem = items.length === 1 ? items[0] : null;
   const handleInsertFile = async (name: string) => {
-    console.log(singleItem);
     if (singleItem && isDirectory(singleItem)) {
       const data: CreateCodeProps = {
         name: name,
@@ -81,7 +80,6 @@ export function ContextMenu({
       };
       let response;
       if (isDirectory(singleItem)) {
-        console.log(data);
         response = await editDirectory({
           ...data,
           parentId: singleItem.parentId,

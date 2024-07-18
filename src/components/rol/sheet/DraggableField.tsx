@@ -15,16 +15,15 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
 
-  const [{ isDragging }, preview] = useDrag(
+  const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: "field",
-      item: { id, type },
-      canDrag: () => !isSelected,
+      item: { id, type, label, style },
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),
     }),
-    [id, type, isSelected]
+    [id, type, label, style]
   );
 
   const toCamelCase = (str: string) => {
@@ -78,13 +77,13 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
 
   const divStyle: React.CSSProperties = {
     opacity: isDragging ? 0.5 : 1,
-    position: "relative",
+    position: "absolute",
   };
 
   return (
     <>
       <div
-        ref={preview}
+        ref={drag}
         className={`field ${isSelected ? "selected" : ""}`}
         style={divStyle}
         onContextMenu={(e) => onContextMenu(e, { id, type, label, style })}

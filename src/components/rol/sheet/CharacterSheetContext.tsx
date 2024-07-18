@@ -31,10 +31,12 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     field: FieldWithoutId,
     style: { [key: string]: any } = {}
   ) => {
-    setFields([
-      ...fields,
-      { ...field, id: Date.now(), style: { ...field.style, style } },
-    ]);
+    const newField = {
+      id: Date.now(),
+      ...field,
+      style: { ...field.style, ...style },
+    };
+    setFields([...fields, newField]);
   };
 
   const updateFieldStyle = (id: number, style: { [key: string]: string }) => {
@@ -45,7 +47,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
           : field
       )
     );
-    console.log(id, fields, style);
   };
 
   const removeField = (id: number) => {

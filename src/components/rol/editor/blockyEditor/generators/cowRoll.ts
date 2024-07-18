@@ -212,7 +212,6 @@ cowRollGenerator.forBlock["array_get"] = function (block) {
 cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {
   const functionName = block.getField("NAME")?.getText() ?? "unnamed";
   const args = block.getVars(); // Obtiene los nombres de los parámetros
-  console.log(args);
   const branch = cowRollGenerator.statementToCode(block, "STACK");
 
   // Construcción de la lista de parámetros

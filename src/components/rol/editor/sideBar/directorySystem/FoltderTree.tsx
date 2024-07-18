@@ -46,9 +46,7 @@ function FolderTree() {
 
   useEffect(() => {
     if (id) {
-      console.log(id);
       const rol = findNodeById(directorySystem, id);
-      console.log(rol);
 
       if (rol && isDirectory(rol)) setRol(rol);
     }

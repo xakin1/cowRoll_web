@@ -12,9 +12,7 @@ function Sidebar() {
   const directorySystem = useSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
-  console.log(directorySystem);
   useEffect(() => {
-    console.log(directorySystem);
     const fetchDocuments = async () => {
       if (directorySystem.id === "") {
         // Chequear si ya tienes los datos en el estado

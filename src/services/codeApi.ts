@@ -77,7 +77,6 @@ export async function saveFile(
       credentials: "include",
       body: JSON.stringify(file),
     });
-    console.log(file);
     if (response.ok) {
       return await response.json();
     } else {

@@ -77,7 +77,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       | React.ChangeEvent<{ name: string; value: string }>
   ) => {
     const { name, value } = e.target;
-    console.log(name, value, Date.now());
 
     switch (name) {
       case "width":

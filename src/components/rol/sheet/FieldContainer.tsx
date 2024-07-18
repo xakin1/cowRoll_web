@@ -49,11 +49,14 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
       drop: (item: Field | FieldWithoutId, monitor) => {
         const delta = monitor.getDifferenceFromInitialOffset();
         const containerRect = containerRef.current?.getBoundingClientRect();
+        const initialClientOffset = monitor.getInitialClientOffset();
         const clientOffset = monitor.getClientOffset();
         let position;
 
-        if (!delta || !containerRect || !clientOffset) return;
+        if (!delta || !containerRect || !initialClientOffset || !clientOffset)
+          return;
 
+        // Calculando la posición correcta dentro del contenedor
         position = {
           x: Math.max(clientOffset.x - containerRect.left, 0),
           y: Math.max(clientOffset.y - containerRect.top, 0),
@@ -61,8 +64,8 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
         if (monitor.getItemType() === "menuItem") {
           addField(item as FieldWithoutId, {
-            top: position.y,
-            left: position.x,
+            top: `${position.y}px`,
+            left: `${position.x}px`,
           });
         } else {
           updateFieldStyle((item as Field).id, {
