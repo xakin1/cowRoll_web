@@ -11,14 +11,21 @@ interface FieldContainerProps {
   setSelectedElement: (element: Field | null) => void;
 }
 
+interface FieldContextMenuProps {
+  visible: boolean;
+  position: { x: number; y: number };
+  field: Field | null;
+}
+
 const FieldContainer: React.FC<FieldContainerProps> = ({
   setSelectedElement,
 }) => {
-  const { fields, addField, saveFile, updateFieldStyle } = useContext(
-    CharacterSheetContext
-  )!;
+  const { fields, addField, saveFile, removeField, updateFieldStyle } =
+    useContext(CharacterSheetContext)!;
   const { id } = useParams<{ id: string }>();
-
+  const [selectedElement, setSelectedElementState] = useState<Field | null>(
+    null
+  );
   const [, drop] = useDrop(
     () => ({
       accept: ["field", "menuItem"],
@@ -54,18 +61,33 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
   );
 
   useEffect(() => {
-    const handleSave = async (event: KeyboardEvent) => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "s") {
         event.preventDefault();
         if (id) {
           await saveFile({ id: id });
         }
+      } else if (event.ctrlKey && event.key === "c") {
+        if (selectedElement) {
+          handleCopy(selectedElement);
+        }
+      } else if (event.ctrlKey && event.key === "v") {
+        handlePaste();
+      } else if (event.ctrlKey && event.key === "x") {
+        if (selectedElement) {
+          handleCut(selectedElement);
+        }
+      } else if (event.key === "Delete") {
+        if (selectedElement) {
+          removeField(selectedElement.id);
+          setSelectedElement(null);
+        }
       }
     };
 
-    window.addEventListener("keydown", handleSave);
-    return () => window.removeEventListener("keydown", handleSave);
-  }, [saveFile, id]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [saveFile, id, selectedElement]);
 
   const handleSaveClick = async (
     event: React.MouseEvent<HTMLButtonElement>
@@ -76,19 +98,20 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     }
   };
 
-  const [contextMenu, setContextMenu] = useState({
+  const [contextMenu, setContextMenu] = useState<FieldContextMenuProps>({
     visible: false,
     position: { x: 0, y: 0 },
-    fieldId: 0,
+    field: null,
   });
+  const [clipboard, setClipboard] = useState<Field | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const handleContextMenu = (id: number) => (event: React.MouseEvent) => {
+  const handleContextMenu = (field: Field) => (event: React.MouseEvent) => {
     event.preventDefault();
     setContextMenu({
       visible: true,
       position: { x: event.clientX, y: event.clientY },
-      fieldId: id,
+      field: field,
     });
   };
 
@@ -106,42 +129,58 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
   }, [contextMenu]);
 
   const handleDelete = (id: number) => {
-    console.log(`Delete field ${id}`);
+    removeField(id);
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleCopy = () => {
-    console.log("Copy action");
+  const handleCopy = (field: Field) => {
+    setClipboard(field);
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleCut = () => {
-    console.log("Cut action");
+  const handleCut = (field: Field) => {
+    setClipboard(field);
+    removeField(field.id);
+    setSelectedElement(null);
     setContextMenu({ ...contextMenu, visible: false });
   };
 
   const handlePaste = () => {
-    console.log("Paste action");
+    if (clipboard) {
+      const newPosX = clipboard.style.left + 10;
+      const newPosY = clipboard.style.top + 10;
+
+      const newField = { ...clipboard, id: undefined };
+
+      addField(newField, { top: newPosY, left: newPosX });
+
+      setClipboard((prevClipboard) => ({
+        ...prevClipboard!,
+        style: { ...prevClipboard!.style, top: newPosY, left: newPosX },
+      }));
+    }
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleUp = () => {
-    console.log("Move to front action");
+  const handleUp = (field: Field) => {
+    updateFieldStyle(field.id, { zIndex: field.style.zIndex + 1 });
+
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleDown = () => {
-    console.log("Move to back action");
+  const handleDown = (field: Field) => {
+    updateFieldStyle(field.id, { zIndex: field.style.zIndex - 1 });
+
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleForward = () => {
-    console.log("Move forward action");
+  const handleForward = (field: Field) => {
+    updateFieldStyle(field.id, { zIndex: 100 });
     setContextMenu({ ...contextMenu, visible: false });
   };
 
-  const handleBackward = () => {
-    console.log("Move backward action");
+  const handleBackward = (field: Field) => {
+    updateFieldStyle(field.id, { zIndex: 0 });
     setContextMenu({ ...contextMenu, visible: false });
   };
 
@@ -152,10 +191,13 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
       <div ref={drop} className="containerDrop">
         {fields.map((field) => (
           <DraggableField
-            onContextMenu={handleContextMenu}
+            onContextMenu={handleContextMenu(field)}
             key={field.id}
             {...field}
-            setSelectedElement={setSelectedElement}
+            setSelectedElement={(element) => {
+              setSelectedElement(field);
+              setSelectedElementState(element);
+            }}
           />
         ))}
         {contextMenu.visible && (
@@ -165,18 +207,18 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
               position: "fixed",
               top: contextMenu.position.y,
               left: contextMenu.position.x,
-              zIndex: 10,
+              zIndex: 999,
             }}
           >
             <ContextualMenu
-              handleCopy={handleCopy}
-              handleCut={handleCut}
+              handleCopy={() => handleCopy(contextMenu.field!)}
+              handleCut={() => handleCut(contextMenu.field!)}
               handlePaste={handlePaste}
-              handleUp={handleUp}
-              handleDown={handleDown}
-              handleForward={handleForward}
-              handleBackward={handleBackward}
-              handleDelete={() => handleDelete(contextMenu.fieldId)}
+              handleUp={() => handleUp(contextMenu.field!)}
+              handleDown={() => handleDown(contextMenu.field!)}
+              handleForward={() => handleForward(contextMenu.field!)}
+              handleBackward={() => handleBackward(contextMenu.field!)}
+              handleDelete={() => handleDelete(contextMenu.field!.id)}
             />
           </div>
         )}

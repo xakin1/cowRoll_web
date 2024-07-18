@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
-import { CharacterSheetContext } from "./CharacterSheetContext";
 import RenderField from "./RenderFields";
 import "./styles.css";
 import type { DraggableFieldProps } from "./types";
@@ -13,8 +12,6 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   setSelectedElement,
   onContextMenu,
 }) => {
-  const { removeField } = useContext(CharacterSheetContext)!;
-
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +55,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
         label,
         style: {
           ...styles,
-          position: "absolute",
+          position: "absolute" as "absolute", // Asegurarse de que 'position' tenga el tipo correcto
         },
       });
     }
@@ -79,7 +76,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     };
   }, []);
 
-  const divStyle = {
+  const divStyle: React.CSSProperties = {
     opacity: isDragging ? 0.5 : 1,
     position: "relative",
   };
@@ -90,7 +87,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
         ref={preview}
         className={`field ${isSelected ? "selected" : ""}`}
         style={divStyle}
-        onContextMenu={onContextMenu(id)} // Llama a la función con el id cerrado
+        onContextMenu={(e) => onContextMenu(e, { id, type, label, style })}
         onClick={(e) => {
           e.stopPropagation();
         }}

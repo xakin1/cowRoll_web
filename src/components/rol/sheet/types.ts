@@ -48,8 +48,9 @@ export interface Field {
 export interface DraggableFieldProps extends Field {
   setSelectedElement: (element: Field | null) => void;
   onContextMenu: (
-    id: number
-  ) => (event: React.MouseEvent<Element, MouseEvent>) => void;
+    event: React.MouseEvent<Element, MouseEvent>,
+    field: Field
+  ) => void;
 }
 
 export interface MenuField {

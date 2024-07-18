@@ -4,6 +4,7 @@ import ArrowUpward from "@mui/icons-material/ArrowUpward";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import ContentCut from "@mui/icons-material/ContentCut";
 import ContentPaste from "@mui/icons-material/ContentPaste";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Forward from "@mui/icons-material/Forward";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -32,6 +33,7 @@ export default function ContextualMenu({
   handleDown,
   handleForward,
   handleBackward,
+  handleDelete,
 }: IconMenuProps) {
   return (
     <Paper sx={{ width: 320, maxWidth: "100%" }}>
@@ -42,7 +44,7 @@ export default function ContextualMenu({
           </ListItemIcon>
           <ListItemText>Cut</ListItemText>
           <Typography variant="body2" color="text.secondary">
-            ⌘X
+            Ctrl + X
           </Typography>
         </MenuItem>
         <MenuItem onClick={handleCopy}>
@@ -51,7 +53,7 @@ export default function ContextualMenu({
           </ListItemIcon>
           <ListItemText>Copy</ListItemText>
           <Typography variant="body2" color="text.secondary">
-            ⌘C
+            Ctrl + C
           </Typography>
         </MenuItem>
         <MenuItem onClick={handlePaste}>
@@ -60,7 +62,16 @@ export default function ContextualMenu({
           </ListItemIcon>
           <ListItemText>Paste</ListItemText>
           <Typography variant="body2" color="text.secondary">
-            ⌘V
+            Ctrl + V
+          </Typography>
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Delete</ListItemText>
+          <Typography variant="body2" color="text.secondary">
+            supr
           </Typography>
         </MenuItem>
         <Divider />
