@@ -13,11 +13,15 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import type { ClipBoard } from "../../types";
 
 interface IconMenuProps {
+  showPasteOnly: boolean;
+  clipboard: ClipBoard;
   handleCopy: () => void;
   handleCut: () => void;
   handlePaste: () => void;
+  handlePasteHere: () => void;
   handleUp: () => void;
   handleDown: () => void;
   handleForward: () => void;
@@ -26,79 +30,106 @@ interface IconMenuProps {
 }
 
 export default function ContextualMenu({
+  showPasteOnly,
+  clipboard,
   handleCopy,
   handleCut,
   handlePaste,
+  handlePasteHere,
   handleUp,
   handleDown,
   handleForward,
   handleBackward,
   handleDelete,
 }: IconMenuProps) {
+  const isPasteDisabled = clipboard === null;
+
   return (
     <Paper sx={{ width: 320, maxWidth: "100%" }}>
       <MenuList>
-        <MenuItem onClick={handleCut}>
-          <ListItemIcon>
-            <ContentCut fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            Ctrl + X
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handleCopy}>
-          <ListItemIcon>
-            <ContentCopy fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Copy</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            Ctrl + C
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handlePaste}>
-          <ListItemIcon>
-            <ContentPaste fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            Ctrl + V
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <ListItemIcon>
-            <DeleteIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Delete</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            supr
-          </Typography>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleForward}>
-          <ListItemIcon>
-            <Forward fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Move Forward</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleBackward}>
-          <ListItemIcon>
-            <Backward fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Move Backward</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleUp}>
-          <ListItemIcon>
-            <ArrowUpward fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Move to Front</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleDown}>
-          <ListItemIcon>
-            <ArrowDownward fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Move to Back</ListItemText>
-        </MenuItem>
+        {showPasteOnly
+          ? [
+              <MenuItem
+                key="paste"
+                onClick={handlePasteHere}
+                disabled={isPasteDisabled}
+              >
+                <ListItemIcon>
+                  <ContentPaste fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Paste Here</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                  Ctrl + V
+                </Typography>
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem key="cut" onClick={handleCut}>
+                <ListItemIcon>
+                  <ContentCut fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Cut</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                  Ctrl + X
+                </Typography>
+              </MenuItem>,
+              <MenuItem key="copy" onClick={handleCopy}>
+                <ListItemIcon>
+                  <ContentCopy fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Copy</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                  Ctrl + C
+                </Typography>
+              </MenuItem>,
+              <MenuItem
+                key="paste"
+                onClick={handlePaste}
+                disabled={isPasteDisabled}
+              >
+                <ListItemIcon>
+                  <ContentPaste fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Paste</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                  Ctrl + V
+                </Typography>
+              </MenuItem>,
+              <MenuItem key="delete" onClick={handleDelete}>
+                <ListItemIcon>
+                  <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                  supr
+                </Typography>
+              </MenuItem>,
+              <Divider key="divider" />,
+              <MenuItem key="forward" onClick={handleForward}>
+                <ListItemIcon>
+                  <Forward fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Move Forward</ListItemText>
+              </MenuItem>,
+              <MenuItem key="backward" onClick={handleBackward}>
+                <ListItemIcon>
+                  <Backward fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Move Backward</ListItemText>
+              </MenuItem>,
+              <MenuItem key="up" onClick={handleUp}>
+                <ListItemIcon>
+                  <ArrowUpward fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Move to Front</ListItemText>
+              </MenuItem>,
+              <MenuItem key="down" onClick={handleDown}>
+                <ListItemIcon>
+                  <ArrowDownward fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Move to Back</ListItemText>
+              </MenuItem>,
+            ]}
       </MenuList>
     </Paper>
   );

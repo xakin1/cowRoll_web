@@ -58,3 +58,5 @@ export interface MenuField {
   type: string;
   label: string;
 }
+
+export type ClipBoard = Field | null;

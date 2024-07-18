@@ -152,7 +152,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             </div>
           );
         case "photo":
-          console.log(photoSrc ? `url(${photoSrc})` : `url(/placeholder.png)`);
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}

@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDrop } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { CharacterSheetContext } from "./CharacterSheetContext";
@@ -15,6 +21,7 @@ interface FieldContextMenuProps {
   visible: boolean;
   position: { x: number; y: number };
   field: Field | null;
+  isOutsideClick: boolean;
 }
 
 const FieldContainer: React.FC<FieldContainerProps> = ({
@@ -26,14 +33,22 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
   const [selectedElement, setSelectedElementState] = useState<Field | null>(
     null
   );
+  const [contextMenu, setContextMenu] = useState<FieldContextMenuProps>({
+    visible: false,
+    position: { x: 0, y: 0 },
+    field: null,
+    isOutsideClick: false,
+  });
+  const [clipboard, setClipboard] = useState<Field | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const [, drop] = useDrop(
     () => ({
       accept: ["field", "menuItem"],
       drop: (item: Field | FieldWithoutId, monitor) => {
         const delta = monitor.getDifferenceFromInitialOffset();
-        const containerRect = document
-          .querySelector(".containerDrop")
-          ?.getBoundingClientRect();
+        const containerRect = containerRef.current?.getBoundingClientRect();
         const clientOffset = monitor.getClientOffset();
         let position;
 
@@ -60,6 +75,15 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     [addField, updateFieldStyle]
   );
 
+  // Combined ref function
+  const setRefs = useCallback(
+    (node: HTMLDivElement) => {
+      containerRef.current = node;
+      drop(node);
+    },
+    [drop]
+  );
+
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "s") {
@@ -72,7 +96,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
           handleCopy(selectedElement);
         }
       } else if (event.ctrlKey && event.key === "v") {
-        handlePaste();
+        handlePasteHere();
       } else if (event.ctrlKey && event.key === "x") {
         if (selectedElement) {
           handleCut(selectedElement);
@@ -98,26 +122,26 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     }
   };
 
-  const [contextMenu, setContextMenu] = useState<FieldContextMenuProps>({
-    visible: false,
-    position: { x: 0, y: 0 },
-    field: null,
-  });
-  const [clipboard, setClipboard] = useState<Field | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const handleContextMenu =
+    (field: Field | null) => (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-  const handleContextMenu = (field: Field) => (event: React.MouseEvent) => {
-    event.preventDefault();
-    setContextMenu({
-      visible: true,
-      position: { x: event.clientX, y: event.clientY },
-      field: field,
-    });
-  };
+      const isOutsideClick = field === null;
+
+      setContextMenu({
+        visible: true,
+        position: { x: event.clientX, y: event.clientY },
+        field: field,
+        isOutsideClick,
+      });
+    };
 
   const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-      setContextMenu({ ...contextMenu, visible: false });
+    const target = event.target as HTMLElement;
+    if (!target.closest(".field") && !target.closest(".properties-panel")) {
+      setSelectedElement(null);
+      setContextMenu({ ...contextMenu, visible: false, isOutsideClick: true });
     }
   };
 
@@ -162,6 +186,25 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     setContextMenu({ ...contextMenu, visible: false });
   };
 
+  const handlePasteHere = () => {
+    if (clipboard && containerRef.current) {
+      const { x, y } = contextMenu.position;
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      const newPosX = x - containerRect.left;
+      const newPosY = y - containerRect.top;
+
+      const newField = {
+        ...clipboard,
+        id: Date.now(),
+        style: { ...clipboard.style, top: newPosY, left: newPosX },
+      };
+
+      addField(newField, { top: newPosY, left: newPosX });
+    }
+    setContextMenu({ ...contextMenu, visible: false });
+  };
+
   const handleUp = (field: Field) => {
     updateFieldStyle(field.id, { zIndex: field.style.zIndex + 1 });
 
@@ -188,7 +231,11 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     <>
       <button onClick={handleSaveClick}>Guardar</button>
 
-      <div ref={drop} className="containerDrop">
+      <div
+        ref={setRefs}
+        className="containerDrop"
+        onContextMenu={handleContextMenu(null)}
+      >
         {fields.map((field) => (
           <DraggableField
             onContextMenu={handleContextMenu(field)}
@@ -211,9 +258,12 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
             }}
           >
             <ContextualMenu
+              clipboard={clipboard}
+              showPasteOnly={contextMenu.isOutsideClick}
               handleCopy={() => handleCopy(contextMenu.field!)}
               handleCut={() => handleCut(contextMenu.field!)}
               handlePaste={handlePaste}
+              handlePasteHere={handlePasteHere}
               handleUp={() => handleUp(contextMenu.field!)}
               handleDown={() => handleDown(contextMenu.field!)}
               handleForward={() => handleForward(contextMenu.field!)}

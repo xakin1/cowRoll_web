@@ -31,7 +31,10 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     field: FieldWithoutId,
     style: { [key: string]: any } = {}
   ) => {
-    setFields([...fields, { ...field, id: Date.now(), style }]);
+    setFields([
+      ...fields,
+      { ...field, id: Date.now(), style: { ...field.style, style } },
+    ]);
   };
 
   const updateFieldStyle = (id: number, style: { [key: string]: string }) => {
