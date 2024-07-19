@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { useDrop } from "react-dnd";
-import { useParams } from "react-router-dom";
 import { CharacterSheetContext } from "./CharacterSheetContext";
 import DraggableField from "./DraggableField";
 import ContextualMenu from "./components/contextMenu/menu";
@@ -27,9 +26,9 @@ interface FieldContextMenuProps {
 const FieldContainer: React.FC<FieldContainerProps> = ({
   setSelectedElement,
 }) => {
-  const { fields, addField, saveFile, removeField, updateFieldStyle } =
-    useContext(CharacterSheetContext)!;
-  const { id } = useParams<{ id: string }>();
+  const { fields, addField, removeField, updateFieldStyle } = useContext(
+    CharacterSheetContext
+  )!;
   const [selectedElement, setSelectedElementState] = useState<Field | null>(
     null
   );
@@ -89,17 +88,11 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "s") {
-        event.preventDefault();
-        if (id) {
-          await saveFile({ id: id });
-        }
-      } else if (event.ctrlKey && event.key === "c") {
+      if (event.ctrlKey && event.key === "c") {
         if (selectedElement) {
           handleCopy(selectedElement);
         }
       } else if (event.ctrlKey && event.key === "v") {
-        console.log("a");
         handlePaste();
       } else if (event.ctrlKey && event.key === "x") {
         if (selectedElement) {
@@ -115,16 +108,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [saveFile, id, selectedElement]);
-
-  const handleSaveClick = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    if (id) {
-      await saveFile({ id: id });
-    }
-  };
+  }, [selectedElement]);
 
   const handleContextMenu =
     (field: Field | null) => (event: React.MouseEvent) => {
@@ -242,8 +226,6 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
   return (
     <>
-      <button onClick={handleSaveClick}>Guardar</button>
-
       <div
         ref={setRefs}
         className="containerDrop"

@@ -66,14 +66,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   };
 
   const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    console.log(!target.closest(".border-style-select"));
-    if (
-      !target.closest(".properties-panel") &&
-      !target.closest(".select-options")
-    ) {
-      setIsSelected(false);
-    }
+    setIsSelected(false);
   };
 
   useEffect(() => {

@@ -1,10 +1,5 @@
 import React, { createContext, useState, type ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { saveFile } from "../../../services/codeApi";
-import type {
-  EditSheetProps,
-  FetchInsertContent,
-} from "../../../utils/types/ApiTypes";
 import type { Field, FieldWithoutId, Id } from "./types";
 
 interface CharacterSheetContextProps {
@@ -12,7 +7,6 @@ interface CharacterSheetContextProps {
   addField: (field: FieldWithoutId, style?: { [key: string]: any }) => Field;
   updateFieldStyle: (id: Id, style: { [key: string]: any }) => void; // Change type of id to string
   removeField: (id: Id) => void; // Change type of id to string
-  saveFile: (sheet: EditSheetProps) => Promise<FetchInsertContent<string>>;
 }
 
 export const CharacterSheetContext = createContext<
@@ -64,7 +58,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
         addField,
         updateFieldStyle,
         removeField,
-        saveFile,
       }}
     >
       {children}
