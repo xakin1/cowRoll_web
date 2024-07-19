@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type Id = number;
+export type Id = string;
 
 export interface Position {
   x: number;
@@ -13,7 +13,7 @@ export interface RenderFieldProps {
   label: string;
   isSelected?: boolean;
   menu?: boolean;
-  onSelect?: (selectedId: number) => void;
+  onSelect?: (selectedId: Id) => void;
   style?: any;
 }
 export interface MenuItemProps {

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   CharacterSheetContext,
   CharacterSheetProvider,
@@ -37,6 +37,23 @@ const CharacterSheet: React.FC = () => {
     }
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (
+      !target.closest(".properties-panel") &&
+      !target.closest(".select-options")
+    ) {
+      setSelectedElement(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="container-parent">
       <FieldMenu />
@@ -44,10 +61,17 @@ const CharacterSheet: React.FC = () => {
         <h2>Character Sheet</h2>
         <FieldContainer setSelectedElement={setSelectedElement} />
       </div>
-      <PropertiesPanel
-        selectedElement={selectedElement}
-        onUpdate={handleUpdate}
-      />
+      {selectedElement && (
+        <div
+          className="properties-panel-wrapper"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <PropertiesPanel
+            selectedElement={selectedElement}
+            onUpdate={handleUpdate}
+          />
+        </div>
+      )}
     </div>
   );
 };

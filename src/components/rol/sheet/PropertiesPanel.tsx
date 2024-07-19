@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { rgbToHex } from "../../../utils/functions/utils";
 import BorderStyleSelect from "./components/borderStyle/BorderStyleSelect";
 import SelectColor from "./components/selectColor/SelectColor";
+import "./styles.css";
 import type { Field } from "./types";
 
 interface PropertiesPanelProps {
@@ -35,6 +36,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderRadius, setBorderRadius] = useState<string>("0");
 
   const previousElementRef = useRef<Field | null>(null);
+  const propertiesPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (
@@ -67,7 +69,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       );
 
       previousElementRef.current = selectedElement;
-    } else {
     }
   }, [selectedElement]);
 
@@ -155,11 +156,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     // Handle alignment logic here
   };
 
-  if (!selectedElement) return null;
   return (
-    <div className="properties-panel">
+    <div className="properties-panel" ref={propertiesPanelRef}>
       <h3>Properties</h3>
-
       <div className="property-field">
         <label>Rotate:</label>
         <input
@@ -236,7 +235,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           onChange={handleChange}
         />
       </div>
-
       {/* Position Controls */}
       <div className="property-field position-controls">
         <h4>Position</h4>

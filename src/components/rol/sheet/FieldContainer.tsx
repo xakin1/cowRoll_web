@@ -11,7 +11,7 @@ import { CharacterSheetContext } from "./CharacterSheetContext";
 import DraggableField from "./DraggableField";
 import ContextualMenu from "./components/contextMenu/menu";
 import "./styles.css";
-import type { Field, FieldWithoutId } from "./types";
+import type { Field, FieldWithoutId, Id } from "./types";
 
 interface FieldContainerProps {
   setSelectedElement: (element: Field | null) => void;
@@ -69,8 +69,8 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
           });
         } else {
           updateFieldStyle((item as Field).id, {
-            top: position.y,
-            left: position.x,
+            top: `${position.y}px`,
+            left: `${position.x}px`,
           });
         }
       },
@@ -99,7 +99,8 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
           handleCopy(selectedElement);
         }
       } else if (event.ctrlKey && event.key === "v") {
-        handlePasteHere();
+        console.log("a");
+        handlePaste();
       } else if (event.ctrlKey && event.key === "x") {
         if (selectedElement) {
           handleCut(selectedElement);
@@ -155,7 +156,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     };
   }, [contextMenu]);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: Id) => {
     removeField(id);
     setContextMenu({ ...contextMenu, visible: false });
   };
@@ -176,15 +177,20 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     if (clipboard) {
       const newPosX = clipboard.style.left + 10;
       const newPosY = clipboard.style.top + 10;
+      console.log(newPosX);
+      console.log(newPosY);
+      const fieldToInsert = {
+        ...clipboard,
+        style: {
+          top: newPosY,
+          left: newPosX,
+          ...clipboard.style,
+        },
+      };
 
-      const newField = { ...clipboard, id: undefined };
-
-      addField(newField, { top: newPosY, left: newPosX });
-
-      setClipboard((prevClipboard) => ({
-        ...prevClipboard!,
-        style: { ...prevClipboard!.style, top: newPosY, left: newPosX },
-      }));
+      const newField = addField(fieldToInsert, { top: newPosY, left: newPosX });
+      setClipboard(newField);
+      console.log(newField);
     }
     setContextMenu({ ...contextMenu, visible: false });
   };
@@ -199,8 +205,12 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
       const newField = {
         ...clipboard,
-        id: Date.now(),
-        style: { ...clipboard.style, top: newPosY, left: newPosX },
+        id: Date.now().toString(),
+        style: {
+          ...clipboard.style,
+          top: `${newPosY}px`,
+          left: `${newPosX}px`,
+        },
       };
 
       addField(newField, { top: newPosY, left: newPosX });
@@ -245,7 +255,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
             key={field.id}
             {...field}
             setSelectedElement={(element) => {
-              setSelectedElement(field);
+              setSelectedElement(element);
               setSelectedElementState(element);
             }}
           />

@@ -5,12 +5,13 @@ import type {
   EditSheetProps,
   FetchInsertContent,
 } from "../../../utils/types/ApiTypes";
-import type { Field, FieldWithoutId } from "./types";
+import type { Field, FieldWithoutId, Id } from "./types";
+
 interface CharacterSheetContextProps {
   fields: Field[];
-  addField: (field: FieldWithoutId, style?: { [key: string]: any }) => void;
-  updateFieldStyle: (id: number, style: any) => void;
-  removeField: (id: number) => void;
+  addField: (field: FieldWithoutId, style?: { [key: string]: any }) => Field;
+  updateFieldStyle: (id: Id, style: { [key: string]: any }) => void; // Change type of id to string
+  removeField: (id: Id) => void; // Change type of id to string
   saveFile: (sheet: EditSheetProps) => Promise<FetchInsertContent<string>>;
 }
 
@@ -33,13 +34,15 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
   ) => {
     const newField = {
       ...field,
-      id: uuidv4(),
+      id: uuidv4(), // Use string id
       style: { ...field.style, ...style },
     };
     setFields([...fields, newField]);
+    return newField;
   };
 
-  const updateFieldStyle = (id: number, style: { [key: string]: string }) => {
+  const updateFieldStyle = (id: Id, style: { [key: string]: string }) => {
+    // Change type of id to string
     setFields((prevFields) =>
       prevFields.map((field) =>
         field.id === id
@@ -49,7 +52,8 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     );
   };
 
-  const removeField = (id: number) => {
+  const removeField = (id: Id) => {
+    // Change type of id to string
     setFields((prevFields) => prevFields.filter((field) => field.id !== id));
   };
 

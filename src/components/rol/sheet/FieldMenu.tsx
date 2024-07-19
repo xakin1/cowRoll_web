@@ -1,5 +1,6 @@
 import React from "react";
 import { useDrag } from "react-dnd";
+import { v4 as uuidv4 } from "uuid";
 import RenderField, { fields } from "./RenderFields";
 import "./styles.css";
 import type { MenuItemProps } from "./types";
@@ -33,7 +34,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ field }) => {
         menu={true}
         type={field.type}
         label={field.label}
-        id={Date.now()}
+        id={uuidv4()}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDrag } from "react-dnd";
 import RenderField from "./RenderFields";
 import "./styles.css";
-import type { DraggableFieldProps } from "./types";
+import type { DraggableFieldProps, Id } from "./types";
 
 const DraggableField: React.FC<DraggableFieldProps> = ({
   id,
@@ -44,7 +44,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     return {};
   };
 
-  const handleSelect = (selectedId: number) => {
+  const handleSelect = (selectedId: Id) => {
     setIsSelected(selectedId === id);
     const styles = getInlineStyles();
     if (setSelectedElement) {
@@ -60,11 +60,19 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     }
   };
 
+  const divStyle: React.CSSProperties = {
+    opacity: isDragging ? 0.5 : 1,
+    position: "absolute",
+  };
+
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (!target.closest(".field") && !target.closest(".properties-panel")) {
+    console.log(!target.closest(".border-style-select"));
+    if (
+      !target.closest(".properties-panel") &&
+      !target.closest(".select-options")
+    ) {
       setIsSelected(false);
-      setSelectedElement(null);
     }
   };
 
@@ -75,16 +83,11 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     };
   }, []);
 
-  const divStyle: React.CSSProperties = {
-    opacity: isDragging ? 0.5 : 1,
-    position: "absolute",
-  };
-
   return (
     <>
       <div
         ref={drag}
-        className={`field ${isSelected ? "selected" : ""}`}
+        className={`field`}
         style={divStyle}
         onContextMenu={(e) => onContextMenu(e, { id, type, label, style })}
         onClick={(e) => {

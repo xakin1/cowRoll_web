@@ -1,0 +1,47 @@
+.resizable-rotatable-container {
+  position: absolute;
+  border: 1px solid #00f;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resizable-rotatable-control {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 1px solid #00f;
+  position: absolute;
+}
+
+.top-left {
+  top: -5px;
+  left: -5px;
+  cursor: nwse-resize;
+}
+
+.top-right {
+  top: -5px;
+  right: -5px;
+  cursor: nesw-resize;
+}
+
+.bottom-left {
+  bottom: -5px;
+  left: -5px;
+  cursor: nesw-resize;
+}
+
+.bottom-right {
+  bottom: -5px;
+  right: -5px;
+  cursor: nwse-resize;
+}
+
+.rotate {
+  top: -20px;
+  left: 50%;
+  margin-left: -5px;
+  cursor: pointer;
+}
