@@ -54,7 +54,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
         label,
         style: {
           ...styles,
-          position: "absolute" as "absolute", // Asegurarse de que 'position' tenga el tipo correcto
+          position: "absolute" as "absolute",
         },
       });
     }
