@@ -11,12 +11,16 @@ import {
 import type { Field, FieldWithoutId, Id } from "./types";
 
 interface CharacterSheetContextProps {
-  fields: Field[];
+  sheets: Field[][];
+  currentSheetIndex: number;
   addField: (field: FieldWithoutId, style?: { [key: string]: any }) => Field;
   updateFieldStyle: (id: Id, style: { [key: string]: any }) => void;
   removeField: (id: Id) => void;
   saveFields: (props: EditSheetProps) => void;
   loadFields: (directorySystem: DirectorySystemProps, id: IdField) => void;
+  addSheet: () => void;
+  nextSheet: () => void;
+  previousSheet: () => void;
 }
 
 export const CharacterSheetContext = createContext<
@@ -30,7 +34,8 @@ interface CharacterSheetProviderProps {
 export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
   children,
 }) => {
-  const [fields, setFields] = useState<Field[]>([]);
+  const [sheets, setSheets] = useState<Field[][]>([[]]);
+  const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
 
   const addField = (
     field: FieldWithoutId,
@@ -41,32 +46,46 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
       id: uuidv4(),
       style: { ...field.style, ...style },
     };
-    setFields([...fields, newField]);
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+      newSheets[currentSheetIndex] = [
+        ...newSheets[currentSheetIndex],
+        newField,
+      ];
+      return newSheets;
+    });
     return newField;
   };
 
   const updateFieldStyle = (id: Id, style: { [key: string]: string }) => {
-    console.log(id, style);
-    setFields((prevFields) =>
-      prevFields.map((field) =>
-        field.id === id
-          ? { ...field, style: { ...field.style, ...style } }
-          : field
-      )
-    );
-    console.log(fields);
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+      newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
+        (field) =>
+          field.id === id
+            ? { ...field, style: { ...field.style, ...style } }
+            : field
+      );
+      return newSheets;
+    });
   };
 
   const removeField = (id: Id) => {
-    setFields((prevFields) => prevFields.filter((field) => field.id !== id));
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+      newSheets[currentSheetIndex] = newSheets[currentSheetIndex].filter(
+        (field) => field.id !== id
+      );
+      return newSheets;
+    });
   };
 
   const saveFields = (props: EditSheetProps) => {
-    const fieldsJSON = JSON.stringify(fields);
-    if (fieldsJSON && fieldsJSON !== "{}" && fieldsJSON !== "[]") {
+    const sheetsJSON = JSON.stringify(sheets);
+    if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
       const fileProps = {
         ...props,
-        content: fieldsJSON,
+        content: sheetsJSON,
       };
       editFile(fileProps);
     }
@@ -76,20 +95,40 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     const sheet = findNodeById(directorySystem, id) as SheetProps;
 
     if (sheet && sheet.content) {
-      console.log(sheet.content);
-      setFields(JSON.parse(sheet.content));
+      setSheets(JSON.parse(sheet.content));
     }
+  };
+
+  const addSheet = () => {
+    setSheets((prevSheets) => [...prevSheets, []]);
+    setCurrentSheetIndex(sheets.length);
+  };
+
+  const nextSheet = () => {
+    setCurrentSheetIndex((prevIndex) =>
+      prevIndex < sheets.length - 1 ? prevIndex + 1 : prevIndex
+    );
+  };
+
+  const previousSheet = () => {
+    setCurrentSheetIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : prevIndex
+    );
   };
 
   return (
     <CharacterSheetContext.Provider
       value={{
-        fields,
+        sheets,
+        currentSheetIndex,
         addField,
         updateFieldStyle,
         removeField,
         saveFields,
         loadFields,
+        addSheet,
+        nextSheet,
+        previousSheet,
       }}
     >
       {children}

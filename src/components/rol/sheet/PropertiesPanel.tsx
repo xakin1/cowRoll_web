@@ -23,8 +23,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   selectedElement,
   onUpdate,
 }) => {
-  const [localWidth, setLocalWidth] = useState<string>("");
-  const [localHeight, setLocalHeight] = useState<string>("");
+  const [width, setwidth] = useState<string>("");
+  const [height, setheight] = useState<string>("");
+  const [opacity, setOpacity] = useState<string>("1");
   const [rotate, setRotate] = useState<string>("0");
   const [scale, setScale] = useState<string>("1");
   const [xPosition, setXPosition] = useState<string>("0");
@@ -43,10 +44,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       selectedElement &&
       selectedElement.id !== previousElementRef.current?.id
     ) {
-      setLocalWidth(getSizeValue(selectedElement.style?.width));
-      setLocalHeight(getSizeValue(selectedElement.style?.height));
+      setwidth(getSizeValue(selectedElement.style?.width));
+      setheight(getSizeValue(selectedElement.style?.height));
       setXPosition(getSizeValue(selectedElement.style?.left));
       setYPosition(getSizeValue(selectedElement.style?.top));
+      setOpacity(selectedElement.style?.opacity || "1");
       const transform = selectedElement.style?.transform || "";
       const rotateMatch = transform.match(/rotate\(([^)]+)\)/);
       setScale(selectedElement.style?.scale || "1");
@@ -81,12 +83,16 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
     switch (name) {
       case "width":
-        setLocalWidth(value);
+        setwidth(value);
         onUpdate(name, `${value}px`);
         break;
       case "height":
-        setLocalHeight(value);
+        setheight(value);
         onUpdate(name, `${value}px`);
+        break;
+      case "opacity":
+        setOpacity(value);
+        onUpdate(name, value);
         break;
       case "rotate":
         setRotate(value);
@@ -182,7 +188,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         <input
           type="number"
           name="width"
-          value={localWidth}
+          value={width}
           onChange={handleChange}
         />
       </div>
@@ -191,8 +197,21 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         <input
           type="number"
           name="height"
-          value={localHeight}
+          value={height}
           onChange={handleChange}
+        />
+      </div>
+
+      <div className="property-field">
+        <label>Opacity:</label>
+        <input
+          type="number"
+          name="opacity"
+          value={opacity}
+          onChange={handleChange}
+          step={0.1}
+          min={0}
+          max={1}
         />
       </div>
       <div className="property-field">

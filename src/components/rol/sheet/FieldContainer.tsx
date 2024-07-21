@@ -14,6 +14,7 @@ import type { Field, FieldWithoutId, Id } from "./types";
 
 interface FieldContainerProps {
   setSelectedElement: (element: Field | null) => void;
+  fields: Field[];
 }
 
 interface FieldContextMenuProps {
@@ -24,9 +25,10 @@ interface FieldContextMenuProps {
 }
 
 const FieldContainer: React.FC<FieldContainerProps> = ({
+  fields,
   setSelectedElement,
 }) => {
-  const { fields, addField, removeField, updateFieldStyle } = useContext(
+  const { addField, removeField, updateFieldStyle } = useContext(
     CharacterSheetContext
   )!;
   const [selectedElement, setSelectedElementState] = useState<Field | null>(

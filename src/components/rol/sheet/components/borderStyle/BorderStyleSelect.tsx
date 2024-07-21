@@ -34,6 +34,7 @@ const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
     { name: "Ridge", style: "ridge" },
     { name: "Inset", style: "inset" },
     { name: "Outset", style: "outset" },
+    { name: "None", style: "none" },
   ];
 
   return (

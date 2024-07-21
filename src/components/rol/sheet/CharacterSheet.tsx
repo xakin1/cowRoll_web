@@ -23,18 +23,22 @@ const CharacterSheet: React.FC = () => {
     (state: RootState) => state.directorySystem.directorySystem
   );
 
-  const sheetProps: EditSheetProps = {
-    id: sheetId!,
-    type: FileSystemEnum.Sheet,
-  };
-
   const context = useContext(CharacterSheetContext);
   if (!context) {
     throw new Error(
       "CharacterSheet must be used within a CharacterSheetProvider"
     );
   }
-  const { updateFieldStyle, saveFields, loadFields } = context;
+  const {
+    sheets,
+    currentSheetIndex,
+    updateFieldStyle,
+    saveFields,
+    loadFields,
+    addSheet,
+    nextSheet,
+    previousSheet,
+  } = context;
 
   const handleUpdate = (name: string, value: string | number) => {
     if (selectedElement) {
@@ -94,8 +98,21 @@ const CharacterSheet: React.FC = () => {
       <div className="sheetContainer">
         <h2>Character Sheet</h2>
         <button onClick={handleSave}>Save</button>
+        <button onClick={addSheet}>New Sheet</button>
+        <button onClick={previousSheet} disabled={currentSheetIndex === 0}>
+          Previous Sheet
+        </button>
+        <button
+          onClick={nextSheet}
+          disabled={currentSheetIndex === sheets.length - 1}
+        >
+          Next Sheet
+        </button>
 
-        <FieldContainer setSelectedElement={setSelectedElement} />
+        <FieldContainer
+          setSelectedElement={setSelectedElement}
+          fields={sheets[currentSheetIndex]}
+        />
       </div>
       {selectedElement && (
         <div
