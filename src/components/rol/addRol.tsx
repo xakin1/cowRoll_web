@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import i18n from "../../i18n/i18n";
 import { createDirectory } from "../../services/codeApi";
@@ -12,7 +12,7 @@ import { toastStyle } from "../Route";
 
 interface RoleFormProps {
   id: Id;
-  onClose: () => void;
+  onClose?: () => void;
   onRoleAdded: (newRole: RolProps) => void;
 }
 
@@ -21,6 +21,13 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +67,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
       onRoleAdded(newRole);
       toast.success(i18n.t("Success.RoleCreated"), toastStyle);
     }
-    onClose();
+    if (onClose) {
+      onClose();
+    }
   };
 
   function upload() {
@@ -106,15 +115,14 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
       <div className="role-card">
         <h1>Add Role</h1>
         <div className="profile-picture">
-          <h1 className="upload-icon">
-            <i className="fa fa-plus fa-2x" aria-hidden="true"></i>
-          </h1>
           <input
+            ref={inputRef}
             className="file-uploader"
             type="file"
             onChange={upload}
             accept="image/*"
           />
+          <div className="profile-picture" />
         </div>
 
         <form onSubmit={handleSubmit}>
