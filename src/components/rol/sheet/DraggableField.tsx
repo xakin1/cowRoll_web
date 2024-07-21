@@ -11,6 +11,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   style,
   setSelectedElement,
   onContextMenu,
+  onChange,
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
@@ -76,6 +77,13 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     };
   }, []);
 
+  const handleChange = (newStyle: { [key: string]: any }) => {
+    if (onChange) {
+      console.log(newStyle);
+      onChange(id, newStyle);
+    }
+  };
+
   return (
     <>
       <div
@@ -93,6 +101,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
           label={label}
           style={{ position: "absolute", zIndex: 1, ...style }}
           id={id}
+          onChange={handleChange}
           isSelected={isSelected}
           onSelect={() => handleSelect(id)}
         />

@@ -15,7 +15,7 @@ import i18n from "../../../../i18n/i18n";
 import {
   updateSelectedFile,
   updateSelectedFileContent,
-} from "../../../../redux/slice/fileSlide";
+} from "../../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../../redux/store";
 import { editFile } from "../../../../services/codeApi";
 import "./BlocklyEditor.css";

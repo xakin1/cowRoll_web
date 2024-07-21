@@ -4,7 +4,7 @@ import {
 } from "../../../../hooks/customHooks.js";
 import { getI18N } from "../../../../i18n/index.js";
 import { getLang } from "../../../../i18n/utils.js";
-import { addOutput } from "../../../../redux/slice/codeSlide.js";
+import { addOutput } from "../../../../redux/slice/codeSlice.js";
 import type { RootState } from "../../../../redux/store.js";
 import { executeCode } from "../../../../services/codeApi.js";
 import type { CodeError } from "../../../../utils/types/ApiTypes.js";

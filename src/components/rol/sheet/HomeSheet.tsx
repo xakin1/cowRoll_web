@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import i18n from "../../../i18n/i18n";
-import { setDirectorySystem } from "../../../redux/slice/fileSlide";
+import { setDirectorySystem } from "../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../redux/store";
 import {
   createDirectory,
@@ -19,8 +19,8 @@ import {
   type Id,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
-import { toastStyle } from "../../App";
 import CustomModal from "../../CustomModal";
+import { toastStyle } from "../../Route";
 import PhotoCardList from "../../photoCard/PhotoCardList";
 import "./styles.css";
 
@@ -76,7 +76,6 @@ export function HomeSheet() {
     e.preventDefault();
 
     if (!rolId) {
-      //TODO: gestionar esto como se debe
       return;
     }
 

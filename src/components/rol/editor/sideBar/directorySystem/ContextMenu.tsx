@@ -20,7 +20,7 @@ import {
   type editDirectoryProps,
 } from "../../../../../utils/types/ApiTypes";
 import type { ContextMenuProps } from "../../../../../utils/types/types";
-import { toastStyle } from "../../../../App";
+import { toastStyle } from "../../../../Route";
 import "./contextMenu.css";
 
 const i18n = getI18N({ currentLocale: getLang() });

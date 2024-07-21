@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setDirectorySystem } from "../../../../redux/slice/fileSlide";
+import { setDirectorySystem } from "../../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../../redux/store";
 import { getFiles } from "../../../../services/codeApi";
 import FolderTree from "./directorySystem/FoltderTree";

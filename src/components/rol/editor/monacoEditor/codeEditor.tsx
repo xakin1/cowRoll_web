@@ -2,11 +2,11 @@ import Editor, { type OnMount } from "@monaco-editor/react";
 import type { editor } from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../hooks/customHooks";
+import { selectFile } from "../../../../redux/slice/DirectorySystemSlice";
 import {
   addCompileErrors,
   clearErrors,
-} from "../../../../redux/slice/codeSlide";
-import { selectFile } from "../../../../redux/slice/fileSlide";
+} from "../../../../redux/slice/codeSlice";
 import type { RootState } from "../../../../redux/store";
 import { saveFile } from "../../../../services/codeApi";
 import {

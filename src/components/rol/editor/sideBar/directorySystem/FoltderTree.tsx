@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   selectFile,
   setDirectorySystem,
-} from "../../../../../redux/slice/fileSlide";
+} from "../../../../../redux/slice/DirectorySystemSlice";
 import {
   FileSystemEnum,
   findNodeById,

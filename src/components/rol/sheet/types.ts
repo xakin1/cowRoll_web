@@ -14,6 +14,8 @@ export interface RenderFieldProps {
   isSelected?: boolean;
   menu?: boolean;
   onSelect?: (selectedId: Id) => void;
+  onChange?: (...args: any[]) => void;
+
   style?: any;
 }
 export interface MenuItemProps {
@@ -43,6 +45,7 @@ export interface Field {
   type: string;
   label: string;
   style: { [key: string]: any };
+  onChange?: (...args: any[]) => void;
 }
 
 export interface DraggableFieldProps extends Field {
@@ -51,6 +54,7 @@ export interface DraggableFieldProps extends Field {
     event: React.MouseEvent<Element, MouseEvent>,
     field: Field
   ) => void;
+  onChange?: (...args: any[]) => void;
 }
 
 export interface MenuField {

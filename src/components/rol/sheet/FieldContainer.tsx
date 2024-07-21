@@ -234,6 +234,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
         {fields.map((field) => (
           <DraggableField
             onContextMenu={handleContextMenu(field)}
+            onChange={updateFieldStyle}
             key={field.id}
             {...field}
             setSelectedElement={(element) => {

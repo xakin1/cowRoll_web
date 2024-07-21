@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import codeReducer from "./slice/codeSlide";
-import directorySystemReducer from "./slice/fileSlide";
+import directorySystemReducer from "./slice/DirectorySystemSlice";
+import codeReducer from "./slice/codeSlice";
 import idReducer from "./slice/idSlice";
 
 const rootReducer = combineReducers({
@@ -15,7 +15,6 @@ const persistConfig = {
   key: "root",
   storage,
 };
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

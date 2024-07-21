@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setDirectorySystem } from "../redux/slice/fileSlide";
+import { setDirectorySystem } from "../redux/slice/DirectorySystemSlice";
 import { setId } from "../redux/slice/idSlice";
 import { getFiles } from "../services/codeApi";
 import {
@@ -28,7 +28,6 @@ export function MainPage() {
     const fetchDocuments = async () => {
       const response = await getFiles();
       dispatch(setDirectorySystem(response.message));
-
       if (response) {
         const rolesArray: RolProps[] = [];
         response.message.children.forEach((child) => {
@@ -63,12 +62,9 @@ export function MainPage() {
     setRoles((prevRoles) => [...prevRoles, newRole]);
 
     try {
-      // Fetch the files
       const response = await getFiles();
 
-      // Check if the response is valid and contains the message
       if (response && response.message) {
-        // Dispatch the setDirectorySystem action with the response message
         dispatch(setDirectorySystem(response.message));
       } else {
         console.error("Invalid response from getFiles:", response);

@@ -232,3 +232,12 @@ export const getCodesOfRol = (
     return null;
   }
 };
+
+export const fetchFiles = async () => {
+  // Lógica para obtener los archivos, por ejemplo, llamada a una API
+  const response = await fetch("/api/files");
+  if (!response.ok) {
+    throw new Error("Error fetching files");
+  }
+  return await response.json();
+};

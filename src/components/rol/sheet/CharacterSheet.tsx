@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { saveFile } from "../../../services/codeApi";
+import { useAppSelector } from "../../../hooks/customHooks";
+import type { RootState } from "../../../redux/store";
+import {
+  FileSystemEnum,
+  type EditSheetProps,
+} from "../../../utils/types/ApiTypes";
 import {
   CharacterSheetContext,
   CharacterSheetProvider,
@@ -12,8 +17,16 @@ import "./styles.css";
 import type { Field } from "./types";
 
 const CharacterSheet: React.FC = () => {
+  const { sheetId } = useParams<{ sheetId: string }>();
   const [selectedElement, setSelectedElement] = useState<Field | null>(null);
-  const { id } = useParams<{ id: string }>();
+  const directorySystem = useAppSelector(
+    (state: RootState) => state.directorySystem.directorySystem
+  );
+
+  const sheetProps: EditSheetProps = {
+    id: sheetId!,
+    type: FileSystemEnum.Sheet,
+  };
 
   const context = useContext(CharacterSheetContext);
   if (!context) {
@@ -21,7 +34,7 @@ const CharacterSheet: React.FC = () => {
       "CharacterSheet must be used within a CharacterSheetProvider"
     );
   }
-  const { updateFieldStyle } = context;
+  const { updateFieldStyle, saveFields, loadFields } = context;
 
   const handleUpdate = (name: string, value: string | number) => {
     if (selectedElement) {
@@ -50,26 +63,6 @@ const CharacterSheet: React.FC = () => {
     }
   };
 
-  const handleSaveClick = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-    if (id) {
-      await saveFile({ id: id });
-    }
-  };
-
-  useEffect(() => {
-    const handleSave = async (event: KeyboardEvent) => {
-      if (event.ctrlKey && (event.key === "s" || event.key === "S")) {
-        saveFile({ id: id! });
-      }
-    };
-
-    window.addEventListener("keydown", handleSave);
-    return () => window.removeEventListener("keydown", handleSave);
-  }, []);
-
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
     return () => {
@@ -77,12 +70,30 @@ const CharacterSheet: React.FC = () => {
     };
   }, []);
 
+  const handleSave = () => {
+    if (sheetId) {
+      const sheetProps: EditSheetProps = {
+        id: sheetId,
+        type: FileSystemEnum.Sheet,
+      };
+      saveFields(sheetProps);
+    } else {
+      console.error("sheetId undefined");
+    }
+  };
+
+  useEffect(() => {
+    if (directorySystem && sheetId) {
+      loadFields(directorySystem, sheetId);
+    }
+  }, [sheetId]);
+
   return (
     <div className="container-parent">
       <FieldMenu />
       <div className="sheetContainer">
         <h2>Character Sheet</h2>
-        <button onClick={handleSaveClick}>Guardar</button>
+        <button onClick={handleSave}>Save</button>
 
         <FieldContainer setSelectedElement={setSelectedElement} />
       </div>

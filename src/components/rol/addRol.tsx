@@ -8,7 +8,7 @@ import {
   type Id,
   type RolProps,
 } from "../../utils/types/ApiTypes";
-import { toastStyle } from "../App";
+import { toastStyle } from "../Route";
 
 interface RoleFormProps {
   id: Id;

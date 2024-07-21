@@ -22,12 +22,12 @@ export const fields = [
 ];
 
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
-  ({ type, label, menu, id, onSelect, style }, ref) => {
+  ({ type, label, menu, id, onSelect, style, onChange }, ref) => {
+    // Añadir onPhotoChange
     const [editableContent, setEditableContent] = useState("Editable Text");
     const [photoSrc, setPhotoSrc] = useState<string>("");
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-
     useImperativeHandle(ref, () => targetRef.current!);
 
     const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
@@ -54,7 +54,11 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-          setPhotoSrc(reader.result as string);
+          const newPhotoSrc = reader.result as string;
+          setPhotoSrc(newPhotoSrc);
+          if (onChange) {
+            onChange({ backgroundImage: `url(${newPhotoSrc})` });
+          }
         };
         reader.readAsDataURL(file);
       }
@@ -157,19 +161,10 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               ref={targetRef as React.RefObject<HTMLDivElement>}
               className="photo-container"
               style={{
+                backgroundImage: `url(/placeholder.png)`,
+                ...style,
                 width: style?.width || 100,
                 height: style?.height || 100,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                border: "1px solid lightgray",
-                cursor: "pointer",
-                backgroundImage: photoSrc
-                  ? `url(${photoSrc})`
-                  : `url(/placeholder.png)`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                ...style,
               }}
               onClick={handleClick}
             >
