@@ -64,7 +64,7 @@ const LoadData = () => {
         </svg>
         <p className="container_rol__options__text">
           {" "}
-          {i18n.t("Rol.General.script")}
+          {i18n.t("Rol.General.scripts")}
         </p>
       </a>
     </main>

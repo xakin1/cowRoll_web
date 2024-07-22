@@ -18,6 +18,7 @@ function WorkSpace() {
     (state: RootState) => state.directorySystem.selectedFile
   );
 
+  console.log(file);
   const dispatch = useAppDispatch();
 
   const formatJson = (data: Object) => {
@@ -36,7 +37,9 @@ function WorkSpace() {
       );
     } catch (error) {
       return (
-        <span style={{ color: "red" }}>Error: Could not display object.</span>
+        <span style={{ color: "red" }}>
+          {i18n.t("Code.Error.CANT_DISPLAY")}
+        </span>
       );
     }
   };

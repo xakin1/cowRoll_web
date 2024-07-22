@@ -1,6 +1,9 @@
 {
   "Code": {
     "code": "Código",
+    "Error": {
+      "CANT_DISPLAY": "Error: No se pudo mostrar el objeto"
+    },
     "output": "Código de salida",
     "run": "Ejecutar",
     "placeHolder": "El código va aquí"

@@ -1,6 +1,9 @@
 {
   "Code": {
     "code": "Code",
+    "Error": {
+      "CANT_DISPLAY": "Error: Could not display object."
+    },
     "output": "Code output",
     "run": "Run",
     "placeHolder": "the code goes here"

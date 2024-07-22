@@ -1,6 +1,9 @@
 {
   "Code": {
     "code": "Código",
+    "Error": {
+      "CANT_DISPLAY": "Error: Non se puido amosar o obexecto"
+    },
     "output": "Código de saída",
     "run": "Executar",
     "placeHolder": "O código vai aquí"

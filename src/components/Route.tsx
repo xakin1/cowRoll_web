@@ -9,7 +9,10 @@ import {
 } from "react-router-dom";
 import { type ToastOptions } from "react-toastify";
 import { PersistGate } from "redux-persist/integration/react";
-import { setDirectorySystem } from "../redux/slice/DirectorySystemSlice";
+import {
+  selectFile,
+  setDirectorySystem,
+} from "../redux/slice/DirectorySystemSlice";
 import { persistor } from "../redux/store";
 import { getFiles } from "../services/codeApi";
 import "../styles/global.css";
@@ -33,6 +36,7 @@ const AppRoute = () => {
         const files = await getFiles();
         if (files && "message" in files) {
           dispatch(setDirectorySystem(files.message));
+          dispatch(selectFile(undefined));
         }
       } catch (error) {
         console.error("Error fetching files:", error);
