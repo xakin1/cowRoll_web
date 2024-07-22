@@ -13,6 +13,7 @@ import { setDirectorySystem } from "../redux/slice/DirectorySystemSlice";
 import { persistor } from "../redux/store";
 import { getFiles } from "../services/codeApi";
 import "../styles/global.css";
+import Loading from "./loading/Loading";
 import { MainPage } from "./mainPage";
 import WorkSpace from "./rol/editor/terminal/WorkSpace";
 import Rol from "./rol/rol";
@@ -44,7 +45,7 @@ const AppRoute = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>; // Puedes cambiar esto por un componente de carga más elaborado si lo prefieres
+    return <Loading></Loading>;
   }
 
   return (

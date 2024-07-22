@@ -13,6 +13,7 @@ import {
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
 import { toastStyle } from "../../Route";
+import Loading from "../../loading/Loading";
 import PhotoCardList from "../../photoCard/PhotoCardList";
 import SheetForm from "./components/sheetForm";
 import "./styles.css";
@@ -48,7 +49,7 @@ export function HomeSheet() {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading></Loading>;
   }
 
   const handleClick = (id: Id) => {
