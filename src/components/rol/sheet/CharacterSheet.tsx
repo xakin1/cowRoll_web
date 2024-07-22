@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../../hooks/customHooks";
+import i18n from "../../../i18n/i18n";
 import type { RootState } from "../../../redux/store";
 import {
   FileSystemEnum,
@@ -96,17 +97,19 @@ const CharacterSheet: React.FC = () => {
     <div className="container-parent">
       <FieldMenu />
       <div className="sheetContainer">
-        <h2>Character Sheet</h2>
-        <button onClick={handleSave}>Save</button>
-        <button onClick={addSheet}>New Sheet</button>
+        <h2>{i18n.t("Rol.Sheet.General.characterSheet")}</h2>
+        <button onClick={handleSave}>{i18n.t("Rol.Sheet.General.save")}</button>
+        <button onClick={addSheet}>
+          {i18n.t("Rol.Sheet.General.newSheet")}
+        </button>
         <button onClick={previousSheet} disabled={currentSheetIndex === 0}>
-          Previous Sheet
+          {i18n.t("Rol.Sheet.General.previousSheet")}
         </button>
         <button
           onClick={nextSheet}
           disabled={currentSheetIndex === sheets.length - 1}
         >
-          Next Sheet
+          {i18n.t("Rol.Sheet.General.nextSheet")}
         </button>
 
         <FieldContainer

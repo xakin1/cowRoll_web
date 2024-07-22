@@ -50,12 +50,14 @@ const SheetForm: React.FC<SheetFormProps> = ({
     e.preventDefault();
     console.log(rolId);
     if (!rolId) {
-      console.error("No se encontró el rolId");
+      console.error(i18n.t("Rol.Sheet.Error.ROL_ID_NOT_FOUND"));
+
       return;
     }
 
     if (sheetName === "") {
-      setError("Name is required.");
+      setError(i18n.t("Rol.Sheet.Error.NAME_REQUIRED"));
+
       return;
     }
 
@@ -77,14 +79,16 @@ const SheetForm: React.FC<SheetFormProps> = ({
         type: FileSystemEnum.Sheet,
       };
       handleSheetAdded(newSheet);
-      toast.success(i18n.t("Success.RoleCreated"), toastStyle);
+      toast.success(i18n.t("Rol.Sheet.Success.Created", sheetName), toastStyle);
     }
     if (onClose) onClose();
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className="custom-modal__title">Nombre de la ficha</h2>
+      <h2 className="custom-modal__title">
+        {i18n.t("Rol.Sheet.General.sheetName")}
+      </h2>
       <div className="custom-modal__input-group">
         <input
           type="text"
@@ -99,7 +103,7 @@ const SheetForm: React.FC<SheetFormProps> = ({
       </div>
       {error && <p className="error-text">{error}</p>}
       <button type="submit" className="submit-button">
-        Submit
+        {i18n.t("Rol.Sheet.General.submit")}
       </button>
     </form>
   );

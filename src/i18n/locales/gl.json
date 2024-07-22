@@ -5,11 +5,85 @@
     "run": "Executar",
     "placeHolder": "O código vai aquí"
   },
+  "Rol": {
+    "General": {
+      "addRol": "Engadir rol",
+      "name": "Nome",
+      "description": "Descrición",
+      "scripts": "Comportamentos",
+      "sheet": "Folla"
+    },
+    "Success": {
+      "deleted": "Se eliminou o rol correctamente",
+      "created": "O rol '{0}' foi borrado correctamente"
+    },
+    "Error": {
+      "deleted": "Error eliminando o rol",
+      "IMAGE_REQUIRED": "A imaxe é obligatoria",
+      "ONLY_IMAGES": "So están permitido as imaxes!",
+      "MAX_SIZE": "O tamaño máximo é {0}!",
+      "NAME_REQUIRED": "O nome é obligatorio.",
+      "created": "Error ao crearen o rol"
+    },
+    "Sheet": {
+      "General": {
+        "sheetName": "Nome da folla",
+        "submit": "Enviar",
+        "characterSheet": "Folla de personaxe",
+        "save": "Gardar",
+        "newSheet": "Nova folla",
+        "nextSheet": "Seguinte folla",
+        "previousSheet": "Folla anterior"
+      },
+      "Style": {
+        "properties": "Propiedades",
+        "rotate": "Rotación",
+        "scale": "Escala",
+        "width": "Ancho",
+        "height": "Alto",
+        "opacity": "Opacidade",
+        "backgroundColor": "Color do fondo",
+        "borderColor": "Color do borde",
+        "borderWidth": "Ancho do borde",
+        "borderStyle": "Estilo do borde",
+        "borderRadius": "Radio do borde",
+        "position": "Posición",
+        "solid": "Sólido",
+        "dotted": "Punteado",
+        "dashed": "Discontinuo",
+        "double": "Dobre",
+        "groove": "Surco",
+        "ridge": "Relieve",
+        "inset": "Afundido",
+        "outset": "Sainte",
+        "none": "Ningún"
+      },
+      "Success": {
+        "created": "A folla '{0}' creouse correctamente",
+        "deleted": "A folla se eliminou correctamente"
+      },
+      "Error": {
+        "NAME_REQUIRED": "O nome é obligatorio.",
+        "ROL_ID_NOT_FOUND": "Non se atopou o id do rol",
+        "deleted": "Error ao eliminaren a folla",
+        "created": "Error ao crearen a folla"
+      }
+    }
+  },
   "ContextualMenu": {
     "newFile": "Crear arquivo...",
     "newFolder": "Crear cartafol...",
     "renameFile": "Cambiar o nome...",
     "delete": "Eliminar",
+    "edit": "Editar",
+    "paste": "Pegar",
+    "pasteHere": "Pegar aquí",
+    "cut": "Cortar",
+    "copy": "Copiar",
+    "moveForward": "Mover hacia arriba",
+    "moveBackward": "Mover hacia abaixo",
+    "moveFront": "Mover ao fronte",
+    "moveBack": "Mover ao fondo",
     "Modal": {
       "inputFileName": "Introduce o nome do arquivo:",
       "inputDirectoryName": "Introduce o nome do cartafol:",

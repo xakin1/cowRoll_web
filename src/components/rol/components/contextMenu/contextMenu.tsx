@@ -5,6 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
+import i18n from "../../../../i18n/i18n";
 
 interface IconMenuProps {
   handleEdit: () => void;
@@ -22,13 +23,13 @@ export default function ContextualMenu({
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Edit</ListItemText>
+          <ListItemText>{i18n.t("ContextualMenu.edit")}</ListItemText>
         </MenuItem>
         <MenuItem key="delete" onClick={handleDelete}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Delete</ListItemText>
+          <ListItemText>{i18n.t("ContextualMenu.delete")}</ListItemText>
         </MenuItem>
       </MenuList>
     </Paper>

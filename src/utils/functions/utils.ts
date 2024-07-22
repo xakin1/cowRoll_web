@@ -22,3 +22,8 @@ export const rgbToHex = (rgb: string) => {
         ("0" + parseInt(result[3], 10).toString(16)).slice(-2)
     : rgb;
 };
+
+export function bytesToMB(bytes: number): string {
+  const megabytes = bytes / (1024 * 1024);
+  return `${megabytes.toFixed(2)} MB`;
+}

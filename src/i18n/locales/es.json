@@ -5,11 +5,85 @@
     "run": "Ejecutar",
     "placeHolder": "El código va aquí"
   },
+  "Rol": {
+    "General": {
+      "addRol": "Añadir rol",
+      "name": "Nombre",
+      "description": "Descripción",
+      "scripts": "Comportamientos",
+      "sheet": "Hoja"
+    },
+    "Success": {
+      "deleted": "Se elimino el rol correctamente",
+      "created": "Se creo el rol '{0}' correctamente"
+    },
+    "Error": {
+      "deleted": "Error eliminando el rol",
+      "IMAGE_REQUIRED": "Es obligatoria la imagen",
+      "ONLY_IMAGES": "Solo se permiten imágenes!",
+      "MAX_SIZE": "El tamaño máximo es de {0}!",
+      "NAME_REQUIRED": "El nombre es obligatorio.",
+      "created": "Error al crear el rol"
+    },
+    "Sheet": {
+      "General": {
+        "sheetName": "Nombre de la hoja",
+        "submit": "Enviar",
+        "characterSheet": "Hoja de personaje",
+        "save": "Guardar",
+        "newSheet": "Nueva hoja",
+        "nextSheet": "Seguinte hoja",
+        "previousSheet": "Hoja anterior"
+      },
+      "Style": {
+        "properties": "Propiedades",
+        "rotate": "Rotación",
+        "scale": "Escala",
+        "width": "Ancho",
+        "height": "Alto",
+        "opacity": "Opacidad",
+        "backgroundColor": "Color del fondo",
+        "borderColor": "Color del borde",
+        "borderWidth": "Ancho del borde",
+        "borderStyle": "Estilo del borde",
+        "borderRadius": "Radio del borde",
+        "position": "Posición",
+        "solid": "Sólido",
+        "dotted": "Punteado",
+        "dashed": "Discontinuo",
+        "double": "Doble",
+        "groove": "Surco",
+        "ridge": "Relieve",
+        "inset": "Hundido",
+        "outset": "Saliente",
+        "none": "Ninguno"
+      },
+      "Success": {
+        "created": "A folla '{0}' creouse correctamente",
+        "deleted": "A folla se eliminou correctamente"
+      },
+      "Error": {
+        "NAME_REQUIRED": "O nome é obligatorio.",
+        "ROL_ID_NOT_FOUND": "Non se atopou o id del rol",
+        "deleted": "Error ao eliminaren a folla",
+        "created": "Error ao crearen a folla"
+      }
+    }
+  },
   "ContextualMenu": {
     "newFile": "Crear archivo...",
     "newFolder": "Crear carpeta...",
     "renameFile": "Modificar el nombre...",
     "delete": "Borrar",
+    "edit": "Editar",
+    "paste": "Pegar",
+    "pasteHere": "Pegar aquí",
+    "cut": "Cortar",
+    "copy": "Copiar",
+    "moveForward": "Mover hacia arriba",
+    "moveBackward": "Mover hacia abajo",
+    "moveFront": "Traer al frente",
+    "moveBack": "Llevar al fondo",
     "Modal": {
       "inputFileName": "Introduce el nombre del archivo:",
       "inputDirectoryName": "Introduce el nombre dela carpeta:",

@@ -8,7 +8,7 @@ import "./ResizableRotatableComponent.css";
 
 interface ResizableRotatableComponentProps {
   children: ReactNode;
-  style?: CSSProperties; // Hacemos que style sea opcional
+  style?: CSSProperties;
 }
 
 interface StyleState {
@@ -103,7 +103,7 @@ const ResizableRotatableComponent: React.FC<
         left: `${componentStyle.left}px`,
         transform: `rotate(${componentStyle.rotate}deg)`,
         transformOrigin: "center center",
-        position: "absolute", // Asegurar que esté posicionado absolutamente
+        position: "absolute",
       }}
       onMouseDown={(e) => {
         e.stopPropagation();

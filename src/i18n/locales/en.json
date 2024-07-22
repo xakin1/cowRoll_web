@@ -5,11 +5,85 @@
     "run": "Run",
     "placeHolder": "the code goes here"
   },
+  "Rol": {
+    "General": {
+      "addRol": "Add rol",
+      "name": "Name",
+      "description": "Description",
+      "scripts": "Scripts",
+      "sheet": "Sheet"
+    },
+    "Success": {
+      "deleted": "Rol '{0}' has been successfully removed",
+      "created": "The rol has been created successfully"
+    },
+    "Error": {
+      "deleted": "Error deleting rol",
+      "IMAGE_REQUIRED": "Image is required.",
+      "ONLY_IMAGES": "Only images are allowed!",
+      "MAX_SIZE": "Maximum upload size is {0}!",
+      "NAME_REQUIRED": "Name is required.",
+      "created": "Error creating rol"
+    },
+    "Sheet": {
+      "General": {
+        "sheetName": "Name of the sheet",
+        "submit": "Submit",
+        "characterSheet": "Character Sheet",
+        "save": "Save",
+        "newSheet": "New sheet",
+        "nextSheet": "Next sheet",
+        "previousSheet": "Previous sheet"
+      },
+      "Style": {
+        "properties": "Properties",
+        "rotate": "Rotate",
+        "scale": "Scale",
+        "width": "Width",
+        "height": "Height",
+        "opacity": "Opacity",
+        "backgroundColor": "Background Color",
+        "borderColor": "Border Color",
+        "borderWidth": "Border Width",
+        "borderStyle": "Border Style",
+        "borderRadius": "Border Radius",
+        "position": "Position",
+        "solid": "Solid",
+        "dotted": "Dotted",
+        "dashed": "Dashed",
+        "double": "Double",
+        "groove": "Groove",
+        "ridge": "Ridge",
+        "inset": "Inset",
+        "outset": "Outset",
+        "none": "None"
+      },
+      "Success": {
+        "created": "The sheet '{0}' has been created successfully",
+        "deleted": "Sheet has been successfully removed"
+      },
+      "Error": {
+        "NAME_REQUIRED": "Name is required.",
+        "ROL_ID_NOT_FOUND": "Rol id not found",
+        "deleted": "Error deleting sheet",
+        "created": "Error creating sheet"
+      }
+    }
+  },
   "ContextualMenu": {
     "newFile": "New file...",
     "newFolder": "New folder...",
     "renameFile": "Rename...",
     "delete": "Delete",
+    "edit": "Edit",
+    "paste": "Paste",
+    "pasteHere": "Paste Here",
+    "cut": "Cut",
+    "copy": "Copy",
+    "moveForward": "Move Forward",
+    "moveBackward": "Move Backward",
+    "moveFront": "Move to front",
+    "moveBack": "Move to back",
     "Modal": {
       "inputFileName": "Insert the name of the file:",
       "inputDirectoryName": "Insert the folder of the file:",

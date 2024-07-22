@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import i18n from "../../../../../i18n/i18n";
 import "./borderStyle.css";
 
 interface BorderStyleSelectProps {
@@ -26,15 +27,15 @@ const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
   };
 
   const styles = [
-    { name: "Solid", style: "solid" },
-    { name: "Dotted", style: "dotted" },
-    { name: "Dashed", style: "dashed" },
-    { name: "Double", style: "double" },
-    { name: "Groove", style: "groove" },
-    { name: "Ridge", style: "ridge" },
-    { name: "Inset", style: "inset" },
-    { name: "Outset", style: "outset" },
-    { name: "None", style: "none" },
+    { name: i18n.t("Roll.Sheet.Styles.solid"), style: "solid" },
+    { name: i18n.t("Roll.Sheet.Styles.dotted"), style: "dotted" },
+    { name: i18n.t("Roll.Sheet.Styles.dashed"), style: "dashed" },
+    { name: i18n.t("Roll.Sheet.Styles.double"), style: "double" },
+    { name: i18n.t("Roll.Sheet.Styles.groove"), style: "groove" },
+    { name: i18n.t("Roll.Sheet.Styles.ridge"), style: "ridge" },
+    { name: i18n.t("Roll.Sheet.Styles.inset"), style: "inset" },
+    { name: i18n.t("Roll.Sheet.Styles.outset"), style: "outset" },
+    { name: i18n.t("Roll.Sheet.Styles.none"), style: "none" },
   ];
 
   return (

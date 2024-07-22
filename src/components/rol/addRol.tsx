@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import i18n from "../../i18n/i18n";
 import { createDirectory } from "../../services/codeApi";
+import { bytesToMB } from "../../utils/functions/utils";
 import {
   FileSystemEnum,
   type CreateRolProps,
@@ -33,12 +34,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
     e.preventDefault();
 
     if (!image) {
-      setError("Image is required.");
+      setError(i18n.t("Rol.Error.IMAGE_REQUIRED"));
       return;
     }
 
     if (name.trim() === "") {
-      setError("Name is required.");
+      setError(i18n.t("Rol.Error.NAME_REQUIRED"));
       return;
     }
 
@@ -65,7 +66,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
         children: [],
       };
       onRoleAdded(newRole);
-      toast.success(i18n.t("Success.RoleCreated"), toastStyle);
+      toast.success(i18n.t("Rol.Success.created", name), toastStyle);
     }
     if (onClose) {
       onClose();
@@ -87,11 +88,11 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
     const file = fileUploadInput.files[0];
 
     if (!file.type.includes("image")) {
-      return alert("Only images are allowed!");
+      return alert(i18n.t("Rol.Error.ONLY_IMAGES"));
     }
-
-    if (file.size > 10_000_000) {
-      return alert("Maximum upload size is 10MB!");
+    let maxBytes = 10_000_000;
+    if (file.size > maxBytes) {
+      return alert(i18n.t("Rol.Error.MAX_SIZE", bytesToMB(maxBytes)));
     }
 
     const fileReader = new FileReader();
@@ -113,7 +114,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
   return (
     <div className="container_rol_add">
       <div className="role-card">
-        <h1>Add Role</h1>
+        <h1>{i18n.t("Rol.General.addRol")}</h1>
         <div className="profile-picture">
           <input
             ref={inputRef}
@@ -128,7 +129,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
         <form onSubmit={handleSubmit}>
           {error && <p className="error-message">{error}</p>}
           <div className="form-group">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">{i18n.t("Rol.General.name")}</label>
             <input
               type="text"
               id="name"
@@ -138,7 +139,9 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description">
+              {i18n.t("Rol.General.description")}
+            </label>
             <textarea
               id="description"
               value={description}
@@ -148,7 +151,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ id, onClose, onRoleAdded }) => {
           </div>
 
           <button className="form-group__summit-button" type="submit">
-            Add Role
+            {i18n.t("Rol.General.addRol")}
           </button>
         </form>
       </div>

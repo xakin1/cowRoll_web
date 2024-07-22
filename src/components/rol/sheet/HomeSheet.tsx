@@ -35,7 +35,6 @@ export function HomeSheet() {
       const directory = getSheetsOfRol(response.message, rolId);
 
       if (directory) {
-        // Assuming the children of 'directory' are of type 'SheetProps'
         const sheets: SheetProps[] = directory.children as SheetProps[];
         setSheetsDirectory(directory);
         setSheets(sheets);
@@ -63,10 +62,10 @@ export function HomeSheet() {
   const handleDelete = async (id: Id) => {
     const response = await deleteFile(id);
     if (response && "message" in response) {
-      toast.success(i18n.t("Success.Role.Deleted"), toastStyle);
-      fetchDocuments(); // Refetch documents after delete
+      toast.success(i18n.t("Rol.Sheet.Success.deleted"), toastStyle);
+      fetchDocuments();
     } else {
-      toast.error(i18n.t("Error.Role.Deleted"), toastStyle);
+      toast.error(i18n.t("Rol.Sheet.Error.deleted"), toastStyle);
     }
   };
 

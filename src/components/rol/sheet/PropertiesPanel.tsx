@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
+import i18n from "../../../i18n/i18n";
 import { rgbToHex } from "../../../utils/functions/utils";
 import BorderStyleSelect from "./components/borderStyle/BorderStyleSelect";
 import SelectColor from "./components/selectColor/SelectColor";
@@ -164,9 +165,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
   return (
     <div className="properties-panel" ref={propertiesPanelRef}>
-      <h3>Properties</h3>
+      <h3>{i18n.t("Rol.Sheet.Style.properties")}</h3>
       <div className="property-field">
-        <label>Rotate:</label>
+        <label>{i18n.t("Rol.Sheet.Style.rotate")}:</label>
         <input
           type="number"
           name="rotate"
@@ -175,7 +176,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         />
       </div>
       <div className="property-field">
-        <label>Scale:</label>
+        <label>{i18n.t("Rol.Sheet.Style.scale")}:</label>
         <input
           type="number"
           name="scale"
@@ -184,7 +185,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         />
       </div>
       <div className="property-field">
-        <label>Width:</label>
+        <label>{i18n.t("Rol.Sheet.Style.width")}:</label>
         <input
           type="number"
           name="width"
@@ -193,7 +194,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         />
       </div>
       <div className="property-field">
-        <label>Height:</label>
+        <label>{i18n.t("Rol.Sheet.Style.height")}:</label>
         <input
           type="number"
           name="height"
@@ -203,7 +204,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       </div>
 
       <div className="property-field">
-        <label>Opacity:</label>
+        <label>{i18n.t("Rol.Sheet.Style.opacity")}:</label>
         <input
           type="number"
           name="opacity"
@@ -218,7 +219,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         <SelectColor
           value={backgroundColor}
           name={"backgroundColor"}
-          label={"Background Color:"}
+          label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
           onChange={handleChange}
           onRemove={handleRemoveBackground}
         ></SelectColor>
@@ -227,13 +228,13 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         <SelectColor
           value={borderColor}
           name={"borderColor"}
-          label={"Border Color:"}
+          label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
           onChange={handleChange}
           onRemove={handleRemoveBorder}
         ></SelectColor>
       </div>
       <div className="property-field">
-        <label>Border Width:</label>
+        <label>{i18n.t("Rol.Sheet.Style.borderWidth")}:</label>
         <input
           type="number"
           name="borderWidth"
@@ -242,11 +243,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         />
       </div>
       <div className="property-field">
-        <label>Border Style:</label>
+        <label>{i18n.t("Rol.Sheet.Style.borderStyle")}:</label>
         <BorderStyleSelect value={borderStyle} onChange={handleChange} />
       </div>
       <div className="property-field">
-        <label>Border Radius:</label>
+        <label>{i18n.t("Rol.Sheet.Style.borderRadius")}:</label>
         <input
           type="number"
           name="borderRadius"
@@ -256,7 +257,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       </div>
       {/* Position Controls */}
       <div className="property-field position-controls">
-        <h4>Position</h4>
+        <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
         <div className="alignment-buttons">
           <button onClick={() => handleAlignment("left")}>
             <FontAwesomeIcon icon={faAlignLeft} />

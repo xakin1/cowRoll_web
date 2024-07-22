@@ -25,7 +25,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
   ({ type, label, menu, id, onSelect, style, onChange }, ref) => {
     // Añadir onPhotoChange
     const [editableContent, setEditableContent] = useState("Editable Text");
-    const [photoSrc, setPhotoSrc] = useState<string>("");
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
@@ -55,7 +54,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         const reader = new FileReader();
         reader.onload = () => {
           const newPhotoSrc = reader.result as string;
-          setPhotoSrc(newPhotoSrc);
           if (onChange) {
             onChange({ backgroundImage: `url(${newPhotoSrc})` });
           }

@@ -61,10 +61,10 @@ export function MainPage() {
   const handleDelete = async (id: Id) => {
     const response = await deleteFile(id);
     if (response && "message" in response) {
-      toast.success(i18n.t("Success.Role.Deleted"), toastStyle);
-      fetchDocuments(); // Refetch documents after delete
+      toast.success(i18n.t("Rol.Success.deleted"), toastStyle);
+      fetchDocuments(); // Actualizar el estado de la aplicación
     } else {
-      toast.error(i18n.t("Error.Role.Deleted"), toastStyle);
+      toast.error(i18n.t("Rol.Error.Deleted"), toastStyle);
     }
   };
 

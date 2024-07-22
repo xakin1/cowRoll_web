@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import i18n from "../../../../../i18n/i18n";
 import type { ClipBoard } from "../../types";
 
 interface IconMenuProps {
@@ -57,7 +58,9 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <ContentPaste fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Paste Here</ListItemText>
+                <ListItemText>
+                  {i18n.t("ContextualMenu.pasteHere")}
+                </ListItemText>
                 <Typography variant="body2" color="text.secondary">
                   Ctrl + V
                 </Typography>
@@ -68,7 +71,7 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <ContentCut fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Cut</ListItemText>
+                <ListItemText>{i18n.t("ContextualMenu.cut")}</ListItemText>
                 <Typography variant="body2" color="text.secondary">
                   Ctrl + X
                 </Typography>
@@ -77,7 +80,7 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <ContentCopy fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Copy</ListItemText>
+                <ListItemText>{i18n.t("ContextualMenu.copy")}</ListItemText>
                 <Typography variant="body2" color="text.secondary">
                   Ctrl + C
                 </Typography>
@@ -90,7 +93,7 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <ContentPaste fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Paste</ListItemText>
+                <ListItemText>{i18n.t("ContextualMenu.paste")}</ListItemText>
                 <Typography variant="body2" color="text.secondary">
                   Ctrl + V
                 </Typography>
@@ -99,7 +102,7 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <DeleteIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Delete</ListItemText>
+                <ListItemText>{i18n.t("ContextualMenu.delete")}</ListItemText>
                 <Typography variant="body2" color="text.secondary">
                   supr
                 </Typography>
@@ -109,25 +112,31 @@ export default function ContextualMenu({
                 <ListItemIcon>
                   <Forward fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Move Forward</ListItemText>
+                <ListItemText>
+                  {i18n.t("ContextualMenu.moveForward")}
+                </ListItemText>
               </MenuItem>,
               <MenuItem key="backward" onClick={handleBackward}>
                 <ListItemIcon>
                   <Backward fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Move Backward</ListItemText>
+                <ListItemText>
+                  {i18n.t("ContextualMenu.moveBackward")}
+                </ListItemText>
               </MenuItem>,
               <MenuItem key="up" onClick={handleUp}>
                 <ListItemIcon>
                   <ArrowUpward fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Move to Front</ListItemText>
+                <ListItemText>
+                  {i18n.t("ContextualMenu.moveFront")}
+                </ListItemText>
               </MenuItem>,
               <MenuItem key="down" onClick={handleDown}>
                 <ListItemIcon>
                   <ArrowDownward fontSize="small" />
                 </ListItemIcon>
-                <ListItemText>Move to Back</ListItemText>
+                <ListItemText>{i18n.t("ContextualMenu.moveBack")}</ListItemText>
               </MenuItem>,
             ]}
       </MenuList>
