@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CustomModal from "../CustomModal";
 import ContextualMenu from "../rol/components/contextMenu/contextMenu";
 import PhotoCard from "./PhotoCard";
@@ -9,6 +9,13 @@ interface PhotoElement {
   id: any;
   name: string;
   image?: string;
+}
+
+export interface PhotoListFormProps<T, Y> {
+  onClose?: () => void;
+  selectedElement?: T;
+  onElementAdded: (newRol: T) => void;
+  onElementUpdated?: (updatedRol: Y) => void;
 }
 
 interface PhotoCardProps {
@@ -34,8 +41,11 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
     null
   );
   const [showModal, setShowModal] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
+
   const handleContextMenu = (
     e: React.MouseEvent<HTMLElement>,
     element: PhotoElement
@@ -47,7 +57,11 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (!target.closest(".contextual-menu")) {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(target) &&
+      !target.closest(".contextual-menu")
+    ) {
       setSelectedElement(null);
       setContextMenuPosition(null);
     }
@@ -62,7 +76,6 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
 
   const handleEdit = () => {
     handleOpen();
-    setSelectedElement(null);
     setContextMenuPosition(null);
   };
 
@@ -88,7 +101,6 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
             />
           </React.Fragment>
         ))}
-
         <PhotoCardAdd handleOpen={handleOpen}></PhotoCardAdd>
       </div>
       {selectedElement && contextMenuPosition && (
@@ -107,9 +119,12 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
         </div>
       )}
       <CustomModal open={showModal} onClose={handleClose}>
-        {React.cloneElement(children as React.ReactElement<any>, {
-          onClose: handleClose,
-        })}
+        <div ref={modalRef} onClick={(e) => e.stopPropagation()}>
+          {React.cloneElement(children as React.ReactElement<any>, {
+            onClose: handleClose,
+            selectedElement: selectedElement,
+          })}
+        </div>
       </CustomModal>
     </>
   );

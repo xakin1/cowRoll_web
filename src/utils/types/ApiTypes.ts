@@ -83,7 +83,7 @@ export interface CreateDirectoryProps {
 
 export interface editDirectoryProps {
   name?: string;
-  parentId?: Id;
+  parentId: Id;
   children?: DirectorySystem;
   type?: DirectoryTypes;
   id: Id;
@@ -92,7 +92,7 @@ export interface editDirectoryProps {
 export type Id = string;
 export interface DirectoryProps {
   name: string;
-  parentId?: Id;
+  parentId: Id;
   id: Id;
   children: DirectorySystem;
   type: DirectoryTypes;

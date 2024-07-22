@@ -9,13 +9,14 @@ import { deleteFile, getFiles } from "../services/codeApi";
 import {
   isDirectory,
   type DirectoryProps,
+  type EditRolProps,
   type Id,
   type RolProps,
 } from "../utils/types/ApiTypes";
 import { toastStyle } from "./Route";
 import Loading from "./loading/Loading";
 import PhotoCardList from "./photoCard/PhotoCardList";
-import RoleForm from "./rol/addRol";
+import RolForm from "./rol/components/form/AddRol";
 
 export function MainPage() {
   const [roles, setRoles] = useState<RolProps[]>([]);
@@ -69,9 +70,7 @@ export function MainPage() {
     }
   };
 
-  const handleRoleAdded = async (newRole: RolProps) => {
-    setRoles((prevRoles) => [...prevRoles, newRole]);
-
+  const updateDirectory = async () => {
     try {
       const response = await getFiles();
       if (response && response.message) {
@@ -84,6 +83,19 @@ export function MainPage() {
     }
   };
 
+  const handleRoleAdded = async (newRol: RolProps) => {
+    setRoles((prevRoles) => [...prevRoles, newRol]);
+    updateDirectory();
+  };
+  const updateRole = (updatedRol: EditRolProps) => {
+    setRoles((prevRoles) =>
+      prevRoles.map((role) =>
+        role.id === updatedRol.id ? { ...role, ...updatedRol } : role
+      )
+    );
+    updateDirectory();
+  };
+
   return (
     <>
       <PhotoCardList
@@ -91,7 +103,11 @@ export function MainPage() {
         handleClick={handleClick}
         handleDelete={handleDelete}
       >
-        <RoleForm id={rolesDirectory?.id || ""} onRoleAdded={handleRoleAdded} />
+        <RolForm
+          id={rolesDirectory?.id || ""}
+          onElementAdded={handleRoleAdded}
+          onElementUpdated={updateRole}
+        />
       </PhotoCardList>
     </>
   );

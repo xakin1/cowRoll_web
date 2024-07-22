@@ -12,13 +12,16 @@
     "General": {
       "addRol": "Add rol",
       "name": "Name",
+      "saveChanges": "Save changes",
+      "editRol": "Edit rol",
       "description": "Description",
       "scripts": "Scripts",
       "sheet": "Sheet"
     },
     "Success": {
-      "deleted": "Rol '{0}' has been successfully removed",
-      "created": "The rol has been created successfully"
+      "deleted": "Rol has been successfully removed",
+      "created": "The rol '{0}' has been created successfully",
+      "updated": "The rol '{0}' has been updated successfully"
     },
     "Error": {
       "deleted": "Error deleting rol",
@@ -63,6 +66,7 @@
       },
       "Success": {
         "created": "The sheet '{0}' has been created successfully",
+        "updated": "The sheet '{0}' has been updated successfully",
         "deleted": "Sheet has been successfully removed"
       },
       "Error": {

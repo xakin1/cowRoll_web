@@ -12,13 +12,16 @@
     "General": {
       "addRol": "Añadir rol",
       "name": "Nombre",
+      "saveChanges": "Guardar cambios",
+      "editRol": "Editar rol",
       "description": "Descripción",
       "scripts": "Comportamientos",
       "sheet": "Hoja"
     },
     "Success": {
       "deleted": "Se elimino el rol correctamente",
-      "created": "Se creo el rol '{0}' correctamente"
+      "created": "Se creó el rol '{0}' correctamente",
+      "updated": "Se editó el rol '{0}' correctamente"
     },
     "Error": {
       "deleted": "Error eliminando el rol",
@@ -63,6 +66,7 @@
       },
       "Success": {
         "created": "A folla '{0}' creouse correctamente",
+        "updated": "A folla '{0}' seactualizo correctamente",
         "deleted": "A folla se eliminou correctamente"
       },
       "Error": {

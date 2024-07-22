@@ -9,6 +9,7 @@ import { deleteFile, getFiles } from "../../../services/codeApi";
 import {
   getSheetsOfRol,
   type DirectoryProps,
+  type EditSheetProps,
   type Id,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
@@ -26,8 +27,6 @@ export function HomeSheet() {
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [sheetName, setSheetName] = useState("");
 
   const fetchDocuments = async () => {
     const response = await getFiles();
@@ -60,6 +59,16 @@ export function HomeSheet() {
     setSheets((prevSheets) => [...prevSheets, newSheet]);
   };
 
+  const handleSheetUpdated = (updatedSheet: EditSheetProps) => {
+    setSheets((prevSheets) =>
+      prevSheets.map((sheet) =>
+        sheet.id === updatedSheet.id
+          ? { ...sheet, name: updatedSheet.name! }
+          : sheet
+      )
+    );
+  };
+
   const handleDelete = async (id: Id) => {
     const response = await deleteFile(id);
     if (response && "message" in response) {
@@ -78,9 +87,8 @@ export function HomeSheet() {
         handleDelete={handleDelete}
       >
         <SheetForm
-          handleSheetAdded={handleSheetAdded}
-          sheetName={sheetName}
-          handleChange={setSheetName}
+          onElementAdded={handleSheetAdded}
+          onElementUpdated={handleSheetUpdated}
           rolId={rolId}
           directoryId={sheetsDirectory?.id!}
         ></SheetForm>

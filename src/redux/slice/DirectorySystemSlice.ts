@@ -1,41 +1,15 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import {
-  FileSystemEnum,
   type CodeProps,
   type DirectoryProps,
 } from "../../utils/types/ApiTypes";
 
 interface DirectorySystem {
-  directorySystem: DirectoryProps;
+  directorySystem?: DirectoryProps;
   selectedFile?: CodeProps;
 }
 const initialState: DirectorySystem = {
-  directorySystem: {
-    name: "Root",
-    type: FileSystemEnum.Directory,
-    children: [
-      {
-        name: "Roles",
-        type: FileSystemEnum.Directory,
-        children: [
-          {
-            name: "Sheets",
-            type: FileSystemEnum.Directory,
-            children: [],
-            id: "",
-          },
-          {
-            name: "Codes",
-            type: FileSystemEnum.Directory,
-            children: [],
-            id: "",
-          },
-        ],
-        id: "",
-      },
-    ],
-    id: "",
-  },
+  directorySystem: undefined,
   selectedFile: undefined,
 };
 
