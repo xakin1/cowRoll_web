@@ -1,7 +1,9 @@
 :root {
   --background-color-light: #f0f0f0;
+  --header-background-color-light: lightgray;
   --text-color-light: #333;
   --background-color-dark: #333;
+  --header-background-color-dark: black;
   --text-color-dark: #fff;
   --border-color-light: rgba(0, 0, 0, 0.4);
   --border-color-dark: rgba(255, 255, 255, 0.4);
@@ -23,12 +25,15 @@
 
 [data-theme="light"] {
   --background-color: var(--background-color-light);
+  --header-background-color: var(--header-background-color-light);
   --text-color: var(--text-color-light);
   --border-color: var(--border-color-light);
 }
 
 [data-theme="dark"] {
   --background-color: var(--background-color-dark);
+  --header-background-color: var(--header-background-color-dark);
+
   --text-color: var(--text-color-dark);
   --border-color: var(--border-color-dark);
 }
@@ -51,28 +56,9 @@ body {
   overflow: hidden;
 }
 
-.header {
-  background-color: lightgray;
-}
-
 form {
   background-color: var(--background-color);
   color: var(--text-color);
-}
-.theme-toggle-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 10px;
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
-}
-
-.theme-toggle-button .icon {
-  width: 24px;
-  height: 24px;
 }
 
 code {
@@ -93,7 +79,6 @@ code {
   width: 100%;
   top: 5rem;
   left: 48px;
-  background-color: #ff9776;
   display: none;
   margin: 0;
 }
@@ -108,28 +93,8 @@ code {
   text-transform: uppercase;
 }
 
-.nav-links a:hover,
-.nav-links a:focus {
-  background-color: #ff9776;
-}
-
 .expanded {
   display: unset;
-}
-
-@media screen and (min-width: 636px) {
-  .nav-links {
-    margin-left: 5em;
-    display: block;
-    position: static;
-    width: auto;
-    background: none;
-  }
-
-  .nav-links a {
-    display: inline-block;
-    padding: 15px 20px;
-  }
 }
 
 .control span {

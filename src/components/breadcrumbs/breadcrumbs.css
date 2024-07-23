@@ -1,0 +1,22 @@
+.breadcrumb__path {
+  color: var(--text-color);
+  font-size: 24px;
+  max-width: 18.75rem;
+  line-height: 1.75rem;
+  margin: 0.125rem 0;
+  padding: 0.25rem 1rem;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  flex: 0 1 auto;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.breadcrumb {
+  margin: rem 0;
+  display: flex;
+  align-items: center;
+}

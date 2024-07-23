@@ -36,6 +36,8 @@
         "sheetName": "Nombre de la hoja",
         "submit": "Enviar",
         "characterSheet": "Hoja de personaje",
+        "deleteSheet": "Borrar hoja actual",
+        "saveSuccess": "Se ha guardado correctamente",
         "save": "Guardar",
         "newSheet": "Nueva hoja",
         "nextSheet": "Seguinte hoja",
@@ -103,6 +105,8 @@
   "General": {
     "accept": "Aceptar",
     "cancel": "Cancelar",
+    "roles": "Roles",
+    "codes": "Códigos",
     "selectFile": "Selecione un archivo",
     "sigIn": "Registrarse",
     "logIn": "Iniciar sesión",

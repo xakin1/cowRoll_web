@@ -24,9 +24,10 @@ export const codeSlice = createSlice({
   initialState,
   reducers: {
     addOutput: (state, action: PayloadAction<FetchRun<any>>) => {
+      console.log(action.payload);
       if (action.payload) {
         if ("message" in action.payload) {
-          state.output = action.payload.message || "";
+          state.output = action.payload.message;
         } else {
           state.error.error = action.payload.error?.error || "";
           state.error.errorCode = action.payload.error?.errorCode || "";

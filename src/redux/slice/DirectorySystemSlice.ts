@@ -26,6 +26,7 @@ export const directorySystemSlice = createSlice({
     selectFile: (state, action: PayloadAction<CodeProps | undefined>) => {
       state.selectedFile = action.payload;
     },
+
     updateSelectedFileContent: (state, action: PayloadAction<string>) => {
       if (state.selectedFile) {
         state.selectedFile.content = action.payload;

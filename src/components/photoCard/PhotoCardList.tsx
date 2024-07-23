@@ -93,7 +93,7 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
             <PhotoCard
               handleClick={() => {
                 setSelectedElement(element);
-                handleClick(element.id);
+                handleClick(element);
               }}
               name={element.name}
               onContextMenu={(e) => handleContextMenu(e, element)}

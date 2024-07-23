@@ -225,7 +225,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     updateFieldStyle(field.id, { zIndex: 0 });
     setContextMenu({ ...contextMenu, visible: false });
   };
-
+  console.log(fields);
   return (
     <>
       <div

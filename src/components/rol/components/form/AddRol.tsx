@@ -82,7 +82,7 @@ const RolForm: React.FC<RolFormProps> = ({
       if (result && "error" in result) {
         toast.error(i18n.t("Errors." + result.error), toastStyle);
       } else {
-        onElementUpdated && onElementAdded(updatedRol as RolProps);
+        onElementUpdated && onElementUpdated(updatedRol as RolProps);
         toast.success(i18n.t("Rol.Success.updated", name), toastStyle);
       }
     } else {

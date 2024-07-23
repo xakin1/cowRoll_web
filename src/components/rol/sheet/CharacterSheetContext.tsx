@@ -1,5 +1,7 @@
 import React, { createContext, useState, type ReactNode } from "react";
+import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import i18n from "../../../i18n/i18n";
 import { editFile } from "../../../services/codeApi";
 import {
   findNodeById,
@@ -8,6 +10,7 @@ import {
   type Id as IdField,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
+import { toastStyle } from "../../Route";
 import type { Field, FieldWithoutId, Id } from "./types";
 
 interface CharacterSheetContextProps {
@@ -19,8 +22,10 @@ interface CharacterSheetContextProps {
   saveFields: (props: EditSheetProps) => void;
   loadFields: (directorySystem: DirectorySystemProps, id: IdField) => void;
   addSheet: () => void;
+  removeSheet: (index: number) => void;
   nextSheet: () => void;
   previousSheet: () => void;
+  goToSheet: (page: number) => void;
 }
 
 export const CharacterSheetContext = createContext<
@@ -80,14 +85,19 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     });
   };
 
-  const saveFields = (props: EditSheetProps) => {
+  const saveFields = async (props: EditSheetProps) => {
     const sheetsJSON = JSON.stringify(sheets);
     if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
       const fileProps = {
         ...props,
         content: sheetsJSON,
       };
-      editFile(fileProps);
+      const response = await editFile(fileProps);
+      if (response && "message" in response) {
+        toast.success(i18n.t("General.saveSuccess"), toastStyle);
+      } else {
+        toast.error(i18n.t("Errors." + response?.error), toastStyle);
+      }
     }
   };
 
@@ -103,6 +113,19 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     setSheets((prevSheets) => [...prevSheets, []]);
     setCurrentSheetIndex(sheets.length);
   };
+  const removeSheet = (index: number) => {
+    console.log(index);
+
+    let sheetsCopy = [...sheets];
+
+    sheetsCopy.splice(index, 1);
+
+    setSheets(sheetsCopy);
+
+    setCurrentSheetIndex(
+      index >= sheetsCopy.length ? sheetsCopy.length - 1 : index
+    );
+  };
 
   const nextSheet = () => {
     setCurrentSheetIndex((prevIndex) =>
@@ -116,6 +139,10 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     );
   };
 
+  const goToSheet = (page: number) => {
+    setCurrentSheetIndex(page);
+  };
+
   return (
     <CharacterSheetContext.Provider
       value={{
@@ -127,7 +154,9 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
         saveFields,
         loadFields,
         addSheet,
+        removeSheet,
         nextSheet,
+        goToSheet,
         previousSheet,
       }}
     >

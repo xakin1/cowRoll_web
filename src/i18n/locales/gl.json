@@ -36,6 +36,9 @@
         "sheetName": "Nome da folla",
         "submit": "Enviar",
         "characterSheet": "Folla de personaxe",
+        "deleteSheet": "Borrar folla actual",
+        "saveSuccess": "Gardado completado con éxito",
+
         "save": "Gardar",
         "newSheet": "Nova folla",
         "nextSheet": "Seguinte folla",
@@ -103,6 +106,8 @@
   "General": {
     "accept": "Aceptar",
     "cancel": "Cancelar",
+    "roles": "Roles",
+    "codes": "Códigos",
     "selectFile": "Selecione un arquivo",
     "sigIn": "Rexistrarse",
     "logIn": "Iniciar sesión",

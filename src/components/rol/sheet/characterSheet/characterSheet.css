@@ -1,0 +1,36 @@
+.container-parent {
+  display: flex;
+  padding: 20px;
+  height: 90vh;
+  box-sizing: border-box;
+}
+.container-parent__sheetContainer {
+  padding: 20px;
+  flex: 1;
+  text-align: center;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background-color: var(--background-color);
+  margin-left: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.container-parent__sheetContainer__header__saveSheet {
+  background-color: #007bff;
+  color: #fff;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-items: center;
+  gap: 10px;
+
+  display: flex;
+}
+
+.container-parent__sheetContainer__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

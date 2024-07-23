@@ -41,12 +41,12 @@ function FolderTree() {
   const directorySystem = useAppSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
-  const id = useAppSelector((state: RootState) => state.id.value);
+  const id = useAppSelector((state: RootState) => state.route.value);
   const [rol, setRol] = useState<DirectoryProps>();
 
   useEffect(() => {
     if (id) {
-      const rol = findNodeById(directorySystem, id);
+      const rol = findNodeById(directorySystem!, id);
 
       if (rol && isDirectory(rol)) setRol(rol);
     }

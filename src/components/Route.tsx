@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   Navigate,
@@ -7,7 +7,6 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-import { type ToastOptions } from "react-toastify";
 import { PersistGate } from "redux-persist/integration/react";
 import {
   selectFile,
@@ -15,18 +14,22 @@ import {
 } from "../redux/slice/DirectorySystemSlice";
 import { persistor } from "../redux/store";
 import { getFiles } from "../services/codeApi";
-import "../styles/global.css";
+
+import type { ToastOptions } from "react-toastify";
+import { PathProvider } from "./PathProvider";
+import PathSelectable from "./breadcrumbs/Breadcrumbs";
 import Loading from "./loading/Loading";
 import { MainPage } from "./mainPage";
 import WorkSpace from "./rol/editor/terminal/WorkSpace";
 import Rol from "./rol/rol";
 import { HomeSheet } from "./rol/sheet/HomeSheet";
 import Sheet from "./rol/sheet/Sheet";
+
 export const toastStyle: ToastOptions<unknown> = {
   position: "bottom-right",
 };
 
-const AppRoute = () => {
+const AppRoute: React.FC = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
 
@@ -49,20 +52,25 @@ const AppRoute = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <Loading></Loading>;
+    return <Loading />;
   }
 
   return (
     <PersistGate loading={null} persistor={persistor}>
       <Router>
-        <Routes>
-          <Route path="/app" element={<MainPage />} />
-          <Route path="/app/rol" element={<Rol />} />
-          <Route path="/app/rol/sheet" element={<HomeSheet />} />
-          <Route path="/app/rol/sheet/:sheetId" element={<Sheet />} />
-          <Route path="/app/rol/editor" element={<WorkSpace />} />
-          <Route path="/app/*" element={<AppRouteHandler />} />{" "}
-        </Routes>
+        <PathProvider>
+          <Suspense fallback={<Loading />}>
+            <PathSelectable />
+            <Routes>
+              <Route path="/app" element={<MainPage />} />
+              <Route path="/app/rol" element={<Rol />} />
+              <Route path="/app/rol/sheet" element={<HomeSheet />} />
+              <Route path="/app/rol/sheet/:sheetId" element={<Sheet />} />
+              <Route path="/app/rol/editor" element={<WorkSpace />} />
+              <Route path="/app/*" element={<AppRouteHandler />} />
+            </Routes>
+          </Suspense>
+        </PathProvider>
       </Router>
     </PersistGate>
   );

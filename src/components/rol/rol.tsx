@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import i18n from "../../i18n/i18n";
 import type { RootState } from "../../redux/store";
 import "../../styles/global.css";
+import { useCurrentPath } from "../PathProvider";
 import "./rol.css";
 
 const LoadData = () => {
-  const id = useSelector((state: RootState) => state.id.value);
+  const id = useSelector((state: RootState) => state.route.value);
+  const { addToPath } = useCurrentPath();
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(`${path}?id=${id}`);
@@ -16,7 +18,15 @@ const LoadData = () => {
   return (
     <main className="container_rol sibling-fade">
       <a
-        onClick={() => handleNavigation("/app/rol/sheet")}
+        onClick={() => {
+          const route = "/app/rol/sheet";
+          addToPath({
+            name: i18n.t("Rol.General.sheet"),
+            route: route,
+          });
+
+          handleNavigation(route);
+        }}
         id="sheets"
         className="container_rol__options"
       >
@@ -48,7 +58,12 @@ const LoadData = () => {
       <a
         id="scripts"
         className="container_rol__options"
-        onClick={() => handleNavigation("/app/rol/editor")}
+        onClick={() => {
+          const route = "/app/rol/editor";
+          addToPath({ name: i18n.t("General.codes"), route: route });
+
+          handleNavigation(route);
+        }}
       >
         <svg
           viewBox="0 0 24 24"
@@ -63,7 +78,6 @@ const LoadData = () => {
           <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
         </svg>
         <p className="container_rol__options__text">
-          {" "}
           {i18n.t("Rol.General.scripts")}
         </p>
       </a>

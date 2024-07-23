@@ -1,3 +1,4 @@
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {
   useAppDispatch,
   useAppSelector,
@@ -67,9 +68,11 @@ function WorkSpace() {
   const { error } = useAppSelector((state: RootState) => state.code);
 
   const handleExecuteClick = async () => {
-    const response = await executeCode(file?.content || "");
-    if (response) {
-      dispatch(addOutput(response));
+    if (file?.content) {
+      const response = await executeCode(file.content);
+      if (response) {
+        dispatch(addOutput(response));
+      }
     }
   };
 
@@ -93,6 +96,7 @@ function WorkSpace() {
                       aria-label="Ejecutar código en el editor"
                     >
                       {i18n.t("Code.run")}
+                      <PlayArrowIcon></PlayArrowIcon>
                     </button>
                   </header>
                   <CodeEditor {...file}></CodeEditor>

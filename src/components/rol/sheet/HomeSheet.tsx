@@ -13,6 +13,7 @@ import {
   type Id,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
+import { useCurrentPath } from "../../PathProvider";
 import { toastStyle } from "../../Route";
 import Loading from "../../loading/Loading";
 import PhotoCardList from "../../photoCard/PhotoCardList";
@@ -20,13 +21,14 @@ import SheetForm from "./components/sheetForm";
 import "./styles.css";
 
 export function HomeSheet() {
-  const rolId = useSelector((state: RootState) => state.id.value);
+  const rolId = useSelector((state: RootState) => state.route.value);
 
   const [sheets, setSheets] = useState<SheetProps[]>([]);
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
   const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { addToPath } = useCurrentPath();
 
   const fetchDocuments = async () => {
     const response = await getFiles();
@@ -51,8 +53,14 @@ export function HomeSheet() {
     return <Loading></Loading>;
   }
 
-  const handleClick = (id: Id) => {
-    navigate(`/app/rol/sheet/${id}`);
+  const handleClick = (sheet: SheetProps) => {
+    const route = `/app/rol/sheet/${sheet.id}`;
+    addToPath({
+      name: sheet.name,
+      route: route,
+    });
+
+    navigate(route);
   };
 
   const handleSheetAdded = (newSheet: SheetProps) => {

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import i18n from "../i18n/i18n";
 import { setDirectorySystem } from "../redux/slice/DirectorySystemSlice";
-import { setId } from "../redux/slice/idSlice";
+import { setId } from "../redux/slice/routeSlice";
 import { deleteFile, getFiles } from "../services/codeApi";
 import {
   isDirectory,
@@ -13,6 +13,7 @@ import {
   type Id,
   type RolProps,
 } from "../utils/types/ApiTypes";
+import { useCurrentPath } from "./PathProvider";
 import { toastStyle } from "./Route";
 import Loading from "./loading/Loading";
 import PhotoCardList from "./photoCard/PhotoCardList";
@@ -22,6 +23,7 @@ export function MainPage() {
   const [roles, setRoles] = useState<RolProps[]>([]);
   const [rolesDirectory, setRolesDirectory] = useState<DirectoryProps>();
   const [loading, setLoading] = useState<boolean>(true);
+  const { addToPath } = useCurrentPath();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,9 +57,11 @@ export function MainPage() {
     return <Loading></Loading>;
   }
 
-  const handleClick = (id: Id) => {
-    dispatch(setId(id));
-    navigate(`/app/rol`);
+  const handleClick = (rol: RolProps) => {
+    const route = `/app/rol`;
+    addToPath({ name: rol.name, route: route });
+    dispatch(setId(rol.id));
+    navigate(route);
   };
 
   const handleDelete = async (id: Id) => {
@@ -88,6 +92,8 @@ export function MainPage() {
     updateDirectory();
   };
   const updateRole = (updatedRol: EditRolProps) => {
+    console.log(updatedRol);
+    console.log(roles);
     setRoles((prevRoles) =>
       prevRoles.map((role) =>
         role.id === updatedRol.id ? { ...role, ...updatedRol } : role

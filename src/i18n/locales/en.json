@@ -36,6 +36,7 @@
         "sheetName": "Name of the sheet",
         "submit": "Submit",
         "characterSheet": "Character Sheet",
+        "deleteSheet": "Delete actual sheet",
         "save": "Save",
         "newSheet": "New sheet",
         "nextSheet": "Next sheet",
@@ -103,6 +104,9 @@
   "General": {
     "accept": "Accept",
     "cancel": "Cancel",
+    "roles": "Roles",
+    "codes": "Codes",
+    "saveSuccess": "Save successfully",
     "selectFile": "Select a file",
     "sigIn": "SignIn",
     "logIn": "logIn",

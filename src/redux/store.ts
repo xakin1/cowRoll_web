@@ -3,12 +3,12 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import directorySystemReducer from "./slice/DirectorySystemSlice";
 import codeReducer from "./slice/codeSlice";
-import idReducer from "./slice/idSlice";
+import routeReducer from "./slice/routeSlice";
 
 const rootReducer = combineReducers({
   code: codeReducer,
   directorySystem: directorySystemReducer,
-  id: idReducer,
+  route: routeReducer,
 });
 
 const persistConfig = {
