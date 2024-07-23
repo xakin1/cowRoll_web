@@ -27,15 +27,15 @@ const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
   };
 
   const styles = [
-    { name: i18n.t("Roll.Sheet.Styles.solid"), style: "solid" },
-    { name: i18n.t("Roll.Sheet.Styles.dotted"), style: "dotted" },
-    { name: i18n.t("Roll.Sheet.Styles.dashed"), style: "dashed" },
-    { name: i18n.t("Roll.Sheet.Styles.double"), style: "double" },
-    { name: i18n.t("Roll.Sheet.Styles.groove"), style: "groove" },
-    { name: i18n.t("Roll.Sheet.Styles.ridge"), style: "ridge" },
-    { name: i18n.t("Roll.Sheet.Styles.inset"), style: "inset" },
-    { name: i18n.t("Roll.Sheet.Styles.outset"), style: "outset" },
-    { name: i18n.t("Roll.Sheet.Styles.none"), style: "none" },
+    { name: i18n.t("Rol.Sheet.Style.solid"), style: "solid" },
+    { name: i18n.t("Rol.Sheet.Style.dotted"), style: "dotted" },
+    { name: i18n.t("Rol.Sheet.Style.dashed"), style: "dashed" },
+    { name: i18n.t("Rol.Sheet.Style.double"), style: "double" },
+    { name: i18n.t("Rol.Sheet.Style.groove"), style: "groove" },
+    { name: i18n.t("Rol.Sheet.Style.ridge"), style: "ridge" },
+    { name: i18n.t("Rol.Sheet.Style.inset"), style: "inset" },
+    { name: i18n.t("Rol.Sheet.Style.outset"), style: "outset" },
+    { name: i18n.t("Rol.Sheet.Style.none"), style: "none" },
   ];
 
   return (

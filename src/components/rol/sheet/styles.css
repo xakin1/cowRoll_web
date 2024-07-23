@@ -253,26 +253,6 @@ body[data-theme="dark"] {
   cursor: nw-resize;
 }
 
-/* src/components/styles.css */
-.properties-panel {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 250px;
-  background: var(--background-color);
-  border-left: 1px solid var(--border-color);
-  padding: 20px;
-}
-
-.property-field {
-  margin-bottom: 10px;
-}
-
-.property-field label {
-  display: block;
-  margin-bottom: 5px;
-}
-
 .photo-container {
   display: flex;
   justify-content: center;

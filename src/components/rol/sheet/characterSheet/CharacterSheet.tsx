@@ -24,8 +24,8 @@ import {
 } from "../CharacterSheetContext";
 import FieldContainer from "../FieldContainer";
 import FieldMenu from "../FieldMenu";
-import PropertiesPanel from "../PropertiesPanel";
 import { PageSelector } from "../components/pageSelector/PageSelector";
+import PropertiesPanel from "../propertiesPanel/PropertiesPanel";
 import type { Field } from "../types";
 import "./characterSheet.css";
 const CharacterSheet: React.FC = () => {
