@@ -52,7 +52,6 @@ const SheetForm: React.FC<SheetFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(rolId);
     if (!rolId) {
       console.error(i18n.t("Rol.Sheet.Error.ROL_ID_NOT_FOUND"));
 

@@ -163,8 +163,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     if (clipboard) {
       const newPosX = clipboard.style.left + 10;
       const newPosY = clipboard.style.top + 10;
-      console.log(newPosX);
-      console.log(newPosY);
+
       const fieldToInsert = {
         ...clipboard,
         style: {
@@ -176,7 +175,6 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
       const newField = addField(fieldToInsert, { top: newPosY, left: newPosX });
       setClipboard(newField);
-      console.log(newField);
     }
     setContextMenu({ ...contextMenu, visible: false });
   };
@@ -225,7 +223,6 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     updateFieldStyle(field.id, { zIndex: 0 });
     setContextMenu({ ...contextMenu, visible: false });
   };
-  console.log(fields);
   return (
     <>
       <div

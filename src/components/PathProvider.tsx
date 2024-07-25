@@ -26,11 +26,9 @@ export interface PathProps {
 }
 
 export const PathProvider: React.FC<PathProviderProps> = ({ children }) => {
-  const currentPath = useAppSelector((state: RootState) => {
-    console.log(state);
-    return state.route.currentPath;
-  });
-  console.log(currentPath);
+  const currentPath = useAppSelector(
+    (state: RootState) => state.route.currentPath
+  );
 
   const dispatch = useDispatch();
 

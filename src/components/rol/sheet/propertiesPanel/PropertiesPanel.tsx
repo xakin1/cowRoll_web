@@ -71,6 +71,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         selectedElement.style?.borderTopLeftRadius?.replace("px", "") || "0"
       );
 
+      const translateMatch = transform.match(
+        /translate\(([^,]+)px,\s*([^)]+)px\)/
+      );
+      if (translateMatch) {
+        setXPosition(parseInt(translateMatch[1], 10).toString());
+        setYPosition(parseInt(translateMatch[2], 10).toString());
+      }
+
       previousElementRef.current = selectedElement;
     }
   }, [selectedElement]);

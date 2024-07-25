@@ -79,7 +79,6 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
 
   const handleChange = (newStyle: { [key: string]: any }) => {
     if (onChange) {
-      console.log(newStyle);
       onChange(id, newStyle);
     }
   };

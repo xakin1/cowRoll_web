@@ -63,6 +63,7 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
   };
 
   const updateFieldStyle = (id: Id, style: { [key: string]: string }) => {
+    console.log(style);
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
       newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
@@ -73,6 +74,7 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
       );
       return newSheets;
     });
+    console.log(sheets);
   };
 
   const removeField = (id: Id) => {
@@ -114,8 +116,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
     setCurrentSheetIndex(sheets.length);
   };
   const removeSheet = (index: number) => {
-    console.log(index);
-
     let sheetsCopy = [...sheets];
 
     sheetsCopy.splice(index, 1);

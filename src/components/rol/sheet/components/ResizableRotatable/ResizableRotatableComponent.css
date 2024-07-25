@@ -45,3 +45,72 @@
   margin-left: -5px;
   cursor: pointer;
 }
+
+.resizable-handle {
+  width: 10px;
+  height: 10px;
+  background: blue;
+  position: absolute;
+}
+
+.resizable-handle-top {
+  top: -5px;
+  left: 50%;
+  margin-left: -5px;
+  cursor: ns-resize;
+}
+
+.resizable-handle-right {
+  right: -5px;
+  top: 50%;
+  margin-top: -5px;
+  cursor: ew-resize;
+}
+
+.resizable-handle-bottom {
+  bottom: -5px;
+  left: 50%;
+  margin-left: -5px;
+  cursor: ns-resize;
+}
+
+.resizable-handle-left {
+  left: -5px;
+  top: 50%;
+  margin-top: -5px;
+  cursor: ew-resize;
+}
+
+.resizable-handle-topRight,
+.resizable-handle-bottomRight,
+.resizable-handle-bottomLeft,
+.resizable-handle-topLeft {
+  width: 10px;
+  height: 10px;
+  background: blue;
+  position: absolute;
+}
+
+.resizable-handle-topRight {
+  right: -5px;
+  top: -5px;
+  cursor: ne-resize;
+}
+
+.resizable-handle-bottomRight {
+  right: -5px;
+  bottom: -5px;
+  cursor: se-resize;
+}
+
+.resizable-handle-bottomLeft {
+  left: -5px;
+  bottom: -5px;
+  cursor: sw-resize;
+}
+
+.resizable-handle-topLeft {
+  left: -5px;
+  top: -5px;
+  cursor: nw-resize;
+}

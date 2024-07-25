@@ -20,7 +20,6 @@ const routeSlice = createSlice({
       state.value = action.payload;
     },
     setCurrentPath: (state, action: PayloadAction<PathProps[]>) => {
-      console.log(action.payload);
       state.currentPath = action.payload;
     },
   },

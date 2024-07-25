@@ -92,8 +92,6 @@ export function MainPage() {
     updateDirectory();
   };
   const updateRole = (updatedRol: EditRolProps) => {
-    console.log(updatedRol);
-    console.log(roles);
     setRoles((prevRoles) =>
       prevRoles.map((role) =>
         role.id === updatedRol.id ? { ...role, ...updatedRol } : role

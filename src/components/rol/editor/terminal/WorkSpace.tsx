@@ -19,7 +19,6 @@ function WorkSpace() {
     (state: RootState) => state.directorySystem.selectedFile
   );
 
-  console.log(file);
   const dispatch = useAppDispatch();
 
   const formatJson = (data: Object) => {

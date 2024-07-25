@@ -67,7 +67,6 @@ const RolForm: React.FC<RolFormProps> = ({
     setError(null);
 
     if (selectedElement) {
-      console.log(selectedElement.parentId);
       const updatedRol: EditRolProps = {
         id: selectedElement.id,
         parentId: selectedElement.parentId,
@@ -78,7 +77,6 @@ const RolForm: React.FC<RolFormProps> = ({
       };
 
       const result = await editDirectory(updatedRol);
-      console.log(result);
       if (result && "error" in result) {
         toast.error(i18n.t("Errors." + result.error), toastStyle);
       } else {

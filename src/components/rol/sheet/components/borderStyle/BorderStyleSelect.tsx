@@ -41,7 +41,7 @@ const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
   return (
     <div className="border-style-select">
       <div className="select-header" onClick={() => setIsOpen(!isOpen)}>
-        {value}
+        {i18n.t("Rol.Sheet.Style." + value)}
         <div
           style={{
             borderBottom: `2px ${border} black`,

@@ -24,7 +24,6 @@ export const codeSlice = createSlice({
   initialState,
   reducers: {
     addOutput: (state, action: PayloadAction<FetchRun<any>>) => {
-      console.log(action.payload);
       if (action.payload) {
         if ("message" in action.payload) {
           state.output = action.payload.message;

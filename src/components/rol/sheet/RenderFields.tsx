@@ -5,17 +5,16 @@ import React, {
   useRef,
   useState,
 } from "react";
+import Draggable, {
+  type DraggableData,
+  type DraggableEvent,
+} from "react-draggable";
 import type { RenderFieldProps } from "./types";
 
 export const fields = [
   { id: "input", type: "input", label: "Input" },
-  { id: "contador", type: "contador", label: "Contador" },
+  { id: "checkbox", type: "checkbox", label: "checkbox" },
   { id: "textarea", type: "textarea", label: "Text area" },
-  {
-    id: "inputCheck",
-    type: "inputCheck",
-    label: "Input con check",
-  },
   { id: "rectangle", type: "rectangle", label: "Rectangle" },
   { id: "text", type: "text", label: "Text" },
   { id: "photo", type: "photo", label: "Photo" },
@@ -25,6 +24,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
   ({ type, label, menu, id, onSelect, style, onChange }, ref) => {
     // Añadir onPhotoChange
     const [editableContent, setEditableContent] = useState("Editable Text");
+    const [position, setPosition] = useState({ x: 0, y: 0 });
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
@@ -62,64 +62,83 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       }
     };
 
+    const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
+      if (onChange) {
+        const positionX = targetRef.current?.style.left!;
+        const positionY = targetRef.current?.style.top!;
+
+        const newXPosition = parseInt(positionX.replace("px", ""), 10) + data.x;
+        const newYPosition = parseInt(positionY.replace("px", ""), 10) + data.y;
+
+        const transform = targetRef.current?.style.transform || "";
+        const rotateMatch = transform.match(/rotate\(([^)]+)\)/);
+        const newTransform = rotateMatch ? `rotate(${rotateMatch[1]})` : "";
+        if (targetRef && targetRef.current) {
+          targetRef.current.style.transform = newTransform;
+        }
+
+        setPosition({ x: 0, y: 0 });
+
+        onChange({
+          left: `${newXPosition}px`,
+          top: `${newYPosition}px`,
+        });
+      }
+    };
+
     const renderComponent = () => {
       switch (type) {
         case "input":
           return (
-            <div style={{ ...style }}>
-              <input
-                ref={targetRef as React.RefObject<HTMLInputElement>}
-                style={style}
-                type="text"
-                placeholder={label}
-                className="input sheet-option"
-                readOnly={menu}
-              />
-            </div>
+            <input
+              ref={targetRef as React.RefObject<HTMLInputElement>}
+              style={{
+                ...style,
+                width: menu ? "100%" : "",
+              }}
+              type="text"
+              placeholder={label}
+              className="sheet-option"
+              readOnly={menu}
+            />
           );
-        case "contador":
+        case "checkbox":
           return (
-            <div style={{ ...style }} className="contador sheet-option">
+            <Draggable
+              position={position}
+              onStop={(e, data) => {
+                handleDragStop(e, data);
+              }}
+            >
               <input
                 ref={targetRef as React.RefObject<HTMLInputElement>}
                 style={{
                   ...style,
-                  width: style?.width || "50px",
-                  height: style?.height || "50px",
+                  width: style?.width || "20px",
+                  height: style?.height || "20px",
                 }}
                 type="checkbox"
-                id={`checkbox-${id}`}
-                className="checkbox"
+                onClick={handleClick}
+                className="sheet-option"
                 disabled={menu}
               />
-              <label htmlFor={`checkbox-${id}`}></label>
-            </div>
+            </Draggable>
           );
+
         case "textarea":
           return (
             <textarea
-              style={{ ...style, width: "100px" }}
+              style={{
+                ...style,
+                border: "1px solid var(--text-color)",
+                width: "100px",
+              }}
               placeholder={label}
               className="textarea sheet-option"
               readOnly={menu}
             />
           );
-        case "inputCheck":
-          return (
-            <div
-              style={{ ...style, width: 100 }}
-              ref={targetRef as React.RefObject<HTMLDivElement>}
-              className="inputCheck"
-            >
-              <input type="checkbox" disabled={menu} />
-              <input
-                type="text"
-                placeholder={label}
-                className="inputInsideCheck"
-                readOnly={menu}
-              />
-            </div>
-          );
+
         case "rectangle":
           return (
             <div
