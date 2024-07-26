@@ -1,12 +1,14 @@
 .properties-panel {
-  position: absolute;
+  position: fixed;
   z-index: 999 !important;
-  right: 0;
-  top: 0;
+  right: 20px;
+  top: 120px;
   width: 250px;
   background: var(--background-color);
   border: 1px solid var(--border-color);
   padding: 20px;
+  height: 80vh;
+  overflow: auto;
   z-index: inherit;
 }
 

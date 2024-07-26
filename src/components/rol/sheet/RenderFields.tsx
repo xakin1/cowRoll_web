@@ -16,6 +16,8 @@ export enum typeField {
   checkbox = "checkbox",
   textarea = "textarea",
   rectangle = "rectangle",
+  circle = "circle",
+  line = "line",
   text = "text",
   photo = "photo",
 }
@@ -35,6 +37,28 @@ export const fields = [
     type: typeField.rectangle,
     label: "Rectangle",
     style: { width: 50, height: 50, border: "1px solid lightgray" },
+  },
+  {
+    type: typeField.circle,
+    label: "Circle",
+    style: {
+      width: 50,
+      height: 50,
+      borderRadius: "50px",
+      border: "1px solid lightgray",
+    },
+  },
+  {
+    type: typeField.line,
+    label: "Line",
+    style: {
+      width: 50,
+      height: 0,
+      top: "10px",
+      left: "10px",
+      maxHeight: "0px",
+      border: "1px solid lightgray",
+    },
   },
   {
     type: typeField.text,
@@ -121,7 +145,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
     };
     const renderComponent = () => {
       switch (type) {
-        case "input":
+        case typeField.input:
           return (
             <input
               ref={targetRef as React.RefObject<HTMLInputElement>}
@@ -132,7 +156,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               className="sheet-option"
             />
           );
-        case "checkbox":
+        case typeField.checkbox:
           return (
             <input
               ref={targetRef as React.RefObject<HTMLInputElement>}
@@ -143,7 +167,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             />
           );
 
-        case "textarea":
+        case typeField.textarea:
           return (
             <textarea
               style={style}
@@ -152,7 +176,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             />
           );
 
-        case "rectangle":
+        case typeField.rectangle:
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
@@ -161,7 +185,25 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               onClick={handleClick}
             ></div>
           );
-        case "text":
+        case typeField.circle:
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="circle sheet-option"
+              style={style}
+              onClick={handleClick}
+            ></div>
+          );
+        case typeField.line:
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="line sheet-option"
+              style={style}
+              onClick={handleClick}
+            ></div>
+          );
+        case typeField.text:
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
@@ -174,7 +216,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               {editableContent}
             </div>
           );
-        case "photo":
+        case typeField.photo:
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}

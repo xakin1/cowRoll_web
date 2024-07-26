@@ -114,13 +114,13 @@ const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
                 </ListItemIcon>
                 <ListItemText primary="Rectangle" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={() => handleAddField(typeField.circle)}>
                 <ListItemIcon>
                   <CircleIcon />
                 </ListItemIcon>
                 <ListItemText primary="Circle" />
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={() => handleAddField(typeField.line)}>
                 <ListItemIcon>
                   <LineIcon />
                 </ListItemIcon>
