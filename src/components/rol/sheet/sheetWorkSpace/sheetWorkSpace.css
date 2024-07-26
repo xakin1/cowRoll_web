@@ -1,21 +1,9 @@
 .container-parent {
   display: flex;
   padding: 20px;
-  height: 90vh;
-  box-sizing: border-box;
-}
-.container-parent__sheetContainer {
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+
   text-align: center;
-  border: 2px solid var(--border-color);
-  border-radius: 10px;
-  background-color: var(--background-color);
-  margin-left: 20px;
-  position: relative;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .containerDrop {

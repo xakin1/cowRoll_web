@@ -35,7 +35,7 @@
       "General": {
         "sheetName": "Nombre de la hoja",
         "submit": "Enviar",
-        "characterSheet": "Hoja de personaje",
+        "Sheet": "Hoja de personaje",
         "deleteSheet": "Borrar hoja actual",
         "saveSuccess": "Se ha guardado correctamente",
         "save": "Guardar",

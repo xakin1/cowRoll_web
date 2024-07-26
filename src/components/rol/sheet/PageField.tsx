@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDrag } from "react-dnd";
 import RenderField from "./RenderFields";
 import "./styles.css";
 import type { DraggableFieldProps, Id } from "./types";
 
-const DraggableField: React.FC<DraggableFieldProps> = ({
+const PageField: React.FC<DraggableFieldProps> = ({
   id,
   type,
   label,
@@ -15,17 +14,6 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
-
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: "field",
-      item: { id, type, label, style },
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-    }),
-    [id, type, label, style]
-  );
 
   const toCamelCase = (str: string) => {
     return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
@@ -61,11 +49,6 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
     }
   };
 
-  const divStyle: React.CSSProperties = {
-    opacity: isDragging ? 0.5 : 1,
-    position: "absolute",
-  };
-
   const handleClickOutside = (event: MouseEvent) => {
     setIsSelected(false);
   };
@@ -86,9 +69,7 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   return (
     <>
       <div
-        ref={drag}
         className={`field`}
-        style={divStyle}
         onContextMenu={(e) => onContextMenu(e, { id, type, label, style })}
         onClick={(e) => {
           e.stopPropagation();
@@ -109,4 +90,4 @@ const DraggableField: React.FC<DraggableFieldProps> = ({
   );
 };
 
-export default DraggableField;
+export default PageField;

@@ -1,13 +1,12 @@
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import WrappedCharacterSheet from "./characterSheet/CharacterSheet";
+import { SheetProvider } from "./SheetContext";
+import { SheetWorkSpace } from "./sheetWorkSpace/SheetWorkSpace";
 import "./styles.css";
 
 function Sheet() {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <WrappedCharacterSheet />
-    </DndProvider>
+    <SheetProvider>
+      <SheetWorkSpace />
+    </SheetProvider>
   );
 }
 

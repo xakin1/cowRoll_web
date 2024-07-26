@@ -1,16 +1,15 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useDrop } from "react-dnd";
-import { CharacterSheetContext } from "./CharacterSheetContext";
-import DraggableField from "./DraggableField";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  FileSystemEnum,
+  type EditSheetProps,
+} from "../../../utils/types/ApiTypes";
+import PageField from "./PageField";
+import { SheetContext } from "./SheetContext";
 import ContextualMenu from "./components/contextMenu/menu";
+import { PageSelector } from "./components/pageSelector/PageSelector";
 import "./styles.css";
-import type { Field, FieldWithoutId, Id } from "./types";
+import type { Field, Id } from "./types";
 
 interface FieldContainerProps {
   setSelectedElement: (element: Field | null) => void;
@@ -24,16 +23,26 @@ interface FieldContextMenuProps {
   isOutsideClick: boolean;
 }
 
-const FieldContainer: React.FC<FieldContainerProps> = ({
+const Page: React.FC<FieldContainerProps> = ({
   fields,
   setSelectedElement,
 }) => {
-  const { addField, removeField, updateFieldStyle } = useContext(
-    CharacterSheetContext
-  )!;
+  const {
+    sheets,
+    saveFields,
+    currentSheetIndex,
+    updateFieldStyle,
+    addField,
+    removeField,
+    nextSheet,
+    previousSheet,
+    goToSheet,
+  } = useContext(SheetContext)!;
   const [selectedElement, setSelectedElementState] = useState<Field | null>(
     null
   );
+  const { sheetId } = useParams<{ sheetId: string }>();
+
   const [contextMenu, setContextMenu] = useState<FieldContextMenuProps>({
     visible: false,
     position: { x: 0, y: 0 },
@@ -43,50 +52,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
   const [clipboard, setClipboard] = useState<Field | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const [, drop] = useDrop(
-    () => ({
-      accept: ["field", "menuItem"],
-      drop: (item: Field | FieldWithoutId, monitor) => {
-        const delta = monitor.getDifferenceFromInitialOffset();
-        const containerRect = containerRef.current?.getBoundingClientRect();
-        const initialClientOffset = monitor.getInitialClientOffset();
-        const clientOffset = monitor.getClientOffset();
-        let position;
-
-        if (!delta || !containerRect || !initialClientOffset || !clientOffset)
-          return;
-
-        // Calculando la posición correcta dentro del contenedor
-        position = {
-          x: Math.max(clientOffset.x - containerRect.left, 0),
-          y: Math.max(clientOffset.y - containerRect.top, 0),
-        };
-
-        if (monitor.getItemType() === "menuItem") {
-          addField(item as FieldWithoutId, {
-            top: `${position.y}px`,
-            left: `${position.x}px`,
-          });
-        } else {
-          updateFieldStyle((item as Field).id, {
-            top: `${position.y}px`,
-            left: `${position.x}px`,
-          });
-        }
-      },
-    }),
-    [addField, updateFieldStyle]
-  );
-
-  // Combined ref function
-  const setRefs = useCallback(
-    (node: HTMLDivElement) => {
-      containerRef.current = node;
-      drop(node);
-    },
-    [drop]
-  );
+  const workAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {
@@ -111,6 +77,18 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedElement]);
+
+  useEffect(() => {
+    const handleSaveKeyDown = async (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        handleSave();
+      }
+    };
+
+    window.addEventListener("keydown", handleSaveKeyDown);
+    return () => window.removeEventListener("keydown", handleSaveKeyDown);
+  }, [fields]);
 
   const handleContextMenu =
     (field: Field | null) => (event: React.MouseEvent) => {
@@ -161,19 +139,20 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
 
   const handlePaste = () => {
     if (clipboard) {
-      const newPosX = clipboard.style.left + 10;
-      const newPosY = clipboard.style.top + 10;
+      const newPosX = parseInt(clipboard.style.left) + 10;
+      const newPosY = parseInt(clipboard.style.top) + 10;
 
       const fieldToInsert = {
         ...clipboard,
+        id: Date.now().toString(),
         style: {
-          top: newPosY,
-          left: newPosX,
           ...clipboard.style,
+          top: `${newPosY}px`,
+          left: `${newPosX}px`,
         },
       };
 
-      const newField = addField(fieldToInsert, { top: newPosY, left: newPosX });
+      const newField = addField(fieldToInsert);
       setClipboard(newField);
     }
     setContextMenu({ ...contextMenu, visible: false });
@@ -182,8 +161,8 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
   const handlePasteHere = () => {
     if (clipboard && containerRef.current) {
       const { x, y } = contextMenu.position;
-      const containerRect = containerRef.current.getBoundingClientRect();
-
+      const containerRect = workAreaRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
       const newPosX = x - containerRect.left;
       const newPosY = y - containerRect.top;
 
@@ -197,7 +176,7 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
         },
       };
 
-      addField(newField, { top: newPosY, left: newPosX });
+      addField(newField);
     }
     setContextMenu({ ...contextMenu, visible: false });
   };
@@ -223,53 +202,76 @@ const FieldContainer: React.FC<FieldContainerProps> = ({
     updateFieldStyle(field.id, { zIndex: 0 });
     setContextMenu({ ...contextMenu, visible: false });
   };
+
+  const handleSave = () => {
+    if (sheetId) {
+      const sheetProps: EditSheetProps = {
+        id: sheetId,
+        type: FileSystemEnum.Sheet,
+      };
+      saveFields(sheetProps);
+    } else {
+      console.error("sheetId undefined");
+    }
+  };
+
   return (
     <>
-      <div
-        ref={setRefs}
-        className="containerDrop"
-        onContextMenu={handleContextMenu(null)}
-      >
-        {fields.map((field) => (
-          <DraggableField
-            onContextMenu={handleContextMenu(field)}
-            onChange={updateFieldStyle}
-            key={field.id}
-            {...field}
-            setSelectedElement={(element) => {
-              setSelectedElement(element);
-              setSelectedElementState(element);
-            }}
-          />
-        ))}
-        {contextMenu.visible && (
-          <div
-            ref={menuRef}
-            style={{
-              position: "fixed",
-              top: contextMenu.position.y,
-              left: contextMenu.position.x,
-              zIndex: 999,
-            }}
-          >
-            <ContextualMenu
-              clipboard={clipboard}
-              showPasteOnly={contextMenu.isOutsideClick}
-              handleCopy={() => handleCopy(contextMenu.field!)}
-              handleCut={() => handleCut(contextMenu.field!)}
-              handlePaste={handlePaste}
-              handlePasteHere={handlePasteHere}
-              handleUp={() => handleUp(contextMenu.field!)}
-              handleDown={() => handleDown(contextMenu.field!)}
-              handleForward={() => handleForward(contextMenu.field!)}
-              handleBackward={() => handleBackward(contextMenu.field!)}
-              handleDelete={() => handleDelete(contextMenu.field!.id)}
+      <div className="page_container">
+        <div
+          ref={containerRef}
+          onContextMenu={handleContextMenu(null)}
+          className="page_container__page"
+        >
+          {fields.map((field) => (
+            <PageField
+              onContextMenu={handleContextMenu(field)}
+              onChange={updateFieldStyle}
+              key={field.id}
+              {...field}
+              setSelectedElement={(element) => {
+                setSelectedElement(element);
+                setSelectedElementState(element);
+              }}
             />
-          </div>
-        )}
+          ))}
+        </div>
+        <PageSelector
+          previousPage={previousSheet}
+          nextPage={nextSheet}
+          currentSheetIndex={currentSheetIndex}
+          totalSheets={sheets.length}
+          goToPage={goToSheet}
+        />
       </div>
+
+      {contextMenu.visible && (
+        <div
+          ref={menuRef}
+          style={{
+            position: "fixed",
+            top: contextMenu.position.y,
+            left: contextMenu.position.x,
+            zIndex: 999,
+          }}
+        >
+          <ContextualMenu
+            clipboard={clipboard}
+            showPasteOnly={contextMenu.isOutsideClick}
+            handleCopy={() => handleCopy(contextMenu.field!)}
+            handleCut={() => handleCut(contextMenu.field!)}
+            handlePaste={handlePaste}
+            handlePasteHere={handlePasteHere}
+            handleUp={() => handleUp(contextMenu.field!)}
+            handleDown={() => handleDown(contextMenu.field!)}
+            handleForward={() => handleForward(contextMenu.field!)}
+            handleBackward={() => handleBackward(contextMenu.field!)}
+            handleDelete={() => handleDelete(contextMenu.field!.id)}
+          />
+        </div>
+      )}
     </>
   );
 };
 
-export default FieldContainer;
+export default Page;

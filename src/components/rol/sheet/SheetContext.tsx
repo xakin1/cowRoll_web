@@ -13,10 +13,10 @@ import {
 import { toastStyle } from "../../Route";
 import type { Field, FieldWithoutId, Id } from "./types";
 
-interface CharacterSheetContextProps {
+interface SheetContextProps {
   sheets: Field[][];
   currentSheetIndex: number;
-  addField: (field: FieldWithoutId, style?: { [key: string]: any }) => Field;
+  addField: (field: FieldWithoutId) => Field;
   updateFieldStyle: (id: Id, style: { [key: string]: any }) => void;
   removeField: (id: Id) => void;
   saveFields: (props: EditSheetProps) => void;
@@ -28,28 +28,22 @@ interface CharacterSheetContextProps {
   goToSheet: (page: number) => void;
 }
 
-export const CharacterSheetContext = createContext<
-  CharacterSheetContextProps | undefined
->(undefined);
+export const SheetContext = createContext<SheetContextProps | undefined>(
+  undefined
+);
 
-interface CharacterSheetProviderProps {
+interface SheetProviderProps {
   children: ReactNode;
 }
 
-export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
-  children,
-}) => {
+export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
   const [sheets, setSheets] = useState<Field[][]>([[]]);
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
 
-  const addField = (
-    field: FieldWithoutId,
-    style: { [key: string]: any } = {}
-  ) => {
+  const addField = (field: FieldWithoutId) => {
     const newField = {
       ...field,
       id: uuidv4(),
-      style: { ...field.style, ...style },
     };
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
@@ -63,7 +57,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
   };
 
   const updateFieldStyle = (id: Id, style: { [key: string]: string }) => {
-    console.log(style);
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
       newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
@@ -74,7 +67,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
       );
       return newSheets;
     });
-    console.log(sheets);
   };
 
   const removeField = (id: Id) => {
@@ -144,7 +136,7 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
   };
 
   return (
-    <CharacterSheetContext.Provider
+    <SheetContext.Provider
       value={{
         sheets,
         currentSheetIndex,
@@ -161,6 +153,6 @@ export const CharacterSheetProvider: React.FC<CharacterSheetProviderProps> = ({
       }}
     >
       {children}
-    </CharacterSheetContext.Provider>
+    </SheetContext.Provider>
   );
 };

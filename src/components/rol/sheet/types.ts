@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { typeField } from "./RenderFields";
 
 export type Id = string;
 
@@ -12,12 +13,16 @@ export interface RenderFieldProps {
   type: string;
   label: string;
   isSelected?: boolean;
-  menu?: boolean;
   onSelect?: (selectedId: Id) => void;
   onChange?: (...args: any[]) => void;
 
   style?: any;
 }
+
+export interface MenuFieldProps {
+  type: string;
+}
+
 export interface MenuItemProps {
   field: MenuField;
 }
@@ -29,11 +34,11 @@ export interface Position {
 
 export type FieldWithoutId = Omit<Field, "id">;
 
-export interface CharacterSheetProviderProps {
+export interface SheetProviderProps {
   children: ReactNode;
 }
 
-export interface CharacterSheetContextProps {
+export interface SheetContextProps {
   fields: Field[];
   addField: (field: FieldWithoutId, position: Position) => void;
   updateFieldPosition: (id: Id, position: Position) => void;
@@ -42,7 +47,7 @@ export interface CharacterSheetContextProps {
 
 export interface Field {
   id: Id;
-  type: string;
+  type: typeField;
   label: string;
   style: { [key: string]: any };
   onChange?: (...args: any[]) => void;

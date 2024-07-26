@@ -1,7 +1,12 @@
+body {
+  margin: 0;
+  padding-top: 60px;
+  overflow-x: hidden;
+}
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  width: 100vw;
+  width: 100%;
   height: 60px;
   display: flex;
   align-items: center;
@@ -11,14 +16,13 @@
     var(--header-background-color) 35%,
     transparent 100%
   );
+  z-index: 1000; /* Asegura que la cabecera esté por encima de otros elementos */
 }
-
 .nav-container {
   display: flex;
   align-items: center;
   width: 100%;
 }
-
 .nav-links {
   display: flex;
   color: var(--text_color);
@@ -26,19 +30,11 @@
   justify-content: space-around;
   flex-grow: 1;
 }
-
-.nav-links::before:hover {
-  width: 100%;
-  height: 0px;
-  background-color: var(--text_color);
-}
-
 .nav-links__link {
   text-decoration: none;
   color: white;
   position: relative;
 }
-
 .nav-links__link::after {
   content: "";
   position: absolute;
@@ -49,12 +45,10 @@
   background-color: var(--text-color);
   transition: all 0.3s ease-in-out;
 }
-
 .nav-links__link:hover::after {
   visibility: visible;
   width: 100%;
 }
-
 .nav-links a {
   margin: 0 20px;
   text-decoration: none;
@@ -66,14 +60,13 @@
   align-items: center;
   height: 120px;
   position: absolute;
-  top: 0px;
+  top: 0;
   width: min-content;
   left: 0;
   right: 0;
   margin-left: auto;
   margin-right: auto;
 }
-
 .hexagon {
   width: 110px;
   height: 110px;
@@ -83,7 +76,6 @@
   align-items: center;
   clip-path: polygon(50% 0%, 90% 25%, 90% 75%, 50% 100%, 10% 75%, 10% 25%);
 }
-
 .theme-toggle-button {
   background: none;
   border: none;
@@ -92,19 +84,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.theme-toggle-button {
-  background: none;
-  border: none;
-  cursor: pointer;
   padding: 0;
   margin-left: 10px;
-  display: inline-flex;
-  align-items: center;
   vertical-align: middle;
 }
-
 .theme-toggle-button .icon {
   width: 24px;
   height: 24px;

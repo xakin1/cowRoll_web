@@ -11,17 +11,45 @@ import Draggable, {
 } from "react-draggable";
 import type { RenderFieldProps } from "./types";
 
+export enum typeField {
+  input = "input",
+  checkbox = "checkbox",
+  textarea = "textarea",
+  rectangle = "rectangle",
+  text = "text",
+  photo = "photo",
+}
 export const fields = [
-  { id: "input", type: "input", label: "Input" },
-  { id: "checkbox", type: "checkbox", label: "checkbox" },
-  { id: "textarea", type: "textarea", label: "Text area" },
-  { id: "rectangle", type: "rectangle", label: "Rectangle" },
-  { id: "text", type: "text", label: "Text" },
-  { id: "photo", type: "photo", label: "Photo" },
+  { type: typeField.input, label: "Input", style: {} },
+  {
+    type: typeField.checkbox,
+    label: "checkbox",
+    style: { width: "20px", height: "20px" },
+  },
+  {
+    type: typeField.textarea,
+    label: "Text area",
+    style: { border: "1px solid var(--text-color)", width: "100px" },
+  },
+  {
+    type: typeField.rectangle,
+    label: "Rectangle",
+    style: { width: 50, height: 50, border: "1px solid lightgray" },
+  },
+  {
+    type: typeField.text,
+    label: "Text",
+    style: { width: "50px", height: "50px", outline: "none" },
+  },
+  {
+    type: typeField.photo,
+    label: "Photo",
+    style: { width: 100, height: 100 },
+  },
 ];
 
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
-  ({ type, label, menu, id, onSelect, style, onChange }, ref) => {
+  ({ type, label, id, onSelect, style, onChange }, ref) => {
     // Añadir onPhotoChange
     const [editableContent, setEditableContent] = useState("Editable Text");
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -63,19 +91,25 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
     };
 
     const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
-      if (onChange) {
-        const positionX = targetRef.current?.style.left!;
-        const positionY = targetRef.current?.style.top!;
+      if (onChange && targetRef.current) {
+        const rect = targetRef.current.getBoundingClientRect();
+        const parentRect =
+          targetRef.current.offsetParent?.getBoundingClientRect() || {
+            left: 0,
+            top: 0,
+          };
 
-        const newXPosition = parseInt(positionX.replace("px", ""), 10) + data.x;
-        const newYPosition = parseInt(positionY.replace("px", ""), 10) + data.y;
+        const newXPosition = rect.left - parentRect.left + data.deltaX;
+        const newYPosition = rect.top - parentRect.top + data.deltaY;
 
         const transform = targetRef.current?.style.transform || "";
         const rotateMatch = transform.match(/rotate\(([^)]+)\)/);
         const newTransform = rotateMatch ? `rotate(${rotateMatch[1]})` : "";
-        if (targetRef && targetRef.current) {
-          targetRef.current.style.transform = newTransform;
-        }
+
+        targetRef.current.style.left = `${newXPosition}px`;
+        targetRef.current.style.top = `${newYPosition}px`;
+        targetRef.current.style.transform = newTransform;
+        targetRef.current.style.position = "absolute";
 
         setPosition({ x: 0, y: 0 });
 
@@ -85,57 +119,36 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         });
       }
     };
-
     const renderComponent = () => {
       switch (type) {
         case "input":
           return (
             <input
               ref={targetRef as React.RefObject<HTMLInputElement>}
-              style={{
-                ...style,
-                width: menu ? "100%" : "",
-              }}
+              style={style}
               type="text"
+              draggable={false}
               placeholder={label}
               className="sheet-option"
-              readOnly={menu}
             />
           );
         case "checkbox":
           return (
-            <Draggable
-              position={position}
-              onStop={(e, data) => {
-                handleDragStop(e, data);
-              }}
-            >
-              <input
-                ref={targetRef as React.RefObject<HTMLInputElement>}
-                style={{
-                  ...style,
-                  width: style?.width || "20px",
-                  height: style?.height || "20px",
-                }}
-                type="checkbox"
-                onClick={handleClick}
-                className="sheet-option"
-                disabled={menu}
-              />
-            </Draggable>
+            <input
+              ref={targetRef as React.RefObject<HTMLInputElement>}
+              style={style}
+              type="checkbox"
+              onClick={handleClick}
+              className="sheet-option"
+            />
           );
 
         case "textarea":
           return (
             <textarea
-              style={{
-                ...style,
-                border: "1px solid var(--text-color)",
-                width: "100px",
-              }}
+              style={style}
               placeholder={label}
               className="textarea sheet-option"
-              readOnly={menu}
             />
           );
 
@@ -144,12 +157,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
               className="rectangle sheet-option"
-              style={{
-                width: 50,
-                height: 50,
-                border: "1px solid lightgray",
-                ...style,
-              }}
+              style={style}
               onClick={handleClick}
             ></div>
           );
@@ -158,15 +166,9 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
               id={`editable-${id}`}
-              contentEditable={!menu}
               onInput={handleInput}
               className="sheet-option"
-              style={{
-                ...style,
-                width: "50px",
-                height: "50px",
-                outline: "none",
-              }}
+              style={style}
               onClick={handleClick}
             >
               {editableContent}
@@ -177,12 +179,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
               className="photo-container"
-              style={{
-                backgroundImage: `url(/placeholder.png)`,
-                ...style,
-                width: style?.width || 100,
-                height: style?.height || 100,
-              }}
+              style={style}
               onClick={handleClick}
             >
               <input
@@ -191,23 +188,21 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 accept="image/*"
                 onChange={handlePhotoChange}
                 style={{ display: "none" }}
-                disabled={menu}
               />
-              {!menu && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fileInputRef.current?.click();
-                  }}
-                  style={{
-                    position: "absolute",
-                    bottom: "0px",
-                    right: "0px",
-                  }}
-                >
-                  Browse
-                </button>
-              )}
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                style={{
+                  position: "absolute",
+                  bottom: "0px",
+                  right: "0px",
+                }}
+              >
+                Browse
+              </button>
             </div>
           );
         default:
@@ -215,7 +210,16 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       }
     };
 
-    return <>{renderComponent()}</>;
+    return (
+      <Draggable
+        position={position}
+        onStop={(e, data) => {
+          handleDragStop(e, data);
+        }}
+      >
+        {renderComponent()}
+      </Draggable>
+    );
   }
 );
 

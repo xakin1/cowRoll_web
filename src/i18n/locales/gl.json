@@ -35,7 +35,7 @@
       "General": {
         "sheetName": "Nome da folla",
         "submit": "Enviar",
-        "characterSheet": "Folla de personaxe",
+        "Sheet": "Folla de personaxe",
         "deleteSheet": "Borrar folla actual",
         "saveSuccess": "Gardado completado con éxito",
 

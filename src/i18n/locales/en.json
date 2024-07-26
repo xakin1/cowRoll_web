@@ -35,7 +35,7 @@
       "General": {
         "sheetName": "Name of the sheet",
         "submit": "Submit",
-        "characterSheet": "Character Sheet",
+        "Sheet": "Character Sheet",
         "deleteSheet": "Delete actual sheet",
         "save": "Save",
         "newSheet": "New sheet",
