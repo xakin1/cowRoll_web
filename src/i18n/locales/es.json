@@ -64,6 +64,12 @@
         "ridge": "Relieve",
         "inset": "Hundido",
         "outset": "Saliente",
+        "css": "Css",
+        "textAling": "Alineamiento del texto",
+        "value": "Valor",
+        "fontSize": "Tamaño de letra",
+        "textProperties": "Propiedades del texto",
+        "font": "Fuente",
         "none": "Ninguno"
       },
       "Success": {

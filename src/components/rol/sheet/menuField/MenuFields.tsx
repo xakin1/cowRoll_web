@@ -46,7 +46,12 @@ const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
       case "textTool":
         return (
           <div className="tool-item" title="Add Text">
-            <span className="tool-item-icon">T</span>
+            <span
+              onClick={() => handleAddField(typeField.text)}
+              className="tool-item-icon"
+            >
+              T
+            </span>
           </div>
         );
       case "inputTool":

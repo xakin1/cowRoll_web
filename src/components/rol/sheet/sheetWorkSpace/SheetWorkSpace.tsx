@@ -39,23 +39,6 @@ export const SheetWorkSpace: React.FC = () => {
     }
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (
-      !target.closest(".properties-panel") &&
-      !target.closest(".select-options")
-    ) {
-      setSelectedElement(null);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
   useEffect(() => {
     if (directorySystem && sheetId) {
       loadFields(directorySystem, sheetId);

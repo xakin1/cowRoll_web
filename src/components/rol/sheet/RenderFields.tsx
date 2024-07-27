@@ -1,6 +1,5 @@
 import React, {
   forwardRef,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -63,7 +62,11 @@ export const fields = [
   {
     type: typeField.text,
     label: "Text",
-    style: { width: "50px", height: "50px", outline: "none" },
+    style: {
+      width: "50px",
+      height: "50px",
+      outline: "none",
+    },
   },
   {
     type: typeField.photo,
@@ -78,25 +81,10 @@ export const fields = [
 
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
   ({ type, label, id, onSelect, style, onChange }, ref) => {
-    // Añadir onPhotoChange
-    const [editableContent, setEditableContent] = useState("Editable Text");
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
-
-    const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-      setEditableContent(e.currentTarget.textContent || "");
-    };
-
-    useEffect(() => {
-      if (type === "text") {
-        const div = document.getElementById(`editable-${id}`);
-        if (div) {
-          div.textContent = editableContent;
-        }
-      }
-    }, [editableContent, type, id]);
 
     const handleClick = () => {
       if (onSelect) {
@@ -209,16 +197,19 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
           );
         case typeField.text:
           return (
-            <div
-              ref={targetRef as React.RefObject<HTMLDivElement>}
-              id={`editable-${id}`}
-              onInput={handleInput}
+            <input
+              ref={targetRef as React.RefObject<HTMLInputElement>}
               className="sheet-option"
-              style={style}
+              placeholder={label}
+              style={{
+                border: "none",
+                background: "none",
+                ...style,
+                width: "fit-content",
+                height: "fit-content",
+              }}
               onClick={handleClick}
-            >
-              {editableContent}
-            </div>
+            ></input>
           );
         case typeField.photo:
           return (

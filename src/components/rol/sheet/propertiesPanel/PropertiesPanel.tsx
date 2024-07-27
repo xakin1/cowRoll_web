@@ -1,19 +1,19 @@
-import {
-  faAlignCenter,
-  faAlignLeft,
-  faAlignRight,
-  faArrowDown,
-  faArrowUp,
-  faGripLinesVertical,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
+import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
+import { default as FormatBoldIcon } from "@mui/icons-material/FormatBold";
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
+import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
+import { IconButton } from "@mui/material";
 import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
-import Draggable from "react-draggable"; // The default
+import Draggable from "react-draggable";
 import i18n from "../../../../i18n/i18n";
 import { rgbToHex } from "../../../../utils/functions/utils";
+import SelectColor from "../../../selectColor/SelectColor";
 import { typeField } from "../RenderFields";
 import BorderStyleSelect from "../components/borderStyle/BorderStyleSelect";
-import SelectColor from "../components/selectColor/SelectColor";
 import type { Field } from "../types";
 import "./propertiesPanel.css";
 interface PropertiesPanelProps {
@@ -26,6 +26,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   onUpdate,
 }) => {
   const [width, setwidth] = useState<string>("");
+  const [isItalic, setIsItalic] = useState<boolean>(false);
+  const [isBold, setIsBold] = useState<boolean>(false);
+
+  const [align, setAlign] = useState<string>("initial");
+  const [decoration, setDecoration] = useState<string>("none");
+
+  const [fontSize, setFontSize] = useState<string>("12");
+  const [font, setFont] = useState<string>("");
   const [height, setheight] = useState<string>("");
   const [opacity, setOpacity] = useState<string>("1");
   const [rotate, setRotate] = useState<string>("0");
@@ -40,13 +48,34 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const previousElementRef = useRef<Field | null>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
 
+  const fonts = [
+    "Arial",
+    "Helvetica",
+    "Times New Roman",
+    "Courier New",
+    "Verdana",
+    "Georgia",
+    "Palatino",
+    "Garamond",
+    "Comic Sans MS",
+    "Trebuchet MS",
+    "Arial Black",
+    "Impact",
+  ];
+
   useEffect(() => {
     if (
       selectedElement &&
       selectedElement.id !== previousElementRef.current?.id
     ) {
       setwidth(getSizeValue(selectedElement.style?.width));
+      setFontSize(selectedElement.style?.fontSize || "12");
       setheight(getSizeValue(selectedElement.style?.height));
+      setIsBold(selectedElement.style.fontWeight == "bold");
+      setIsItalic(selectedElement.style.fontStyle == "italic");
+      setAlign(selectedElement.style.textAlign || "initial");
+      setAlign(selectedElement.style.textDecoration || "none");
+      setFont(selectedElement.style.fontFamily || "Arial");
       setXPosition(getSizeValue(selectedElement.style?.left));
       setYPosition(getSizeValue(selectedElement.style?.top));
       setOpacity(selectedElement.style?.opacity || "1");
@@ -88,7 +117,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       | React.ChangeEvent<{ name: string; value: string }>
   ) => {
     const { name, value } = e.target;
-
     switch (name) {
       case "width":
         setwidth(value);
@@ -134,6 +162,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setBorderRadius(value);
         onUpdate(name, `${value}px`);
         break;
+      case "fontSize":
+        setFontSize(value);
+        onUpdate(name, `${value}px`);
+        break;
+      case "fontFamily":
+        setFont(value);
+        onUpdate(name, value);
+        break;
       default:
         onUpdate(name, value);
         break;
@@ -162,94 +198,219 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     return size?.toString() || "";
   };
 
-  const handleAlignment = (alignment: string) => {
-    // Handle alignment logic here
-  };
-
   return (
     <Draggable>
       <div className="properties-panel" ref={propertiesPanelRef}>
-        <h3>{i18n.t("Rol.Sheet.Style.properties")}</h3>
-        <div className="position-inputs__container properties-panel__property-field">
-          <label className="position-inputs__container__label">
-            {i18n.t("Rol.Sheet.Style.rotate")}:
-          </label>
-          <input
-            type="number"
-            className="position-inputs__container__input"
-            name="rotate"
-            value={rotate}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="position-inputs__container properties-panel__property-field">
-          <label className="position-inputs__container__label">
-            {i18n.t("Rol.Sheet.Style.width")}:
-          </label>
-          <input
-            type="number"
-            className="position-inputs__container__input"
-            name="width"
-            value={width}
-            onChange={handleChange}
-          />
-        </div>
-        {selectedElement?.type !== typeField.line && (
-          <div className="position-inputs__container properties-panel__property-field">
-            <label className="position-inputs__container__label">
-              {i18n.t("Rol.Sheet.Style.height")}:
-            </label>
-            <input
-              type="number"
-              className="position-inputs__container__input"
-              name="height"
-              value={height}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-
-        <div className="position-inputs__container properties-panel__property-field">
-          <label className="position-inputs__container__label">
-            {i18n.t("Rol.Sheet.Style.opacity")}:
-          </label>
-          <input
-            type="number"
-            className="position-inputs__container__input"
-            name="opacity"
-            value={opacity}
-            onChange={handleChange}
-            step={0.1}
-            min={0}
-            max={1}
-          />
-        </div>
-
-        <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
         <div className="properties-panel__property-field position-controls">
           {selectedElement?.type === typeField.text && (
-            <div className="alignment-buttons">
-              <button onClick={() => handleAlignment("left")}>
-                <FontAwesomeIcon icon={faAlignLeft} />
-              </button>
-              <button onClick={() => handleAlignment("center")}>
-                <FontAwesomeIcon icon={faAlignCenter} />
-              </button>
-              <button onClick={() => handleAlignment("right")}>
-                <FontAwesomeIcon icon={faAlignRight} />
-              </button>
-              <button onClick={() => handleAlignment("top")}>
-                <FontAwesomeIcon icon={faArrowUp} />
-              </button>
-              <button onClick={() => handleAlignment("middle")}>
-                <FontAwesomeIcon icon={faGripLinesVertical} />
-              </button>
-              <button onClick={() => handleAlignment("bottom")}>
-                <FontAwesomeIcon icon={faArrowDown} />
-              </button>
-            </div>
+            <>
+              <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
+              <div className="alignment-buttons">
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "center" ? "lightgray" : "transparent",
+                    border: align == "center" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "center") {
+                      setAlign("center");
+                      onUpdate("textAlign", `center`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdate("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignCenterIcon></FormatAlignCenterIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "justify" ? "lightgray" : "transparent",
+                    border: align == "justify" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "justify") {
+                      setAlign("justify");
+                      onUpdate("textAlign", `justify`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdate("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignJustifyIcon></FormatAlignJustifyIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "left" ? "lightgray" : "transparent",
+                    border: align == "left" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "left") {
+                      setAlign("left");
+                      onUpdate("textAlign", `left`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdate("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignLeftIcon></FormatAlignLeftIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "right" ? "lightgray" : "transparent",
+                    border: align == "right" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "right") {
+                      setAlign("right");
+                      onUpdate("textAlign", `right`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdate("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignRightIcon></FormatAlignRightIcon>
+                </IconButton>
+
+                <IconButton
+                  sx={{
+                    backgroundColor: isBold ? "lightgray" : "transparent",
+                    border: isBold ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (isBold) {
+                      onUpdate("fontWeight", `normal`);
+                    } else {
+                      onUpdate("fontWeight", `bold`);
+                    }
+                    setIsBold(!isBold);
+                  }}
+                >
+                  <FormatBoldIcon></FormatBoldIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor: isItalic ? "lightgray" : "transparent",
+                    border: isItalic ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (isItalic) {
+                      onUpdate("fontStyle", `normal`);
+                    } else {
+                      onUpdate("fontStyle", `italic`);
+                    }
+                    setIsItalic(!isItalic);
+                  }}
+                >
+                  <FormatItalicIcon></FormatItalicIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      decoration == "underline" ? "lightgray" : "transparent",
+                    border:
+                      decoration == "underline" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (decoration != "underline") {
+                      setDecoration("underline");
+                      onUpdate("textDecoration", `underline`);
+                    } else {
+                      setDecoration("none");
+
+                      onUpdate("textDecoration", `none`);
+                    }
+                  }}
+                >
+                  <FormatUnderlinedIcon></FormatUnderlinedIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      decoration == "line-through"
+                        ? "lightgray"
+                        : "transparent",
+                    border:
+                      decoration == "line-through" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (decoration != "line-through") {
+                      setDecoration("line-through");
+                      onUpdate("textDecoration", `line-through`);
+                    } else {
+                      setDecoration("none");
+
+                      onUpdate("textDecoration", `none`);
+                    }
+                  }}
+                >
+                  <FormatStrikethroughIcon></FormatStrikethroughIcon>
+                </IconButton>
+              </div>
+
+              <h4>{i18n.t("Rol.Sheet.Style.textProperties")}</h4>
+              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.fontSize")}:
+                </label>
+                <input
+                  className="position-inputs__container__input"
+                  type="number"
+                  name="fontSize"
+                  value={fontSize}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.font")}:
+                </label>
+                <select
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  value={font}
+                  name="fontFamily"
+                  onChange={handleChange}
+                >
+                  {fonts.map((fontOption) => (
+                    <option
+                      style={{ fontFamily: fontOption }}
+                      onClick={(e) => e.stopPropagation()}
+                      key={fontOption}
+                      value={fontOption}
+                    >
+                      {fontOption}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
           )}
+          <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
 
           <div className="position-inputs">
             <div className="position-inputs__container properties_inputs">
@@ -274,10 +435,66 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             </div>
           </div>
         </div>
-        <h4>{i18n.t("Rol.Sheet.Style.borderStyle")}</h4>
-
+        <h3>{i18n.t("Rol.Sheet.Style.properties")}</h3>
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.rotate")}:
+          </label>
+          <input
+            type="number"
+            className="position-inputs__container__input"
+            name="rotate"
+            value={rotate}
+            onChange={handleChange}
+          />
+        </div>
+        {selectedElement?.type !== typeField.text && (
+          <div className="position-inputs__container properties-panel__property-field">
+            <label className="position-inputs__container__label">
+              {i18n.t("Rol.Sheet.Style.width")}:
+            </label>
+            <input
+              type="number"
+              className="position-inputs__container__input"
+              name="width"
+              value={width}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+        {selectedElement?.type !== typeField.text &&
+          selectedElement?.type !== typeField.line && (
+            <div className="position-inputs__container properties-panel__property-field">
+              <label className="position-inputs__container__label">
+                {i18n.t("Rol.Sheet.Style.height")}:
+              </label>
+              <input
+                type="number"
+                className="position-inputs__container__input"
+                name="height"
+                value={height}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.opacity")}:
+          </label>
+          <input
+            type="number"
+            className="position-inputs__container__input"
+            name="opacity"
+            value={opacity}
+            onChange={handleChange}
+            step={0.1}
+            min={0}
+            max={1}
+          />
+        </div>
         {selectedElement?.type !== typeField.text && (
           <>
+            <h4>{i18n.t("Rol.Sheet.Style.borderStyle")}</h4>
             <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
               <label className="position-inputs__container__label">
                 {i18n.t("Rol.Sheet.Style.borderWidth")}:
@@ -315,6 +532,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           )}
         {selectedElement?.type !== typeField.text && (
           <>
+            <div className="properties-panel__property-field">
+              <SelectColor
+                value={borderColor}
+                name={"borderColor"}
+                label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
+                onChange={handleChange}
+                onRemove={handleRemoveBorder}
+              ></SelectColor>
+            </div>
             {selectedElement?.type !== typeField.line && (
               <div className="properties-panel__property-field">
                 <SelectColor
@@ -326,17 +552,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 ></SelectColor>
               </div>
             )}
-            <div className="properties-panel__property-field">
-              <SelectColor
-                value={borderColor}
-                name={"borderColor"}
-                label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
-                onChange={handleChange}
-                onRemove={handleRemoveBorder}
-              ></SelectColor>
-            </div>
           </>
         )}
+        {/* <h4>{i18n.t("Rol.Sheet.Style.css")}</h4>
+        <textarea></textarea> */}
       </div>
     </Draggable>
   );

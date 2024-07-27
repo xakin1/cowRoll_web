@@ -44,6 +44,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     const newField = {
       ...field,
       id: uuidv4(),
+      name: field.type,
     };
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];

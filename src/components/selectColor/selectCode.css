@@ -10,3 +10,12 @@
   width: 16px;
   height: 16px;
 }
+
+.label {
+  display: flex;
+  margin-right: 10px;
+  text-align: left;
+  min-width: 20px;
+  color: var(--text-color);
+  font: unset;
+}

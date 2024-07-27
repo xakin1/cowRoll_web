@@ -63,6 +63,12 @@
         "ridge": "Ridge",
         "inset": "Inset",
         "outset": "Outset",
+        "css": "Css",
+        "textAling": "Text Aling",
+        "fontSize": "Font size",
+        "textProperties": "Text properties",
+        "font": "Font",
+        "value": "Value",
         "none": "None"
       },
       "Success": {

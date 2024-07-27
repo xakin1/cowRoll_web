@@ -6,6 +6,8 @@ import type { DraggableFieldProps, Id } from "./types";
 const PageField: React.FC<DraggableFieldProps> = ({
   id,
   type,
+  name,
+  tags = [],
   label,
   style,
   setSelectedElement,
@@ -41,6 +43,8 @@ const PageField: React.FC<DraggableFieldProps> = ({
         id,
         type,
         label,
+        name,
+        tags,
         style: {
           ...styles,
           position: "absolute" as "absolute",
@@ -70,7 +74,9 @@ const PageField: React.FC<DraggableFieldProps> = ({
     <>
       <div
         className={`field`}
-        onContextMenu={(e) => onContextMenu(e, { id, type, label, style })}
+        onContextMenu={(e) =>
+          onContextMenu(e, { id, type, name, tags, label, style })
+        }
         onClick={(e) => {
           e.stopPropagation();
         }}
@@ -79,6 +85,8 @@ const PageField: React.FC<DraggableFieldProps> = ({
           ref={renderFieldRef}
           type={type}
           label={label}
+          name={type}
+          tags={[]}
           style={{ position: "absolute", zIndex: 1, ...style }}
           id={id}
           onChange={handleChange}

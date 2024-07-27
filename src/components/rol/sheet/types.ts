@@ -8,15 +8,10 @@ export interface Position {
   y: number;
 }
 
-export interface RenderFieldProps {
-  id: Id;
-  type: string;
-  label: string;
+export interface RenderFieldProps extends Field {
   isSelected?: boolean;
   onSelect?: (selectedId: Id) => void;
   onChange?: (...args: any[]) => void;
-
-  style?: any;
 }
 
 export interface MenuFieldProps {
@@ -32,7 +27,7 @@ export interface Position {
   y: number;
 }
 
-export type FieldWithoutId = Omit<Field, "id">;
+export type FieldWithoutId = Omit<Field, "id" | "name">;
 
 export interface SheetProviderProps {
   children: ReactNode;
@@ -48,6 +43,8 @@ export interface SheetContextProps {
 export interface Field {
   id: Id;
   type: typeField;
+  name: string;
+  tags?: string[];
   label: string;
   style: { [key: string]: any };
   onChange?: (...args: any[]) => void;

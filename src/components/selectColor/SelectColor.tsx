@@ -17,7 +17,7 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
 }) => {
   return (
     <>
-      <label>{label}</label>
+      <label className="label">{label}</label>
       <input type="color" name={name} value={value} onChange={onChange} />
       <button className="icon-button" onClick={onRemove}>
         <svg
