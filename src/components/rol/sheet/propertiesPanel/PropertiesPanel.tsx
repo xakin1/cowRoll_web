@@ -11,6 +11,7 @@ import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
 import Draggable from "react-draggable"; // The default
 import i18n from "../../../../i18n/i18n";
 import { rgbToHex } from "../../../../utils/functions/utils";
+import { typeField } from "../RenderFields";
 import BorderStyleSelect from "../components/borderStyle/BorderStyleSelect";
 import SelectColor from "../components/selectColor/SelectColor";
 import type { Field } from "../types";
@@ -28,7 +29,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [height, setheight] = useState<string>("");
   const [opacity, setOpacity] = useState<string>("1");
   const [rotate, setRotate] = useState<string>("0");
-  const [scale, setScale] = useState<string>("1");
   const [xPosition, setXPosition] = useState<string>("0");
   const [yPosition, setYPosition] = useState<string>("0");
   const [borderColor, setBorderColor] = useState<string>("#000000");
@@ -52,7 +52,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       setOpacity(selectedElement.style?.opacity || "1");
       const transform = selectedElement.style?.transform || "";
       const rotateMatch = transform.match(/rotate\(([^)]+)\)/);
-      setScale(selectedElement.style?.scale || "1");
       if (rotateMatch) {
         setRotate(rotateMatch[1].replace("deg", ""));
       } else {
@@ -106,10 +105,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       case "rotate":
         setRotate(value);
         updateTransform("rotate", value);
-        break;
-      case "scale":
-        setScale(value);
-        onUpdate(name, value);
         break;
       case "xPosition":
         setXPosition(value);
@@ -175,47 +170,53 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     <Draggable>
       <div className="properties-panel" ref={propertiesPanelRef}>
         <h3>{i18n.t("Rol.Sheet.Style.properties")}</h3>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.rotate")}:</label>
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.rotate")}:
+          </label>
           <input
             type="number"
+            className="position-inputs__container__input"
             name="rotate"
             value={rotate}
             onChange={handleChange}
           />
         </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.scale")}:</label>
+
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.width")}:
+          </label>
           <input
             type="number"
-            name="scale"
-            value={scale}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.width")}:</label>
-          <input
-            type="number"
+            className="position-inputs__container__input"
             name="width"
             value={width}
             onChange={handleChange}
           />
         </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.height")}:</label>
-          <input
-            type="number"
-            name="height"
-            value={height}
-            onChange={handleChange}
-          />
-        </div>
+        {selectedElement?.type !== typeField.line && (
+          <div className="position-inputs__container properties-panel__property-field">
+            <label className="position-inputs__container__label">
+              {i18n.t("Rol.Sheet.Style.height")}:
+            </label>
+            <input
+              type="number"
+              className="position-inputs__container__input"
+              name="height"
+              value={height}
+              onChange={handleChange}
+            />
+          </div>
+        )}
 
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.opacity")}:</label>
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.opacity")}:
+          </label>
           <input
             type="number"
+            className="position-inputs__container__input"
             name="opacity"
             value={opacity}
             onChange={handleChange}
@@ -224,86 +225,118 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             max={1}
           />
         </div>
-        <div className="properties-panel__property-field">
-          <SelectColor
-            value={backgroundColor}
-            name={"backgroundColor"}
-            label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
-            onChange={handleChange}
-            onRemove={handleRemoveBackground}
-          ></SelectColor>
-        </div>
-        <div className="properties-panel__property-field">
-          <SelectColor
-            value={borderColor}
-            name={"borderColor"}
-            label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
-            onChange={handleChange}
-            onRemove={handleRemoveBorder}
-          ></SelectColor>
-        </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.borderWidth")}:</label>
-          <input
-            type="number"
-            name="borderWidth"
-            value={borderWidth}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.borderStyle")}:</label>
-          <BorderStyleSelect value={borderStyle} onChange={handleChange} />
-        </div>
-        <div className="properties-panel__property-field">
-          <label>{i18n.t("Rol.Sheet.Style.borderRadius")}:</label>
-          <input
-            type="number"
-            name="borderRadius"
-            value={borderRadius}
-            onChange={handleChange}
-          />
-        </div>
-        {/* Position Controls */}
+
+        <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
         <div className="properties-panel__property-field position-controls">
-          <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
-          <div className="alignment-buttons">
-            <button onClick={() => handleAlignment("left")}>
-              <FontAwesomeIcon icon={faAlignLeft} />
-            </button>
-            <button onClick={() => handleAlignment("center")}>
-              <FontAwesomeIcon icon={faAlignCenter} />
-            </button>
-            <button onClick={() => handleAlignment("right")}>
-              <FontAwesomeIcon icon={faAlignRight} />
-            </button>
-            <button onClick={() => handleAlignment("top")}>
-              <FontAwesomeIcon icon={faArrowUp} />
-            </button>
-            <button onClick={() => handleAlignment("middle")}>
-              <FontAwesomeIcon icon={faGripLinesVertical} />
-            </button>
-            <button onClick={() => handleAlignment("bottom")}>
-              <FontAwesomeIcon icon={faArrowDown} />
-            </button>
-          </div>
+          {selectedElement?.type === typeField.text && (
+            <div className="alignment-buttons">
+              <button onClick={() => handleAlignment("left")}>
+                <FontAwesomeIcon icon={faAlignLeft} />
+              </button>
+              <button onClick={() => handleAlignment("center")}>
+                <FontAwesomeIcon icon={faAlignCenter} />
+              </button>
+              <button onClick={() => handleAlignment("right")}>
+                <FontAwesomeIcon icon={faAlignRight} />
+              </button>
+              <button onClick={() => handleAlignment("top")}>
+                <FontAwesomeIcon icon={faArrowUp} />
+              </button>
+              <button onClick={() => handleAlignment("middle")}>
+                <FontAwesomeIcon icon={faGripLinesVertical} />
+              </button>
+              <button onClick={() => handleAlignment("bottom")}>
+                <FontAwesomeIcon icon={faArrowDown} />
+              </button>
+            </div>
+          )}
+
           <div className="position-inputs">
-            <label>X:</label>
-            <input
-              type="number"
-              name="xPosition"
-              value={xPosition}
-              onChange={handleChange}
-            />
-            <label>Y:</label>
-            <input
-              type="number"
-              name="yPosition"
-              value={yPosition}
-              onChange={handleChange}
-            />
+            <div className="position-inputs__container properties_inputs">
+              <label className="position-inputs__container__label">X:</label>
+              <input
+                type="number"
+                className="position-inputs__container__input"
+                name="xPosition"
+                value={xPosition}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="position-inputs__container properties_inputs">
+              <label className="position-inputs__container__label">Y:</label>
+              <input
+                type="number"
+                className="position-inputs__container__input"
+                name="yPosition"
+                value={yPosition}
+                onChange={handleChange}
+              />
+            </div>
           </div>
         </div>
+        <h4>{i18n.t("Rol.Sheet.Style.borderStyle")}</h4>
+
+        {selectedElement?.type !== typeField.text && (
+          <>
+            <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+              <label className="position-inputs__container__label">
+                {i18n.t("Rol.Sheet.Style.borderWidth")}:
+              </label>
+              <input
+                className="position-inputs__container__input"
+                type="number"
+                name="borderWidth"
+                value={borderWidth}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="position-inputs__container properties-panel__property-field">
+              <label className="position-inputs__container__label">
+                {i18n.t("Rol.Sheet.Style.borderStyle")}:
+              </label>
+              <BorderStyleSelect value={borderStyle} onChange={handleChange} />
+            </div>
+          </>
+        )}
+        {selectedElement?.type !== typeField.line &&
+          selectedElement?.type !== typeField.text && (
+            <div className="position-inputs__container properties-panel__property-field">
+              <label className="position-inputs__container__label">
+                {i18n.t("Rol.Sheet.Style.borderRadius")}:
+              </label>
+              <input
+                type="number"
+                className="position-inputs__container__input"
+                name="borderRadius"
+                value={borderRadius}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+        {selectedElement?.type !== typeField.text && (
+          <>
+            {selectedElement?.type !== typeField.line && (
+              <div className="properties-panel__property-field">
+                <SelectColor
+                  value={backgroundColor}
+                  name={"backgroundColor"}
+                  label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
+                  onChange={handleChange}
+                  onRemove={handleRemoveBackground}
+                ></SelectColor>
+              </div>
+            )}
+            <div className="properties-panel__property-field">
+              <SelectColor
+                value={borderColor}
+                name={"borderColor"}
+                label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
+                onChange={handleChange}
+                onRemove={handleRemoveBorder}
+              ></SelectColor>
+            </div>
+          </>
+        )}
       </div>
     </Draggable>
   );

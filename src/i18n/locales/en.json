@@ -43,7 +43,7 @@
         "previousSheet": "Previous sheet"
       },
       "Style": {
-        "properties": "Properties",
+        "properties": "General Properties",
         "rotate": "Rotate",
         "scale": "Scale",
         "width": "Width",

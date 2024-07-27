@@ -14,9 +14,36 @@
 
 .properties-panel__property-field {
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  max-width: 200px; /* Limita el ancho del contenedor */
 }
 
 .properties-panel__property-field label {
   display: block;
   margin-bottom: 5px;
+}
+
+.position-inputs__container {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+  width: 100%;
+  max-width: 200px;
+}
+
+.position-inputs__container__label {
+  flex: 0 0 auto; /* Fija el ancho del label */
+  margin-right: 10px;
+  text-align: left;
+  min-width: 70px; /* Ajusta este valor según sea necesario */
+}
+
+.position-inputs__container__input {
+  flex: 1; /* Permite que el input ocupe el resto del espacio disponible */
+  width: 100%;
+}
+
+.properties_inputs {
+  max-width: 200px; /* Limita el ancho del contenedor */
 }
