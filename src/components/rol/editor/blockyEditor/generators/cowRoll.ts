@@ -279,7 +279,7 @@ cowRollGenerator.forBlock["return"] = function (block) {
     cowRollGenerator.valueToCode(block, "VALUE", Order.ORDER_ATOMIC) || "";
   return argument0;
 };
-cowRollGenerator.forBlock["custom_if"] = function (block) {
+cowRollGenerator.forBlock["controls_if"] = function (block) {
   let n = 0;
   let code = "";
   let branchCode, conditionCode;
@@ -290,16 +290,20 @@ cowRollGenerator.forBlock["custom_if"] = function (block) {
       cowRollGenerator.valueToCode(block, "IF" + n, order) || "false";
     branchCode = cowRollGenerator.statementToCode(block, "DO" + n);
     code +=
-      (n === 0 ? "if " : "elseif ") + conditionCode + " then\n" + branchCode;
+      (n === 0 ? "if " : "elseif ") +
+      conditionCode +
+      " then\n" +
+      branchCode +
+      "\n";
     n++;
   } while (block.getInput("IF" + n));
 
   if (block.getInput("ELSE")) {
     branchCode = cowRollGenerator.statementToCode(block, "ELSE");
-    code += "else\n" + branchCode;
+    code += "else\n" + branchCode + "\n";
   }
 
-  code += "\nend";
+  code += "end";
   return code;
 };
 

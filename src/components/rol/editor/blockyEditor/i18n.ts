@@ -190,3 +190,42 @@ Blockly.Msg["CROSS_TAB_PASTE"] = i18n.t("Blocky.PASTE");
 Blockly.Msg.PROCEDURES_CREATE_DO = i18n.t(
   "Blocky.ContextualMenu.PROCEDURES_CREATE_DO"
 );
+
+Blockly.Msg.CONTROLS_IF_HELPURL = i18n.t("Blocky.Logic.CONTROLS_IF_HELPURL");
+Blockly.Msg.CONTROLS_IF_TOOLTIP_1 = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_TOOLTIP_1"
+);
+Blockly.Msg.CONTROLS_IF_TOOLTIP_2 = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_TOOLTIP_2"
+);
+Blockly.Msg.CONTROLS_IF_TOOLTIP_3 = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_TOOLTIP_3"
+);
+Blockly.Msg.CONTROLS_IF_TOOLTIP_4 = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_TOOLTIP_4"
+);
+Blockly.Msg.CONTROLS_IF_MSG_IF = i18n.t("Blocky.Logic.CONTROLS_IF_MSG_IF");
+Blockly.Msg.CONTROLS_IF_MSG_ELSEIF = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_MSG_ELSEIF"
+);
+Blockly.Msg.CONTROLS_IF_MSG_ELSE = i18n.t("Blocky.Logic.CONTROLS_IF_MSG_ELSE");
+Blockly.Msg.CONTROLS_IF_MSG_THEN = i18n.t(
+  "Blocky.Loops.CONTROLS_REPEAT_INPUT_DO"
+); // Asumimos que es el mismo mensaje que en el bloque de bucles
+Blockly.Msg.CONTROLS_IF_IF_TITLE_IF = i18n.t("Blocky.Logic.CONTROLS_IF_MSG_IF");
+Blockly.Msg.CONTROLS_IF_IF_TOOLTIP = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_IF_TOOLTIP"
+);
+Blockly.Msg.CONTROLS_IF_ELSEIF_TITLE_ELSEIF = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_MSG_ELSEIF"
+);
+Blockly.Msg.CONTROLS_IF_ELSEIF_TOOLTIP = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_ELSEIF_TOOLTIP"
+);
+Blockly.Msg.CONTROLS_IF_ELSE_TITLE_ELSE = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_MSG_ELSE"
+);
+Blockly.Msg.CONTROLS_IF_ELSE_TOOLTIP = i18n.t(
+  "Blocky.Logic.CONTROLS_IF_ELSE_TOOLTIP"
+);
+Blockly.Msg.CONTROLS_IF_MSG_ELSE = i18n.t("Blocky.Logic.CONTROLS_IF_MSG_ELSE");

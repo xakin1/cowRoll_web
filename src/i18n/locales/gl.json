@@ -203,6 +203,8 @@
     },
     "Loops": {
       "MODULE_NAME": "Bucles",
+      "CONTROLS_REPEAT_INPUT_DO": "facer",
+
       "Blocks": {
         "FOR_WITH_RANGE": "para cada %1 de %2 ata %3 facer %4 finalizar",
         "FOR_TOOLTIP": "Repite a acción indicada para cada elemento definido na lista ou intervalo",
@@ -218,14 +220,20 @@
       "LOGIC_NEGATE_TITLE": "no %1",
       "LOGIC_OPERATION_AND": "e",
       "LOGIC_OPERATION_OR": "ou",
-      "Blocks": {
-        "CUSTOM_IF": "se %1 enton %2",
-        "CUSTOM_IF_TOOLTIP": "Bloque condicional",
-        "THEN": "enton",
-        "ELSEIF": "pola contra, se ",
-        "ELSE": "se non",
-        "IF": "se"
-      }
+      "CONTROLS_IF_HELPURL": "https://github.com/google/blockly/wiki/IfElse",
+
+      "CONTROLS_IF_TOOLTIP_1": "Se un valor é verdadeiro, enton realiza algunha instruccion.",
+      "CONTROLS_IF_TOOLTIP_2": "Se un valor é verdadeiro, enton realiza o primeiro bloque de instruccions. pola contra, realiza o segundo bloque de instruccions.",
+      "CONTROLS_IF_TOOLTIP_3": "Se un valor é verdadeiro, enton realiza o primeiro bloque de instruccions. pola contra, se o seguindo valor é verdadeiro, realiza o segundo bloque de instruccions.",
+      "CONTROLS_IF_TOOLTIP_4": "Se un valor é verdadeiro, enton realiza o primeiro bloque de instruccions. pola contra, se o seguindo valor é verdadeiro, realiza o segundo bloque de instruccions. Si ninguno de los valores es verdadero, realiza el último bloque de instrucciones.",
+      "CONTROLS_IF_MSG_IF": "se",
+      "CONTROLS_REPEAT_INPUT_DO": "enton",
+
+      "CONTROLS_IF_MSG_ELSEIF": "pola contra, se",
+      "CONTROLS_IF_MSG_ELSE": "se non",
+      "CONTROLS_IF_IF_TOOLTIP": "Agregar, eliminar o reordenar seccions para reconfigurar este bloque se.",
+      "CONTROLS_IF_ELSEIF_TOOLTIP": "Agregar unha condición ao bloque se.",
+      "CONTROLS_IF_ELSE_TOOLTIP": "Agregar unha condición final de captura ao bloque se."
     },
     "Math": {
       "MODULE_NAME": "Matemáticas",

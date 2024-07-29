@@ -204,6 +204,8 @@
     },
     "Loops": {
       "MODULE_NAME": "Bucles",
+      "CONTROLS_REPEAT_INPUT_DO": "hacer",
+
       "Blocks": {
         "FOR_WITH_RANGE": "para cada %1 de %2 hasta %3 hacer %4 finalizar",
         "FOR_TOOLTIP": "Repite la acción indicada para cada elemento definido en la lista o intervalo",
@@ -219,14 +221,20 @@
       "LOGIC_NEGATE_TITLE": "no %1",
       "LOGIC_OPERATION_AND": "y",
       "LOGIC_OPERATION_OR": "o",
-      "Blocks": {
-        "CUSTOM_IF": "si %1 entonces %2",
-        "CUSTOM_IF_TOOLTIP": "Bloque condicional",
-        "THEN": "entonces",
-        "ELSEIF": "de lo contrario, si ",
-        "ELSE": "si no",
-        "IF": "si"
-      }
+      "CONTROLS_IF_HELPURL": "https://github.com/google/blockly/wiki/IfElse",
+
+      "CONTROLS_IF_TOOLTIP_1": "Si un valor es verdadero, entonces realiza algunas instrucciones.",
+      "CONTROLS_IF_TOOLTIP_2": "Si un valor es verdadero, entonces realiza el primer bloque de instrucciones. De lo contrario, realiza el segundo bloque de instrucciones.",
+      "CONTROLS_IF_TOOLTIP_3": "Si el primer valor es verdadero, entonces realiza el primer bloque de instrucciones. De lo contrario, si el segundo valor es verdadero, realiza el segundo bloque de instrucciones.",
+      "CONTROLS_IF_TOOLTIP_4": "Si el primer valor es verdadero, entonces realiza el primer bloque de instrucciones. De lo contrario, si el segundo valor es verdadero, realiza el segundo bloque de instrucciones. Si ninguno de los valores es verdadero, realiza el último bloque de instrucciones.",
+      "CONTROLS_IF_MSG_IF": "si",
+      "CONTROLS_REPEAT_INPUT_DO": "entonces",
+
+      "CONTROLS_IF_MSG_ELSEIF": "de lo contrario, si",
+      "CONTROLS_IF_MSG_ELSE": "si no",
+      "CONTROLS_IF_IF_TOOLTIP": "Agregar, eliminar o reordenar secciones para reconfigurar este bloque si.",
+      "CONTROLS_IF_ELSEIF_TOOLTIP": "Agregar una condición al bloque si.",
+      "CONTROLS_IF_ELSE_TOOLTIP": "Agregar una condición final de captura a este bloque si."
     },
     "Math": {
       "MODULE_NAME": "Matemáticas",

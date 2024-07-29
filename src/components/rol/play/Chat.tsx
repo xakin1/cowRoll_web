@@ -1,12 +1,12 @@
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import i18n from "../../../i18n/i18n";
 import { addMessage } from "../../../redux/slice/chatSlice";
 import type { RootState } from "../../../redux/store";
-import { getFiles } from "../../../services/codeApi";
+import { executeCode, getFiles } from "../../../services/codeApi"; // Import executeCode here
 import {
   getSheetsOfRol,
   isDirectory,
@@ -23,11 +23,13 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
   const [role, setRole] = useState("GM");
+  const [scripts, setScripts] = useState<{ [key: string]: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileProps>();
   const [roles, setRoles] = useState(["GM"]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
@@ -58,9 +60,9 @@ const Chat = () => {
     fetchDocuments();
   }, [dispatch]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim()) {
-      let processedInput = processInput(input.trim());
+      let processedInput = await processInput(input.trim());
 
       const timestamp = new Date().toLocaleTimeString();
       dispatch(
@@ -71,6 +73,12 @@ const Chat = () => {
       setInput("");
     }
   };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -102,15 +110,14 @@ const Chat = () => {
     }
   };
 
-  const processInput = (input: string): string => {
-    return processCommandRecursively(input);
+  const processInput = async (input: string): Promise<string> => {
+    return await processCommandRecursively(input);
   };
 
-  const processCommandRecursively = (input: string): string => {
-    // Encuentra el próximo comando en la cadena
+  const processCommandRecursively = async (input: string): Promise<string> => {
     const commandMatch = input.match(/\\?\/\w+/);
     if (!commandMatch) {
-      return input; // No se encontraron más comandos
+      return input;
     }
 
     const command = commandMatch[0];
@@ -119,72 +126,142 @@ const Chat = () => {
     const afterCommand = input.slice(index + command.length).trim();
 
     if (command.startsWith("\\")) {
-      // Si el comando está escapado, no lo proceses y continúa con el resto
       return (
         beforeCommand +
         command.slice(1) +
-        processCommandRecursively(afterCommand)
+        (await processCommandRecursively(afterCommand))
       );
     } else {
-      // Procesa el comando
-      const processedCommand = processCommand(command, afterCommand);
+      const processedCommand = await processCommand(command, afterCommand);
       return beforeCommand + processedCommand;
     }
   };
 
-  const processCommand = (command: string, input: string): string => {
+  const processCommand = async (
+    command: string,
+    input: string
+  ): Promise<string> => {
     const parts = command.slice(1).split(" ");
     const cmd = parts[0];
     const args = parts.slice(1);
 
     switch (cmd) {
       case "roll":
-        if (args.length === 0) {
-          const argMatch = input.match(/^\s*(\d+d\d+)\s*/);
-          if (argMatch) {
-            const arg = argMatch[1];
-            const remainingInput = input.slice(argMatch[0].length);
-            const match = arg.match(/^(\d+)d(\d+)$/);
-            if (match) {
-              const numDice = parseInt(match[1], 10);
-              const numSides = parseInt(match[2], 10);
-              if (!isNaN(numDice) && !isNaN(numSides)) {
-                const result = rollDice(numDice, numSides);
-                return `${result} ` + processCommandRecursively(remainingInput);
-              }
-            }
-          }
-        }
-        return (
-          "Invalid command format. Use /roll <numDice>d<numSides> " +
-          processCommandRecursively(input)
-        );
+        return processRollCommand(args, input);
 
       case "sum":
-        if (args.length === 0) {
-          const argMatch = input.match(/^\s*(\d+)\s+(\d+)\s*/);
-          if (argMatch) {
-            const num1 = parseFloat(argMatch[1]);
-            const num2 = parseFloat(argMatch[2]);
-            const remainingInput = input.slice(argMatch[0].length);
-            if (!isNaN(num1) && !isNaN(num2)) {
-              const result = sum([num1, num2]);
-              return `${result} ` + processCommandRecursively(remainingInput);
-            }
-          }
-        }
-        return (
-          "Invalid command format. Use /sum <num1> <num2> " +
-          processCommandRecursively(input)
-        );
-
-      // Agrega más comandos aquí según sea necesario
+        return processSumCommand(args, input);
 
       default:
-        return command + " " + processCommandRecursively(input);
+        return await processScriptCommand(cmd, args);
     }
   };
 
+  const processRollCommand = async (
+    args: string[],
+    input: string
+  ): Promise<Promise<string>> => {
+    if (args.length === 0) {
+      const argMatch = input.match(/^\s*(\d+d\d+)\s*/);
+      if (argMatch) {
+        const arg = argMatch[1];
+        const remainingInput = input.slice(argMatch[0].length);
+        const match = arg.match(/^(\d+)d(\d+)$/);
+        if (match) {
+          const numDice = parseInt(match[1], 10);
+          const numSides = parseInt(match[2], 10);
+          if (!isNaN(numDice) && !isNaN(numSides)) {
+            const result = rollDice(numDice, numSides);
+            return (
+              `${result} ` + (await processCommandRecursively(remainingInput))
+            );
+          }
+        }
+      }
+    }
+    return (
+      "Invalid command format. Use /roll <numDice>d<numSides> " +
+      (await processCommandRecursively(input))
+    );
+  };
+
+  const processSumCommand = async (
+    args: string[],
+    input: string
+  ): Promise<string> => {
+    if (args.length === 0) {
+      const argMatch = input.match(/^\s*(\d+)\s+(\d+)\s*/);
+      if (argMatch) {
+        const num1 = parseFloat(argMatch[1]);
+        const num2 = parseFloat(argMatch[2]);
+        const remainingInput = input.slice(argMatch[0].length);
+        if (!isNaN(num1) && !isNaN(num2)) {
+          const result = sum([num1, num2]);
+          return (
+            `${result} ` + (await processCommandRecursively(remainingInput))
+          );
+        }
+      }
+    }
+    return (
+      "Invalid command format. Use /sum <num1> <num2> " +
+      (await processCommandRecursively(input))
+    );
+  };
+
+  const processScriptCommand = async (
+    cmd: string,
+    args: string[]
+  ): Promise<string> => {
+    const scriptObject = scripts.find((script) => script[cmd]);
+    if (!scriptObject) {
+      return `Command not found: ${cmd}`;
+    }
+    let script = scriptObject[cmd];
+
+    // Identificar la última función en el script
+    const functionRegex =
+      /function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(.*?\)\s*do\s*end/g;
+    let match;
+    let lastFunctionName = null;
+
+    while ((match = functionRegex.exec(script)) !== null) {
+      lastFunctionName = match[1];
+    }
+
+    if (lastFunctionName) {
+      // Crear la llamada a la función con los argumentos proporcionados
+      const functionCall = `${lastFunctionName}(${args.join(", ")})`;
+
+      // Insertar la llamada a la función en la última línea del script
+      script += `\n${functionCall}`;
+
+      try {
+        const result = await executeCode(script);
+        return `Result: ${result}`;
+      } catch (error) {
+        console.error("Error executing script:", error);
+        if (error instanceof Error) {
+          return `Error executing script: ${error.message}`;
+        } else {
+          return `Unknown error executing script.`;
+        }
+      }
+    } else {
+      // Si no hay funciones, simplemente ejecutar el código
+      try {
+        const result = await executeCode(script);
+        return `Result: ${result}`;
+      } catch (error) {
+        console.error("Error executing script:", error);
+        if (error instanceof Error) {
+          return `Error executing script: ${error.message}`;
+        } else {
+          return `Unknown error executing script.`;
+        }
+      }
+    }
+  };
   const rollDice = (numDice: number, numSides: number): number => {
     let total = 0;
     for (let i = 0; i < numDice; i++) {
@@ -197,19 +274,17 @@ const Chat = () => {
     return numbers.reduce((acc, curr) => acc + curr, 0);
   };
 
-  const selectFile = () => {};
-
-  const handleAddRole = (newRole: string) => {
-    if (newRole && !roles.includes(newRole)) {
-      setRoles([...roles, newRole]);
+  const handleAddRole = () => {
+    handleClose();
+    if (selectedFile && selectedFile.content) {
+      setRoles([...roles, selectedFile.name]);
+      setScripts([...scripts, { [selectedFile.name]: selectedFile.content }]);
     }
   };
 
   const handleGoToParentDirectory = () => {
     if (parentDirectory) {
       setSheetsDirectory(parentDirectory);
-      // Set the new parent directory. In a real application, you would need to keep track of the hierarchy.
-      // For simplicity, assuming parentDirectory is the root.
       setParentDirectory(null);
     }
   };
@@ -237,6 +312,7 @@ const Chat = () => {
                     </div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
               </div>
               <div className="chat-container__footer">
                 <select value={role} onChange={(e) => setRole(e.target.value)}>
@@ -327,6 +403,7 @@ const Chat = () => {
                 "buttons-modal_container__accept" +
                 (selectedFile ? "--selected" : "--unselected")
               }
+              onClick={handleAddRole}
               disabled={!selectedFile}
             >
               {i18n.t("General.accept")}

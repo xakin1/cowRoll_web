@@ -73,7 +73,7 @@ const BlocklyEditor = () => {
   const toolboxXml = `
     <xml id="toolbox" style="display: none">
       <category name="${i18n.t("Blocky.Logic.MODULE_NAME")}" colour="#5C81A6">
-        <block type="custom_if"></block>
+        <block type="controls_if"></block>
         <block type="logic_compare"></block>
         <block type="logic_operation"></block>
         <block type="logic_negate"></block>
