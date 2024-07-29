@@ -82,11 +82,14 @@ export function ContextMenu({
       if (isDirectory(singleItem)) {
         response = await editDirectory({
           ...data,
+          name: name,
           parentId: singleItem.parentId,
         } as editDirectoryProps);
       } else if (isFile(singleItem)) {
         response = await editFile({
           ...data,
+          name: name,
+
           directoryId: singleItem.directoryId,
         } as EditFileProps);
       } else {
@@ -96,6 +99,7 @@ export function ContextMenu({
 
       if (response && "message" in response) {
         onAddNode();
+        toast.success(i18n.t("General.nameChanged"), toastStyle);
       } else {
         toast.error(i18n.t("Errors." + response?.error), toastStyle);
       }
@@ -151,6 +155,7 @@ export function ContextMenu({
           onClick={() =>
             handleOpenModal({
               label: i18n.t("ContextualMenu.Modal.renameName", singleItem.name),
+              initialText: singleItem.name,
               showInput: true,
               action: handleChangeName,
             })

@@ -113,6 +113,7 @@
   "General": {
     "accept": "Accept",
     "addPlayer": "Add player",
+    "nameChanged": "Name changed",
     "send": "Send",
     "actualRoles": "Actual roles",
     "cancel": "Cancel",

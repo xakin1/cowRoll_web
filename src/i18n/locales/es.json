@@ -119,6 +119,7 @@
     "accept": "Aceptar",
     "cancel": "Cancelar",
     "roles": "Roles",
+    "nameChanged": "Se ha cambiado el nombre correctamente",
     "codes": "Códigos",
     "selectFile": "Selecione un archivo",
     "sigIn": "Registrarse",
