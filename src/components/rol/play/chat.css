@@ -102,3 +102,9 @@
 .item-container__item--selected > * {
   cursor: pointer;
 }
+
+.modal-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
