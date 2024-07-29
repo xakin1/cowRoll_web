@@ -22,6 +22,7 @@ const CustomModal: React.FC<PhotoCardProps> = ({ open, onClose, children }) => {
           boxShadow: 24,
           p: 4,
           height: "auto",
+          padding: "12px",
         }}
       >
         {children}

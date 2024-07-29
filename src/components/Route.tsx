@@ -21,6 +21,7 @@ import PathSelectable from "./breadcrumbs/Breadcrumbs";
 import Loading from "./loading/Loading";
 import { MainPage } from "./mainPage";
 import WorkSpace from "./rol/editor/terminal/WorkSpace";
+import Chat from "./rol/play/Chat";
 import Rol from "./rol/rol";
 import { HomeSheet } from "./rol/sheet/HomeSheet";
 import Sheet from "./rol/sheet/Sheet";
@@ -64,6 +65,7 @@ const AppRoute: React.FC = () => {
             <Routes>
               <Route path="/app" element={<MainPage />} />
               <Route path="/app/rol" element={<Rol />} />
+              <Route path="/app/rol/play" element={<Chat />} />
               <Route path="/app/rol/sheet" element={<HomeSheet />} />
               <Route path="/app/rol/sheet/:sheetId" element={<Sheet />} />
               <Route path="/app/rol/editor" element={<WorkSpace />} />

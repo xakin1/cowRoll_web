@@ -89,6 +89,8 @@ export interface editDirectoryProps {
   id: Id;
 }
 
+export type EditDirectorySystemProps = editDirectoryProps | EditFileProps;
+
 export type Id = string;
 export interface DirectoryProps {
   name: string;
@@ -189,6 +191,31 @@ export const findNodeById = (
     }
   }
   return null;
+};
+
+export const findParentById = (
+  node: DirectorySystemProps,
+  id: Id
+): DirectoryProps | null => {
+  const findParent = (
+    currentNode: DirectorySystemProps,
+    targetId: Id
+  ): DirectoryProps | null => {
+    if (!isDirectory(currentNode)) return null;
+
+    for (const child of currentNode.children) {
+      if (child.id === targetId) {
+        return currentNode;
+      }
+      const parent = findParent(child, targetId);
+      if (parent) {
+        return parent;
+      }
+    }
+    return null;
+  };
+
+  return findParent(node, id);
 };
 
 export const getSheetsOfRol = (

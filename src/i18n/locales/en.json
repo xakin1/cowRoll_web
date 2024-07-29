@@ -12,10 +12,12 @@
     "General": {
       "addRol": "Add rol",
       "name": "Name",
+      "play": "Play",
       "saveChanges": "Save changes",
       "editRol": "Edit rol",
       "description": "Description",
       "scripts": "Scripts",
+      "summit": "Summit",
       "sheet": "Sheet"
     },
     "Success": {
@@ -34,6 +36,7 @@
     "Sheet": {
       "General": {
         "sheetName": "Name of the sheet",
+        "folderName": "Folder name",
         "submit": "Submit",
         "Sheet": "Character Sheet",
         "deleteSheet": "Delete actual sheet",

@@ -147,3 +147,8 @@ body[data-theme="dark"] {
 .tool-item-icon {
   cursor: pointer;
 }
+
+.container-photoCards {
+  display: flex;
+  flex-direction: row;
+}

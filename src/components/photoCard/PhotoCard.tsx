@@ -4,7 +4,8 @@ import "./styles.css";
 interface PhotoCardProps {
   name: string;
   image: string;
-  handleClick: () => void;
+  handleClick?: () => void;
+  handleDoubleClick?: () => void;
   onContextMenu?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
@@ -12,12 +13,14 @@ const PhotoCard: React.FC<PhotoCardProps> = ({
   name,
   image,
   handleClick,
+  handleDoubleClick,
   onContextMenu,
 }) => {
   return (
     <div
       onContextMenu={onContextMenu}
       className="photo-card"
+      onDoubleClick={handleDoubleClick}
       onClick={handleClick}
     >
       <img src={image} alt={name} className="photo" />

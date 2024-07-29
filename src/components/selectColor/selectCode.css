@@ -19,3 +19,21 @@
   color: var(--text-color);
   font: unset;
 }
+
+.container_rol__edition__options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.container_rol__edition__options__text {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+}

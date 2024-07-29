@@ -12,10 +12,12 @@
     "General": {
       "addRol": "Engadir rol",
       "name": "Nome",
+      "play": "Xogar",
       "saveChanges": "Gardar cambios",
       "editRol": "Editar rol",
       "description": "Descrición",
       "scripts": "Comportamentos",
+      "summit": "Enviar",
       "sheet": "Folla"
     },
     "Success": {
@@ -34,6 +36,7 @@
     "Sheet": {
       "General": {
         "sheetName": "Nome da folla",
+        "folderName": "Nome da  carpeta",
         "submit": "Enviar",
         "Sheet": "Folla de personaxe",
         "deleteSheet": "Borrar folla actual",

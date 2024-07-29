@@ -12,10 +12,13 @@
     "General": {
       "addRol": "Añadir rol",
       "name": "Nombre",
+      "play": "Jugar",
       "saveChanges": "Guardar cambios",
       "editRol": "Editar rol",
       "description": "Descripción",
       "scripts": "Comportamientos",
+      "summit": "Enviar",
+
       "sheet": "Hoja"
     },
     "Success": {
@@ -34,6 +37,7 @@
     "Sheet": {
       "General": {
         "sheetName": "Nombre de la hoja",
+        "folderName": "Nombre de la carpeta",
         "submit": "Enviar",
         "Sheet": "Hoja de personaje",
         "deleteSheet": "Borrar hoja actual",

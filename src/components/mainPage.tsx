@@ -104,7 +104,7 @@ export function MainPage() {
     <>
       <PhotoCardList
         elements={roles}
-        handleClick={handleClick}
+        handleDoubleClick={handleClick}
         handleDelete={handleDelete}
       >
         <RolForm

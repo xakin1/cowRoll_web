@@ -8,12 +8,14 @@ interface PathContextProps {
   currentPath: PathProps[];
   setCurrentPath: (path: PathProps[]) => void;
   addToPath: (path: PathProps) => void;
+  removeLastFromPath: () => void;
 }
 
 const PathContext = createContext<PathContextProps>({
   currentPath: [],
   setCurrentPath: () => {},
   addToPath: () => {},
+  removeLastFromPath: () => {},
 });
 
 interface PathProviderProps {
@@ -36,9 +38,17 @@ export const PathProvider: React.FC<PathProviderProps> = ({ children }) => {
   const addToPath = ({ name, route }: PathProps) => {
     dispatch(setPath([...currentPath, { name, route }]));
   };
+  const removeLastFromPath = () => {
+    if (currentPath.length > 0) {
+      const newPath = currentPath.slice(0, -1);
+      dispatch(setPath(newPath));
+    }
+  };
 
   return (
-    <PathContext.Provider value={{ currentPath, setCurrentPath, addToPath }}>
+    <PathContext.Provider
+      value={{ currentPath, setCurrentPath, addToPath, removeLastFromPath }}
+    >
       {children}
     </PathContext.Provider>
   );

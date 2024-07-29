@@ -7,12 +7,19 @@ import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import { IconButton } from "@mui/material";
-import React, { useEffect, useRef, useState, type ChangeEvent } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import Draggable from "react-draggable";
 import i18n from "../../../../i18n/i18n";
 import { rgbToHex } from "../../../../utils/functions/utils";
 import SelectColor from "../../../selectColor/SelectColor";
 import { typeField } from "../RenderFields";
+import { SheetContext } from "../SheetContext";
 import BorderStyleSelect from "../components/borderStyle/BorderStyleSelect";
 import type { Field } from "../types";
 import "./propertiesPanel.css";
@@ -44,7 +51,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderWidth, setBorderWidth] = useState<string>("1");
   const [borderStyle, setBorderStyle] = useState<string>("solid");
   const [borderRadius, setBorderRadius] = useState<string>("0");
-
+  const [customCSS, setCustomCSS] = useState<string>("");
+  const { updateFieldStyle } = useContext(SheetContext)!;
   const previousElementRef = useRef<Field | null>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
 
@@ -106,10 +114,44 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setXPosition(parseInt(translateMatch[1], 10).toString());
         setYPosition(parseInt(translateMatch[2], 10).toString());
       }
-
+      // setCustomCSS(generateCustomCSS(selectedElement.style));
       previousElementRef.current = selectedElement;
     }
   }, [selectedElement]);
+
+  // const generateCustomCSS = (style: CSSStyleDeclaration): string => {
+  //   const cssProperties = [
+  //     "width",
+  //     "height",
+  //     "opacity",
+  //     "transform",
+  //     "left",
+  //     "top",
+  //     "borderTopColor",
+  //     "backgroundColor",
+  //     "borderTopWidth",
+  //     "borderTopStyle",
+  //     "borderTopLeftRadius",
+  //     "fontSize",
+  //     "fontFamily",
+  //     "fontWeight",
+  //     "fontStyle",
+  //     "textAlign",
+  //     "textDecoration",
+  //   ];
+
+  //   return cssProperties
+  //     .map((property) => {
+  //       const kebabCaseProperty = property.replace(
+  //         /([A-Z])/g,
+  //         (g) => `-${g[0].toLowerCase()}`
+  //       );
+  //       const value = style[property as any];
+  //       return value ? `${kebabCaseProperty}: ${value};` : "";
+  //     })
+  //     .filter(Boolean)
+  //     .join(" ");
+  // };
 
   const handleChange = (
     e:
@@ -170,9 +212,32 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setFont(value);
         onUpdate(name, value);
         break;
+      case "customCSS":
+        if (selectedElement) {
+          setCustomCSS(value);
+          applyCustomCSS(value);
+        }
+        break;
       default:
         onUpdate(name, value);
         break;
+    }
+  };
+
+  const applyCustomCSS = (css: string) => {
+    if (selectedElement) {
+      const style: { [key: string]: string | number } = {};
+      const cssRules = css.split(";").filter((rule) => rule.trim() !== "");
+      cssRules.forEach((rule) => {
+        const [property, value] = rule.split(":").map((part) => part.trim());
+        if (property && value) {
+          const camelCaseProperty = property.replace(/-([a-z])/g, (g) =>
+            g[1].toUpperCase()
+          );
+          style[camelCaseProperty] = value;
+        }
+      });
+      updateFieldStyle(selectedElement.id, style);
     }
   };
 
@@ -555,7 +620,12 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </>
         )}
         {/* <h4>{i18n.t("Rol.Sheet.Style.css")}</h4>
-        <textarea></textarea> */}
+        <textarea
+          name="customCSS"
+          value={customCSS}
+          onChange={handleChange}
+          placeholder="Enter custom CSS"
+        /> */}
       </div>
     </Draggable>
   );

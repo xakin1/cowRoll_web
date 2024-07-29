@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import CustomModal from "../CustomModal";
+import { FileSystemEnum, isDirectory } from "../../utils/types/ApiTypes";
 import ContextualMenu from "../rol/components/contextMenu/contextMenu";
+import CustomModal from "../utils/CustomModal";
 import PhotoCard from "./PhotoCard";
 import PhotoCardAdd from "./PhotoCardAdd";
 import "./styles.css";
 
-interface PhotoElement {
+export interface PhotoElement {
   id: any;
   name: string;
   image?: string;
+  type: FileSystemEnum;
 }
 
 export interface PhotoListFormProps<T, Y> {
@@ -21,48 +23,57 @@ export interface PhotoListFormProps<T, Y> {
 interface PhotoCardProps {
   elements: PhotoElement[];
   image?: string;
-  handleClick: (...args: any[]) => void;
+  handleClick?: (...args: any[]) => void;
+  handleDoubleClick: (...args: any[]) => void;
   handleDelete: (id: any) => void;
+  handleMove?: (elements: any[], targetFolder: any) => void;
   children: React.ReactNode;
+  childrenFolder?: React.ReactNode;
 }
 
 const PhotoCardList: React.FC<PhotoCardProps> = ({
   elements,
   image,
   handleClick,
+  handleDoubleClick,
   handleDelete,
+  handleMove,
   children,
+  childrenFolder,
 }) => {
   const [contextMenuPosition, setContextMenuPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
-  const [selectedElement, setSelectedElement] = useState<PhotoElement | null>(
-    null
-  );
+  const [selectedElements, setSelectedElements] = useState<PhotoElement[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalFolder, setShowModalFolder] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const handleClose = () => setShowModal(false);
+  const handleClose = () => {
+    setShowModal(false);
+    setShowModalFolder(false);
+  };
+
   const handleOpen = () => setShowModal(true);
+  const handleOpenFolder = () => setShowModalFolder(true);
 
   const handleContextMenu = (
     e: React.MouseEvent<HTMLElement>,
-    element: PhotoElement
+    element?: PhotoElement
   ): void => {
     e.preventDefault();
-    setSelectedElement(element);
+    if (element && !selectedElements.includes(element)) {
+      setSelectedElements([element]);
+    }
     setContextMenuPosition({ x: e.clientX, y: e.clientY });
   };
 
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (
-      modalRef.current &&
-      !modalRef.current.contains(target) &&
-      !target.closest(".contextual-menu")
-    ) {
-      setSelectedElement(null);
+
+    if (!target.closest(".contextual-menu")) {
+      setSelectedElements([]);
       setContextMenuPosition(null);
     }
   };
@@ -75,35 +86,105 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
   }, []);
 
   const handleEdit = () => {
-    handleOpen();
+    if (selectedElements.length === 1) {
+      const selectedElement = selectedElements[0];
+      if (isDirectory(selectedElement) && childrenFolder) {
+        handleOpenFolder();
+      } else {
+        handleOpen();
+      }
+    }
     setContextMenuPosition(null);
   };
 
   const handleDeleteWithClose = (id: any) => {
     handleDelete(id);
-    setSelectedElement(null);
+    setSelectedElements([]);
     setContextMenuPosition(null);
   };
 
+  const handleSelect = (element: PhotoElement, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (e.ctrlKey || e.metaKey) {
+      setSelectedElements((prevElements) => {
+        if (prevElements.includes(element)) {
+          return prevElements.filter((el) => el.id !== element.id);
+        } else {
+          return [...prevElements, element];
+        }
+      });
+    } else {
+      setSelectedElements([element]);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetElement: PhotoElement) => {
+    e.preventDefault();
+    if (isDirectory(targetElement) && handleMove) {
+      handleMove(selectedElements, targetElement);
+      setSelectedElements([]);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    console.log("Selected elements updated:", selectedElements);
+  }, [selectedElements]);
+
   return (
-    <>
+    <div
+      style={{ width: "100%", height: "100%" }}
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleContextMenu(e);
+      }}
+    >
       <div className="photo-grid sibling-fade">
         {elements.map((element) => (
-          <React.Fragment key={element.id}>
+          <div
+            key={element.id}
+            onClick={(e) => handleSelect(element, e)}
+            onDragOver={handleDragOver}
+            onDrop={(e) => {
+              handleDrop(e, element);
+            }}
+            className={`photo-card ${
+              selectedElements.includes(element) ? "selected" : ""
+            }`}
+            draggable={!isDirectory(element)} // Only non-directories are draggable
+          >
             <PhotoCard
+              handleDoubleClick={() => {
+                handleDoubleClick(element);
+              }}
               handleClick={() => {
-                setSelectedElement(element);
-                handleClick(element);
+                if (handleClick) handleClick(element);
               }}
               name={element.name}
-              onContextMenu={(e) => handleContextMenu(e, element)}
-              image={element.image || image || "/file.svg"}
+              onContextMenu={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleContextMenu(e, element);
+              }}
+              image={
+                element.image
+                  ? element.image
+                  : image
+                    ? image
+                    : isDirectory(element)
+                      ? "/folder.svg"
+                      : "/file.svg"
+              }
             />
-          </React.Fragment>
+          </div>
         ))}
-        <PhotoCardAdd handleOpen={handleOpen}></PhotoCardAdd>
+        <PhotoCardAdd handleOpen={handleOpen} />
       </div>
-      {selectedElement && contextMenuPosition && (
+      {selectedElements.length > 0 && contextMenuPosition && (
         <div
           className="contextual-menu"
           style={{
@@ -114,19 +195,52 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
         >
           <ContextualMenu
             handleEdit={handleEdit}
-            handleDelete={() => handleDeleteWithClose(selectedElement.id)}
+            handleDelete={() =>
+              selectedElements.forEach((el) => handleDeleteWithClose(el.id))
+            }
+          />
+        </div>
+      )}
+
+      {!selectedElements.length && contextMenuPosition && (
+        <div
+          className="contextual-menu"
+          style={{
+            position: "absolute",
+            top: contextMenuPosition.y,
+            left: contextMenuPosition.x,
+          }}
+        >
+          <ContextualMenu
+            handleNew={handleOpen}
+            handleNewFolder={childrenFolder ? handleOpenFolder : undefined} // Only show if childrenFolder is present
           />
         </div>
       )}
       <CustomModal open={showModal} onClose={handleClose}>
         <div ref={modalRef} onClick={(e) => e.stopPropagation()}>
-          {React.cloneElement(children as React.ReactElement<any>, {
-            onClose: handleClose,
-            selectedElement: selectedElement,
-          })}
+          <div>
+            {React.cloneElement(children as React.ReactElement<any>, {
+              onClose: handleClose,
+              selectedElement: selectedElements[0],
+            })}
+          </div>
         </div>
       </CustomModal>
-    </>
+
+      {childrenFolder && (
+        <CustomModal open={showModalFolder} onClose={handleClose}>
+          <div ref={modalRef} onClick={(e) => e.stopPropagation()}>
+            <div>
+              {React.cloneElement(childrenFolder as React.ReactElement<any>, {
+                onClose: handleClose,
+                selectedElement: selectedElements[0],
+              })}
+            </div>
+          </div>
+        </CustomModal>
+      )}
+    </div>
   );
 };
 
