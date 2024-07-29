@@ -114,6 +114,9 @@
   },
   "General": {
     "accept": "Aceptar",
+    "addPlayer": "Engadir personaxe",
+    "send": "Enviar",
+    "actualRoles": "Roles actuaias",
     "cancel": "Cancelar",
     "roles": "Roles",
     "codes": "Códigos",

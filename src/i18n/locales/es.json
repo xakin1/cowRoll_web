@@ -49,6 +49,9 @@
       },
       "Style": {
         "properties": "Propiedades generales",
+        "addPlayer": "Agregar Personaje",
+        "send": "Enviar",
+        "actualRoles": "Roles actuales",
         "rotate": "Rotación",
         "scale": "Escala",
         "width": "Ancho",

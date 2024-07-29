@@ -112,6 +112,9 @@
   },
   "General": {
     "accept": "Accept",
+    "addPlayer": "Add player",
+    "send": "Send",
+    "actualRoles": "Actual roles",
     "cancel": "Cancel",
     "roles": "Roles",
     "codes": "Codes",
