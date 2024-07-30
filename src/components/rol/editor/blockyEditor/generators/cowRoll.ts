@@ -306,7 +306,6 @@ cowRollGenerator.forBlock["controls_if"] = function (block) {
   code += "end";
   return code;
 };
-
 function getOrderForOperator(operator: string) {
   switch (operator) {
     case "+":

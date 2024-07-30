@@ -2,13 +2,16 @@ import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux";
 import i18n from "../../../i18n/i18n";
 import { addMessage } from "../../../redux/slice/chatSlice";
 import type { RootState } from "../../../redux/store";
 import { executeCode, getFiles } from "../../../services/codeApi"; // Import executeCode here
 import {
+  getCodesOfRol,
   getSheetsOfRol,
+  isCodeFile,
   isDirectory,
   type DirectoryProps,
   type FileProps,
@@ -29,7 +32,9 @@ const Chat = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
@@ -44,6 +49,7 @@ const Chat = () => {
 
   const fetchDocuments = async () => {
     const response = await getFiles();
+    setScripts([]);
     if (rolId) {
       const directory = getSheetsOfRol(response.message, rolId);
 
@@ -51,8 +57,30 @@ const Chat = () => {
         setSheetsDirectory(directory);
         setParentDirectory(null); // Root directory has no parent
       }
-    }
 
+      const scriptsDirectory = getCodesOfRol(response.message, rolId);
+      console.log(scriptsDirectory);
+
+      if (scriptsDirectory) {
+        const processDirectory = (directory: DirectoryProps) => {
+          directory.children.forEach((child) => {
+            if (isDirectory(child)) {
+              processDirectory(child);
+            } else if (isCodeFile(child)) {
+              if (child.content !== undefined) {
+                // Ensure content is not undefined
+                setScripts((prevScripts) => [
+                  ...prevScripts,
+                  { [child.name]: child.content ?? "" },
+                ]);
+              }
+            }
+          });
+        };
+        processDirectory(scriptsDirectory);
+      }
+    }
+    console.log(scripts);
     setLoading(false);
   };
 
@@ -71,6 +99,7 @@ const Chat = () => {
       setMessageHistory((prev) => [...prev, input.trim()]);
       setHistoryIndex(-1);
       setInput("");
+      setIsEditing(false); // Desactivar edición al enviar el mensaje
     }
   };
 
@@ -80,38 +109,71 @@ const Chat = () => {
     }
   }, [messages]);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    setIsEditing(true); // Activar edición al presionar cualquier tecla
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
       handleSend();
+    } else if (event.key === "Enter" && event.shiftKey) {
+      event.preventDefault();
+      insertNewLineAtCursor();
     }
-    if (event.key === "ArrowUp") {
-      if (messageHistory.length > 0) {
-        const newIndex =
-          historyIndex === -1
-            ? messageHistory.length - 1
-            : Math.max(0, historyIndex - 1);
-        setInput(messageHistory[newIndex]);
-        setHistoryIndex(newIndex);
-      }
-    }
-    if (event.key === "ArrowDown") {
-      if (messageHistory.length > 0) {
-        const newIndex =
-          historyIndex === -1
-            ? -1
-            : Math.min(messageHistory.length - 1, historyIndex + 1);
-        if (newIndex === messageHistory.length) {
-          setInput("");
-        } else {
+
+    if (event.ctrlKey) {
+      if (event.key === "ArrowUp") {
+        if (messageHistory.length > 0) {
+          const newIndex =
+            historyIndex === -1
+              ? messageHistory.length - 1
+              : Math.max(0, historyIndex - 1);
           setInput(messageHistory[newIndex]);
+          setHistoryIndex(newIndex);
         }
-        setHistoryIndex(newIndex);
+      }
+      if (event.key === "ArrowDown") {
+        if (messageHistory.length > 0) {
+          const newIndex =
+            historyIndex === -1
+              ? -1
+              : Math.min(messageHistory.length - 1, historyIndex + 1);
+          if (newIndex === messageHistory.length) {
+            setInput("");
+          } else {
+            setInput(messageHistory[newIndex]);
+          }
+          setHistoryIndex(newIndex);
+        }
       }
     }
   };
 
+  const insertNewLineAtCursor = () => {
+    if (inputRef.current) {
+      const { selectionStart, selectionEnd } = inputRef.current;
+      const newValue =
+        input.substring(0, selectionStart) +
+        "\n" +
+        input.substring(selectionEnd);
+      setInput(newValue);
+      setTimeout(() => {
+        inputRef.current!.selectionStart = inputRef.current!.selectionEnd =
+          selectionStart + 1;
+      }, 0);
+    }
+  };
+
   const processInput = async (input: string): Promise<string> => {
-    return await processCommandRecursively(input);
+    const lines = input.split("\n");
+    const processedLines = await Promise.all(lines.map(processLine));
+    return processedLines.join("\n");
+  };
+
+  const processLine = async (line: string): Promise<string> => {
+    if (line.startsWith("/")) {
+      return await processCommandRecursively(line);
+    }
+    return line;
   };
 
   const processCommandRecursively = async (input: string): Promise<string> => {
@@ -152,15 +214,29 @@ const Chat = () => {
       case "sum":
         return processSumCommand(args, input);
 
+      case "help":
+        return processHelpCommand();
+
       default:
-        return await processScriptCommand(cmd, args);
+        return await processScriptCommand(cmd, input);
     }
+  };
+
+  const processHelpCommand = (): string => {
+    const scriptNames = scripts.map((script) => Object.keys(script)).flat();
+    scriptNames.push("roll", "sum");
+    if (scriptNames.length === 0) {
+      return "No scripts available.";
+    }
+
+    const scriptList = scriptNames.map((name) => `**/${name}**`).join("\n");
+    return `\n${scriptList}`;
   };
 
   const processRollCommand = async (
     args: string[],
     input: string
-  ): Promise<Promise<string>> => {
+  ): Promise<string> => {
     if (args.length === 0) {
       const argMatch = input.match(/^\s*(\d+d\d+)\s*/);
       if (argMatch) {
@@ -211,7 +287,7 @@ const Chat = () => {
 
   const processScriptCommand = async (
     cmd: string,
-    args: string[]
+    input: string
   ): Promise<string> => {
     const scriptObject = scripts.find((script) => script[cmd]);
     if (!scriptObject) {
@@ -221,7 +297,7 @@ const Chat = () => {
 
     // Identificar la última función en el script
     const functionRegex =
-      /function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(.*?\)\s*do\s*end/g;
+      /function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(.*?\)\s*do\s*([\s\S]*?)\send/g;
     let match;
     let lastFunctionName = null;
 
@@ -230,38 +306,60 @@ const Chat = () => {
     }
 
     if (lastFunctionName) {
+      // Obtener el número de argumentos que necesita la función
+      const argsRegex = new RegExp(
+        `function\\s+${lastFunctionName}\\s*\\(([^)]*)\\)`,
+        "g"
+      );
+      const argsMatch = argsRegex.exec(script);
+      const numArgs = argsMatch ? argsMatch[1].split(",").length : 0;
+
+      // Dividir el input para obtener los argumentos y el resto del input
+      const inputParts = input.split(" ");
+      const args = inputParts.slice(0, numArgs);
+      const remainingInput = inputParts.slice(numArgs).join(" ");
+
       // Crear la llamada a la función con los argumentos proporcionados
       const functionCall = `${lastFunctionName}(${args.join(", ")})`;
 
       // Insertar la llamada a la función en la última línea del script
       script += `\n${functionCall}`;
-
+      console.log(script);
       try {
         const result = await executeCode(script);
-        return `Result: ${result}`;
+        const processedRemainingInput =
+          await processCommandRecursively(remainingInput);
+        if (result) {
+          if ("message" in result)
+            return `${result.message} ${processedRemainingInput}`;
+          else return `${result?.error} ${processedRemainingInput}`;
+        }
+        return `${processedRemainingInput}`;
       } catch (error) {
         console.error("Error executing script:", error);
         if (error instanceof Error) {
           return `Error executing script: ${error.message}`;
         } else {
-          return `Unknown error executing script.`;
+          return "Unknown error executing script.";
         }
       }
     } else {
       // Si no hay funciones, simplemente ejecutar el código
       try {
         const result = await executeCode(script);
-        return `Result: ${result}`;
+        const processedRemainingInput = await processCommandRecursively(input);
+        return `Result: ${result} ${processedRemainingInput}`;
       } catch (error) {
         console.error("Error executing script:", error);
         if (error instanceof Error) {
           return `Error executing script: ${error.message}`;
         } else {
-          return `Unknown error executing script.`;
+          return "Unknown error executing script.";
         }
       }
     }
   };
+
   const rollDice = (numDice: number, numSides: number): number => {
     let total = 0;
     for (let i = 0; i < numDice; i++) {
@@ -305,7 +403,8 @@ const Chat = () => {
                 {messages.map((message, index) => (
                   <div className="chat-container__body__message" key={index}>
                     <div>
-                      {message.user}: {message.text}
+                      <strong>{message.user}:</strong>{" "}
+                      <ReactMarkdown>{message.text}</ReactMarkdown>
                     </div>
                     <div style={{ fontSize: "0.8em", color: "gray" }}>
                       {message.time}
@@ -322,8 +421,8 @@ const Chat = () => {
                     </option>
                   ))}
                 </select>
-                <input
-                  type="text"
+                <textarea
+                  ref={inputRef}
                   value={input}
                   onKeyDown={handleKeyDown}
                   onChange={(e) => setInput(e.target.value)}

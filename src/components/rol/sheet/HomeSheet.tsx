@@ -69,7 +69,6 @@ export function HomeSheet() {
   }
 
   const handleClick = () => {
-    console.log(directoryHistory.length > 0);
     if (directoryHistory.length > 0) {
       const previousDirectory = directoryHistory[directoryHistory.length - 1];
       setDirectoryHistory((prevHistory) => prevHistory.slice(0, -1));

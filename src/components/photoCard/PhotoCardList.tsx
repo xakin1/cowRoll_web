@@ -130,10 +130,6 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
     e.preventDefault();
   };
 
-  useEffect(() => {
-    console.log("Selected elements updated:", selectedElements);
-  }, [selectedElements]);
-
   return (
     <div
       style={{ width: "100%", height: "100%" }}
