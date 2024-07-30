@@ -114,6 +114,8 @@
   },
   "General": {
     "accept": "Aceptar",
+    "add": "Engadir",
+    "upload": "Subir",
     "addPlayer": "Engadir personaxe",
     "nameChanged": "Cambiouse o nome correctamente",
     "send": "Enviar",

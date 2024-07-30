@@ -22,6 +22,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({
       className="photo-card"
       onDoubleClick={handleDoubleClick}
       onClick={handleClick}
+      title={name}
     >
       <img src={image} alt={name} className="photo" />
       <div className="name">{name}</div>

@@ -4,6 +4,7 @@ import ContextualMenu from "../rol/components/contextMenu/contextMenu";
 import CustomModal from "../utils/CustomModal";
 import PhotoCard from "./PhotoCard";
 import PhotoCardAdd from "./PhotoCardAdd";
+import PhotoCardUpload from "./PhotoCardUpload";
 import "./styles.css";
 
 export interface PhotoElement {
@@ -24,6 +25,7 @@ interface PhotoCardProps {
   elements: PhotoElement[];
   image?: string;
   handleClick?: (...args: any[]) => void;
+  upload?: (...args: any[]) => void;
   handleDoubleClick: (...args: any[]) => void;
   handleDelete: (id: any) => void;
   handleMove?: (elements: any[], targetFolder: any) => void;
@@ -38,6 +40,7 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
   handleDoubleClick,
   handleDelete,
   handleMove,
+  upload,
   children,
   childrenFolder,
 }) => {
@@ -179,6 +182,7 @@ const PhotoCardList: React.FC<PhotoCardProps> = ({
           </div>
         ))}
         <PhotoCardAdd handleOpen={handleOpen} />
+        {upload && <PhotoCardUpload onFileSelect={upload} />}
       </div>
       {selectedElements.length > 0 && contextMenuPosition && (
         <div

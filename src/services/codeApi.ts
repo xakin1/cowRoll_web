@@ -2,6 +2,7 @@ import { cookiesEnabled } from "../utils/functions/utils";
 import type {
   CreateDirectoryProps,
   CreateFileProps,
+  CreateSheetProps,
   DirectoryProps,
   EditFileProps,
   FetchError,
@@ -213,6 +214,26 @@ export async function executeCode(code: string): Promise<FetchRun<any>> {
   } catch (error: any) {
     console.error("Execution error:", error);
     return { error: { error: "", errorCode: error.toString() } };
+  }
+}
+
+export async function uploadFile(
+  file: CreateSheetProps
+): Promise<FetchSuccess<Id> | FetchError | undefined> {
+  const response = await fetch(apiUrl + "api/file/upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/pdf",
+      Accept: "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(file),
+  });
+  if (response.ok) {
+    return await response.json();
+  } else {
+    console.error("Failed to upload the file.");
+    throw new Error("Failed to upload the file due to an error.");
   }
 }
 

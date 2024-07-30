@@ -69,8 +69,12 @@ function WorkSpace() {
   const handleExecuteClick = async () => {
     if (file?.content) {
       const response = await executeCode(file.content);
+      console.log(response);
       if (response) {
+        console.log(response);
         dispatch(addOutput(response));
+      } else {
+        dispatch(addOutput({ message: "" }));
       }
     }
   };

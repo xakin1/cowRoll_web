@@ -117,6 +117,8 @@
   },
   "General": {
     "accept": "Aceptar",
+    "add": "Añadir",
+    "upload": "Subir",
     "cancel": "Cancelar",
     "roles": "Roles",
     "nameChanged": "Se ha cambiado el nombre correctamente",

@@ -112,6 +112,8 @@
   },
   "General": {
     "accept": "Accept",
+    "add": " Add",
+    "upload": " Upload",
     "addPlayer": "Add player",
     "nameChanged": "Name changed",
     "send": "Send",

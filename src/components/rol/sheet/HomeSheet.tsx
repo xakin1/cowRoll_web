@@ -6,12 +6,14 @@ import i18n from "../../../i18n/i18n";
 import { setDirectorySystem } from "../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../redux/store";
 import {
+  createFile,
   deleteFile,
   editDirectory,
   editFile,
   getFiles,
 } from "../../../services/codeApi";
 import {
+  FileSystemEnum,
   getSheetsOfRol,
   isDirectory,
   isSheetsProps,
@@ -32,14 +34,14 @@ import "./styles.css";
 
 export function HomeSheet() {
   const rolId = useSelector((state: RootState) => state.route.value);
-
   const [sheets, setSheets] = useState<DirectorySystemProps[]>([]);
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
   const [isSubDirectory, setIsSubDirectory] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [directoryHistory, setDirectoryHistory] = useState<DirectoryProps[]>(
     []
-  ); // Nuevo estado para el historial
+  );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { addToPath, currentPath, removeLastFromPath } = useCurrentPath();
@@ -49,14 +51,12 @@ export function HomeSheet() {
     dispatch(setDirectorySystem(response.message));
     if (rolId) {
       const directory = getSheetsOfRol(response.message, rolId);
-
       if (directory) {
         const sheets: SheetProps[] = directory.children as SheetProps[];
         setSheetsDirectory(directory);
         setSheets(sheets);
       }
     }
-
     setLoading(false);
   };
 
@@ -121,7 +121,6 @@ export function HomeSheet() {
         return editFile({ ...element, directoryId: targetFolder.id });
       }
     });
-
     await Promise.all(promises);
     fetchDocuments();
   };
@@ -136,17 +135,52 @@ export function HomeSheet() {
     }
   };
 
+  const handleFileChange = async (file: File) => {
+    setSelectedFile(file);
+    const base64File = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result as string).split(",")[1]);
+      reader.onerror = (error) => reject(error);
+    });
+    try {
+      const response = await createFile({
+        name: file.name,
+        content: base64File,
+        type: FileSystemEnum.Sheet,
+        directoryId: sheetsDirectory?.id,
+      });
+      if (response) {
+        if ("message" in response) {
+          toast.success(i18n.t("Rol.Sheet.Success.uploaded"), {
+            position: "top-right",
+          });
+          fetchDocuments();
+        } else {
+          toast.error(i18n.t("Rol.Sheet.Error.uploaded"), {
+            position: "top-right",
+          });
+        }
+      }
+    } catch (error) {
+      toast.error(i18n.t("Rol.Sheet.Error.uploaded"), {
+        position: "top-right",
+      });
+      console.error("Upload error:", error);
+    }
+  };
+
   return (
     <div className="container-photoCards">
       <PhotoCard
         handleDoubleClick={handleClick}
         name={"back"}
         image={"/back-arrow.svg"}
-      ></PhotoCard>
-
+      />
       <PhotoCardList
         elements={sheets}
         handleDoubleClick={handleDoubleClick}
+        upload={handleFileChange}
         handleDelete={handleDelete}
         handleMove={handleMove}
         children={
