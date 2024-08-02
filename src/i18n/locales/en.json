@@ -38,6 +38,7 @@
         "sheetName": "Name of the sheet",
         "folderName": "Folder name",
         "submit": "Submit",
+        "changeMode": "Change Mode",
         "Sheet": "Character Sheet",
         "deleteSheet": "Delete actual sheet",
         "save": "Save",
@@ -48,6 +49,10 @@
       "Style": {
         "properties": "General Properties",
         "rotate": "Rotate",
+        "tag": "Tags",
+        "addTag": "Add tag",
+        "name": "Name",
+        "nameNotAvailable": "Name {0} not available",
         "scale": "Scale",
         "width": "Width",
         "height": "Height",

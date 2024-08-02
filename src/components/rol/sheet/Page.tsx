@@ -76,7 +76,7 @@ const Page: React.FC<FieldContainerProps> = ({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedElement]);
+  }, [selectedElement, fields]);
 
   useEffect(() => {
     const handleSaveKeyDown = async (event: KeyboardEvent) => {
@@ -183,13 +183,11 @@ const Page: React.FC<FieldContainerProps> = ({
 
   const handleUp = (field: Field) => {
     updateFieldStyle(field.id, { zIndex: field.style.zIndex + 1 });
-
     setContextMenu({ ...contextMenu, visible: false });
   };
 
   const handleDown = (field: Field) => {
     updateFieldStyle(field.id, { zIndex: field.style.zIndex - 1 });
-
     setContextMenu({ ...contextMenu, visible: false });
   };
 

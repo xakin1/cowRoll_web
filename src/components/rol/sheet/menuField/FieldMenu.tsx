@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SettingsSuggestRoundedIcon from "@mui/icons-material/SettingsSuggestRounded";
 import {
   IconButton,
   MenuItem as ItemMenu,
@@ -32,7 +33,7 @@ const FieldMenu: React.FC = () => {
   if (!context) {
     throw new Error("Sheet must be used within a SheetProvider");
   }
-  const { currentSheetIndex, addSheet, removeSheet } = context;
+  const { currentSheetIndex, addSheet, removeSheet, changeMode } = context;
 
   return (
     <Draggable>
@@ -76,6 +77,17 @@ const FieldMenu: React.FC = () => {
               <DeleteIcon />
             </ListItemIcon>
             <ListItemText primary={i18n.t("Rol.Sheet.General.deleteSheet")} />
+          </ItemMenu>
+          <ItemMenu
+            onClick={() => {
+              changeMode(true);
+              handleClose();
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <SettingsSuggestRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary={i18n.t("Rol.Sheet.General.changeMode")} />
           </ItemMenu>
         </Menu>
       </div>

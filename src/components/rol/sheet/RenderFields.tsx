@@ -145,6 +145,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               type="text"
               draggable={false}
               placeholder={label}
+              onClick={handleClick}
               className="sheet-option"
             />
           );

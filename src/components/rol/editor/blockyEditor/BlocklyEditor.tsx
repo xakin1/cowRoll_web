@@ -8,7 +8,13 @@ import "blockly/lua";
 import "blockly/msg/en";
 import "blockly/php";
 import "blockly/python";
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../../hooks/customHooks";
 import i18n from "../../../../i18n/i18n";
@@ -18,59 +24,71 @@ import {
 } from "../../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../../redux/store";
 import { editFile } from "../../../../services/codeApi";
+import type { Field } from "../../sheet/types";
 import "./BlocklyEditor.css";
 import { cowRollGenerator } from "./generators/cowRoll";
 import "./index";
 import { darkTheme } from "./themes/darkTheme";
 
-const BlocklyEditor = () => {
-  const dispatch = useDispatch();
-  const file = useAppSelector(
-    (state: RootState) => state.directorySystem.selectedFile
-  );
-  const blocklyDiv = useRef(null);
-  const backpackContentRef = useRef<string[]>([]); // useRef to store backpack contents
+interface BlocklyEditorProps {
+  style?: React.CSSProperties;
+}
 
-  const proceduresFlyoutCallback = function (workspace: Blockly.Workspace) {
-    const xmlList = [];
+export interface BlocklyRefProps {
+  updateVariables: (fields: Field[]) => void;
+  renameVariable: (oldName: string, newName: string) => void;
+  saveContent: () => void;
+}
 
-    // Agregar bloque de definición de procedimiento sin retorno
-    const blockDef = Blockly.utils.xml.createElement("block");
-    blockDef.setAttribute("type", "procedures_defnoreturn");
-    xmlList.push(blockDef);
+const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
+  ({ style }, ref) => {
+    const dispatch = useDispatch();
+    const file = useAppSelector(
+      (state: RootState) => state.directorySystem.selectedFile
+    );
+    const blocklyDiv = useRef(null);
+    const backpackContentRef = useRef<string[]>([]); // useRef to store backpack contents
 
-    // Obtener todos los procedimientos sin retorno
-    const procedures = Blockly.Procedures.allProcedures(workspace)[0];
-    for (const procedure of procedures) {
-      const blockCall = Blockly.utils.xml.createElement("block");
-      blockCall.setAttribute("type", "procedures_callnoreturn_as_return");
-      const mutation = Blockly.utils.xml.createElement("mutation");
-      mutation.setAttribute("name", procedure[0]);
-      const argNames = procedure[1];
-      for (let i = 0; i < argNames.length; i++) {
-        const arg = Blockly.utils.xml.createElement("arg");
-        arg.setAttribute("name", argNames[i]);
-        mutation.appendChild(arg);
+    const proceduresFlyoutCallback = function (workspace: Blockly.Workspace) {
+      const xmlList = [];
+
+      // Agregar bloque de definición de procedimiento sin retorno
+      const blockDef = Blockly.utils.xml.createElement("block");
+      blockDef.setAttribute("type", "procedures_defnoreturn");
+      xmlList.push(blockDef);
+
+      // Obtener todos los procedimientos sin retorno
+      const procedures = Blockly.Procedures.allProcedures(workspace)[0];
+      for (const procedure of procedures) {
+        const blockCall = Blockly.utils.xml.createElement("block");
+        blockCall.setAttribute("type", "procedures_callnoreturn_as_return");
+        const mutation = Blockly.utils.xml.createElement("mutation");
+        mutation.setAttribute("name", procedure[0]);
+        const argNames = procedure[1];
+        for (let i = 0; i < argNames.length; i++) {
+          const arg = Blockly.utils.xml.createElement("arg");
+          arg.setAttribute("name", argNames[i]);
+          mutation.appendChild(arg);
+        }
+        blockCall.appendChild(mutation);
+        xmlList.push(blockCall);
       }
-      blockCall.appendChild(mutation);
-      xmlList.push(blockCall);
-    }
 
-    return xmlList;
-  };
+      return xmlList;
+    };
 
-  const getInitialTheme = () => {
-    const userPreferredTheme = localStorage.getItem("theme");
-    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-    const themeToApply = userPreferredTheme || systemPreference;
-    return themeToApply === "dark" ? darkTheme : Blockly.Themes.Classic;
-  };
-  const [blocklyTheme, setBlocklyTheme] = useState(getInitialTheme); // Default theme
+    const getInitialTheme = () => {
+      const userPreferredTheme = localStorage.getItem("theme");
+      const systemPreference = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+      const themeToApply = userPreferredTheme || systemPreference;
+      return themeToApply === "dark" ? darkTheme : Blockly.Themes.Classic;
+    };
+    const [blocklyTheme, setBlocklyTheme] = useState(getInitialTheme); // Default theme
 
-  const toolboxXml = `
+    const toolboxXml = `
     <xml id="toolbox" style="display: none">
       <category name="${i18n.t("Blocky.Logic.MODULE_NAME")}" colour="#5C81A6">
         <block type="controls_if"></block>
@@ -111,162 +129,229 @@ const BlocklyEditor = () => {
     </xml>
   `;
 
-  useEffect(() => {
-    if (!blocklyDiv.current) return;
+    useImperativeHandle(ref, () => ({
+      updateVariables(fields: Field[]) {
+        const workspace = Blockly.getMainWorkspace();
+        // Get all variables as objects to access both names and IDs
+        const currentVariables = workspace.getAllVariables();
 
-    const workspace = Blockly.inject(blocklyDiv.current, {
-      toolbox: toolboxXml,
-      theme: blocklyTheme,
-      zoom: {
-        controls: true,
-        wheel: true,
-        startScale: 1.0,
-        minScale: 0.3,
-        pinch: true,
-      },
-      trashcan: true,
-      toolboxPosition: "start",
-      horizontalLayout: false,
-      sounds: true,
-    });
-    const options = {
-      contextMenu: true,
-      shortcut: true,
-    };
+        // Extract the names for comparison
+        const currentVariableNames = currentVariables.map(
+          (variable) => variable.name
+        );
 
-    if (!Blockly.ContextMenuRegistry.registry.getItem("blockCopyToStorage")) {
-      const plugin = new CrossTabCopyPaste();
-      plugin.init(options);
-    }
-
-    const backpack = new Backpack(workspace);
-    backpack.init();
-    workspace.registerButtonCallback("CREATE_VARIABLE", function (button) {
-      Blockly.Variables.createVariableButtonHandler(
-        button.getTargetWorkspace()
-      );
-    });
-
-    workspace.registerToolboxCategoryCallback(
-      "PROCEDURE_CUSTOM",
-      proceduresFlyoutCallback
-    );
-
-    workspace.registerToolboxCategoryCallback(
-      "VARIABLE_CUSTOM",
-      function (workspace) {
-        const xmlList = [];
-        const button = document.createElement("button");
-        button.setAttribute("text", i18n.t("Blocky.Variables.CREATE_VAR"));
-        button.setAttribute("callbackKey", "CREATE_VARIABLE");
-        xmlList.push(button);
-
-        const variableList = workspace.getAllVariables();
-        if (variableList.length > 0) {
-          for (let i = 0; i < variableList.length; i++) {
-            const variable = variableList[i];
-            const getBlockText = `<block type="variables_get"><field name="VAR">${variable.name}</field></block>`;
-            const getBlock = Blockly.utils.xml.textToDom(getBlockText);
-            xmlList.push(getBlock);
+        // Create variables for each field name
+        fields.forEach((field) => {
+          if (!currentVariableNames.includes(field.name)) {
+            workspace.createVariable(field.name, null, field.name);
           }
+        });
 
-          // Add a single variables_set block
-          const setBlockText = `<block type="variables_set"><field name="VAR">${variableList[0].name}</field></block>`;
-          const setBlock = Blockly.utils.xml.textToDom(setBlockText);
-          xmlList.push(setBlock);
+        // Extract all unique tags from fields
+        const allTags = new Set<string>();
+        fields.forEach((field) => {
+          field.tags?.forEach((tag) => {
+            allTags.add(tag);
+          });
+        });
+
+        // Create variables for each unique tag
+        allTags.forEach((tag) => {
+          if (!currentVariableNames.includes(tag)) {
+            workspace.createVariable(tag, null, tag);
+          }
+        });
+
+        // Delete variables that are no longer in use (neither field.name nor tag)
+        currentVariables.forEach((variable) => {
+          const variableName = variable.name;
+          const isFieldVariable = fields.some(
+            (field) => field.name === variableName
+          );
+          const isTagVariable = allTags.has(variableName);
+
+          if (!isFieldVariable && !isTagVariable) {
+            workspace.deleteVariableById(variable.getId()); // Now using the ID properly
+          }
+        });
+      },
+      renameVariable(oldName: string, newName: string) {
+        const workspace = Blockly.getMainWorkspace();
+        const variable = workspace.getVariable(oldName);
+
+        if (variable) {
+          workspace.renameVariableById(variable.getId(), newName);
         }
-        return xmlList;
-      }
-    );
+      },
+      saveContent,
+    }));
 
-    const handleThemeChange = (event: Event) => {
-      backpackContentRef.current = backpack.getContents(); // Store backpack contents in ref
-      Blockly.svgResize(workspace);
-
-      const customEvent = event as CustomEvent<{ theme: string }>;
-      const newTheme = customEvent.detail.theme;
-      setBlocklyTheme(newTheme === "dark" ? darkTheme : Blockly.Themes.Classic);
-      workspace.setTheme(
-        newTheme === "dark" ? darkTheme : Blockly.Themes.Classic
-      );
-    };
-    backpack.setContents(backpackContentRef.current); // Restore backpack contents
-
-    document.addEventListener("themeChanged", handleThemeChange);
-
-    const handleResize = () => {
-      Blockly.svgResize(workspace);
+    const saveContent = () => {
+      const workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg; // Explicitly cast to WorkspaceSvg
+      const backpack = new Backpack(workspace);
+      backpackContentRef.current = backpack.getContents();
+      generateCode();
     };
 
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
+    useEffect(() => {
+      if (!blocklyDiv.current) return;
 
-    if (blocklyDiv.current) {
-      resizeObserver.observe(blocklyDiv.current);
-    }
-    if (file && file.contentSchema) {
-      const xml = Blockly.utils.xml.textToDom(file.contentSchema);
-      Blockly.Xml.domToWorkspace(xml, workspace);
-    }
-
-    if (file && file.backpackSchema) {
-      backpack.setContents(file.backpackSchema);
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const workspace = Blockly.getMainWorkspace();
-      if (event.ctrlKey && event.key === "s") {
-        backpackContentRef.current = backpack.getContents();
-        event.preventDefault();
-        generateCode();
-      } else if (event.ctrlKey && event.key === "c") {
-        event.preventDefault();
-        Blockly.clipboard.copy(workspace);
-      } else if (event.ctrlKey && event.key === "v") {
-        event.preventDefault();
-        Blockly.clipboard.paste(workspace);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      workspace.dispose();
-      window.removeEventListener("resize", handleResize);
-      resizeObserver.disconnect();
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("themeChanged", handleThemeChange);
-    };
-  }, [blocklyTheme, toolboxXml, file]);
-
-  const generateCode = () => {
-    const workspace = Blockly.getMainWorkspace();
-    const code = cowRollGenerator.workspaceToCode(workspace);
-    dispatch(updateSelectedFileContent(code));
-
-    if (file) {
-      const dom = Blockly.Xml.workspaceToDom(workspace);
-      const xmlText = Blockly.Xml.domToText(dom);
-      const updatedFile = {
-        ...file,
-        content: code,
-        contentSchema: xmlText,
-        backpackSchema: backpackContentRef.current,
+      const workspace = Blockly.inject(blocklyDiv.current, {
+        toolbox: toolboxXml,
+        theme: blocklyTheme,
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1.0,
+          minScale: 0.3,
+          pinch: true,
+        },
+        trashcan: true,
+        toolboxPosition: "start",
+        horizontalLayout: false,
+        sounds: true,
+      });
+      const options = {
+        contextMenu: true,
+        shortcut: true,
       };
-      dispatch(updateSelectedFile(updatedFile));
-      editFile(updatedFile);
-    }
-  };
 
-  return (
-    <>
-      <div className="parent-container">
-        <div ref={blocklyDiv} className="blocklyDiv"></div>
-        <button className="generator-button" onClick={generateCode}>
-          {i18n.t("Blocky.GENERATE_CODE")}
-        </button>
-      </div>
-    </>
-  );
-};
+      if (!Blockly.ContextMenuRegistry.registry.getItem("blockCopyToStorage")) {
+        const plugin = new CrossTabCopyPaste();
+        plugin.init(options);
+      }
+
+      const backpack = new Backpack(workspace);
+      backpack.init();
+      workspace.registerButtonCallback("CREATE_VARIABLE", function (button) {
+        Blockly.Variables.createVariableButtonHandler(
+          button.getTargetWorkspace()
+        );
+      });
+
+      workspace.registerToolboxCategoryCallback(
+        "PROCEDURE_CUSTOM",
+        proceduresFlyoutCallback
+      );
+
+      workspace.registerToolboxCategoryCallback(
+        "VARIABLE_CUSTOM",
+        function (workspace) {
+          const xmlList = [];
+          const button = document.createElement("button");
+          button.setAttribute("text", i18n.t("Blocky.Variables.CREATE_VAR"));
+          button.setAttribute("callbackKey", "CREATE_VARIABLE");
+          xmlList.push(button);
+
+          const variableList = workspace.getAllVariables();
+          if (variableList.length > 0) {
+            for (let i = 0; i < variableList.length; i++) {
+              const variable = variableList[i];
+              const getBlockText = `<block type="variables_get"><field name="VAR">${variable.name}</field></block>`;
+              const getBlock = Blockly.utils.xml.textToDom(getBlockText);
+              xmlList.push(getBlock);
+            }
+
+            // Add a single variables_set block
+            const setBlockText = `<block type="variables_set"><field name="VAR">${variableList[0].name}</field></block>`;
+            const setBlock = Blockly.utils.xml.textToDom(setBlockText);
+            xmlList.push(setBlock);
+          }
+          return xmlList;
+        }
+      );
+
+      const handleThemeChange = (event: Event) => {
+        backpackContentRef.current = backpack.getContents(); // Store backpack contents in ref
+        Blockly.svgResize(workspace);
+
+        const customEvent = event as CustomEvent<{ theme: string }>;
+        const newTheme = customEvent.detail.theme;
+        setBlocklyTheme(
+          newTheme === "dark" ? darkTheme : Blockly.Themes.Classic
+        );
+        workspace.setTheme(
+          newTheme === "dark" ? darkTheme : Blockly.Themes.Classic
+        );
+      };
+      backpack.setContents(backpackContentRef.current); // Restore backpack contents
+
+      document.addEventListener("themeChanged", handleThemeChange);
+
+      const handleResize = () => {
+        Blockly.svgResize(workspace);
+      };
+
+      const resizeObserver = new ResizeObserver(() => {
+        handleResize();
+      });
+
+      if (blocklyDiv.current) {
+        resizeObserver.observe(blocklyDiv.current);
+      }
+      if (file && file.contentSchema) {
+        const xml = Blockly.utils.xml.textToDom(file.contentSchema);
+        Blockly.Xml.domToWorkspace(xml, workspace);
+      }
+
+      if (file && file.backpackSchema) {
+        backpack.setContents(file.backpackSchema);
+      }
+      const handleKeyDown = (event: KeyboardEvent) => {
+        const workspace = Blockly.getMainWorkspace();
+        if (event.ctrlKey && event.key === "s") {
+          backpackContentRef.current = backpack.getContents();
+          event.preventDefault();
+          generateCode();
+        } else if (event.ctrlKey && event.key === "c") {
+          event.preventDefault();
+          Blockly.clipboard.copy(workspace);
+        } else if (event.ctrlKey && event.key === "v") {
+          event.preventDefault();
+          Blockly.clipboard.paste(workspace);
+        }
+      };
+      document.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        workspace.dispose();
+        window.removeEventListener("resize", handleResize);
+        resizeObserver.disconnect();
+        document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("themeChanged", handleThemeChange);
+      };
+    }, [blocklyTheme, toolboxXml, file]);
+
+    const generateCode = () => {
+      const workspace = Blockly.getMainWorkspace();
+      const code = cowRollGenerator.workspaceToCode(workspace);
+      dispatch(updateSelectedFileContent(code));
+
+      if (file) {
+        const dom = Blockly.Xml.workspaceToDom(workspace);
+        const xmlText = Blockly.Xml.domToText(dom);
+        const updatedFile = {
+          ...file,
+          content: code,
+          contentSchema: xmlText,
+          backpackSchema: backpackContentRef.current,
+        };
+        dispatch(updateSelectedFile(updatedFile));
+        editFile(updatedFile);
+      }
+    };
+
+    return (
+      <>
+        <div style={style} className="parent-container">
+          <div ref={blocklyDiv} className="blocklyDiv"></div>
+          <button className="generator-button" onClick={generateCode}>
+            {i18n.t("Blocky.GENERATE_CODE")}
+          </button>
+        </div>
+      </>
+    );
+  }
+);
 
 export default BlocklyEditor;

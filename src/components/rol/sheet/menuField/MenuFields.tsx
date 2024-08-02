@@ -36,6 +36,7 @@ const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
   };
 
   const handleAddField = (type: typeField) => {
+    console.log(typeField);
     const fieldToInsert = fields.find((field) => field.type === type);
     if (fieldToInsert) addField({ ...fieldToInsert });
     handleClose();

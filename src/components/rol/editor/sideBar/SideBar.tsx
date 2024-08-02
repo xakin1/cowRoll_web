@@ -4,24 +4,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { setDirectorySystem } from "../../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../../redux/store";
 import { getFiles } from "../../../../services/codeApi";
+import type { Id } from "../../../../utils/types/ApiTypes";
 import FolderTree from "./directorySystem/FoltderTree";
 import "./sideBar.css";
 
-function Sidebar() {
+export interface SideBarProps {
+  directoryId?: Id;
+}
+const Sidebar: React.FC<SideBarProps> = ({ directoryId }) => {
   const dispatch = useDispatch();
   const directorySystem = useSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
   useEffect(() => {
     const fetchDocuments = async () => {
-      if (directorySystem.id === "") {
+      if (directoryId || directorySystem?.id === "") {
         // Chequear si ya tienes los datos en el estado
         const docs = await getFiles();
         dispatch(setDirectorySystem(docs.message));
       }
     };
     fetchDocuments();
-  }, [directorySystem, dispatch]);
+  }, []);
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -47,9 +51,9 @@ function Sidebar() {
           <path d="M14 4l-4 16" />
         </svg>
       </div>
-      <FolderTree></FolderTree>
+      <FolderTree directoryId={directoryId}></FolderTree>
     </nav>
   );
-}
+};
 
 export default Sidebar;

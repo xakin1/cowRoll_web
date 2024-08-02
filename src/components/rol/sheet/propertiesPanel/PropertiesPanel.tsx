@@ -6,7 +6,7 @@ import { default as FormatBoldIcon } from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
-import { IconButton } from "@mui/material";
+import { Chip, IconButton } from "@mui/material"; // Import necessary components
 import React, {
   useContext,
   useEffect,
@@ -14,7 +14,8 @@ import React, {
   useState,
   type ChangeEvent,
 } from "react";
-import Draggable from "react-draggable";
+import Draggable from "react-draggable"; // Ensure this is correctly imported
+
 import i18n from "../../../../i18n/i18n";
 import { rgbToHex } from "../../../../utils/functions/utils";
 import SelectColor from "../../../selectColor/SelectColor";
@@ -23,16 +24,21 @@ import { SheetContext } from "../SheetContext";
 import BorderStyleSelect from "../components/borderStyle/BorderStyleSelect";
 import type { Field } from "../types";
 import "./propertiesPanel.css";
+
 interface PropertiesPanelProps {
   selectedElement: Field | null;
-  onUpdate: (name: string, value: string | number) => void;
+  onUpdateStyle: (name: string, value: string | number) => void;
+  onUpdateField: (field: Field) => void;
 }
 
 const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   selectedElement,
-  onUpdate,
+  onUpdateStyle,
+  onUpdateField,
 }) => {
-  const [width, setwidth] = useState<string>("");
+  const [width, setWidth] = useState<string>("");
+  const [nameVar, setNameVar] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isBold, setIsBold] = useState<boolean>(false);
 
@@ -41,7 +47,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
   const [fontSize, setFontSize] = useState<string>("12");
   const [font, setFont] = useState<string>("");
-  const [height, setheight] = useState<string>("");
+  const [height, setHeight] = useState<string>("");
   const [opacity, setOpacity] = useState<string>("1");
   const [rotate, setRotate] = useState<string>("0");
   const [xPosition, setXPosition] = useState<string>("0");
@@ -52,6 +58,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderStyle, setBorderStyle] = useState<string>("solid");
   const [borderRadius, setBorderRadius] = useState<string>("0");
   const [customCSS, setCustomCSS] = useState<string>("");
+
+  // State to manage error display
+  const [showError, setShowError] = useState<boolean>(false);
+
   const { updateFieldStyle } = useContext(SheetContext)!;
   const previousElementRef = useRef<Field | null>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
@@ -76,13 +86,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       selectedElement &&
       selectedElement.id !== previousElementRef.current?.id
     ) {
-      setwidth(getSizeValue(selectedElement.style?.width));
+      setWidth(getSizeValue(selectedElement.style?.width));
+      setNameVar(selectedElement.name);
+      setTags(selectedElement.tags || []); // Use selectedElement.tags
       setFontSize(selectedElement.style?.fontSize || "12");
-      setheight(getSizeValue(selectedElement.style?.height));
-      setIsBold(selectedElement.style.fontWeight == "bold");
-      setIsItalic(selectedElement.style.fontStyle == "italic");
+      setHeight(getSizeValue(selectedElement.style?.height));
+      setIsBold(selectedElement.style.fontWeight === "bold");
+      setIsItalic(selectedElement.style.fontStyle === "italic");
       setAlign(selectedElement.style.textAlign || "initial");
-      setAlign(selectedElement.style.textDecoration || "none");
+      setDecoration(selectedElement.style.textDecoration || "none");
       setFont(selectedElement.style.fontFamily || "Arial");
       setXPosition(getSizeValue(selectedElement.style?.left));
       setYPosition(getSizeValue(selectedElement.style?.top));
@@ -119,40 +131,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     }
   }, [selectedElement]);
 
-  // const generateCustomCSS = (style: CSSStyleDeclaration): string => {
-  //   const cssProperties = [
-  //     "width",
-  //     "height",
-  //     "opacity",
-  //     "transform",
-  //     "left",
-  //     "top",
-  //     "borderTopColor",
-  //     "backgroundColor",
-  //     "borderTopWidth",
-  //     "borderTopStyle",
-  //     "borderTopLeftRadius",
-  //     "fontSize",
-  //     "fontFamily",
-  //     "fontWeight",
-  //     "fontStyle",
-  //     "textAlign",
-  //     "textDecoration",
-  //   ];
-
-  //   return cssProperties
-  //     .map((property) => {
-  //       const kebabCaseProperty = property.replace(
-  //         /([A-Z])/g,
-  //         (g) => `-${g[0].toLowerCase()}`
-  //       );
-  //       const value = style[property as any];
-  //       return value ? `${kebabCaseProperty}: ${value};` : "";
-  //     })
-  //     .filter(Boolean)
-  //     .join(" ");
-  // };
-
   const handleChange = (
     e:
       | ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -161,16 +139,16 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const { name, value } = e.target;
     switch (name) {
       case "width":
-        setwidth(value);
-        onUpdate(name, `${value}px`);
+        setWidth(value);
+        onUpdateStyle(name, `${value}px`);
         break;
       case "height":
-        setheight(value);
-        onUpdate(name, `${value}px`);
+        setHeight(value);
+        onUpdateStyle(name, `${value}px`);
         break;
       case "opacity":
         setOpacity(value);
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
       case "rotate":
         setRotate(value);
@@ -178,39 +156,39 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         break;
       case "xPosition":
         setXPosition(value);
-        onUpdate("left", `${value}px`);
+        onUpdateStyle("left", `${value}px`);
         break;
       case "yPosition":
         setYPosition(value);
-        onUpdate("top", `${value}px`);
+        onUpdateStyle("top", `${value}px`);
         break;
       case "borderColor":
         setBorderColor(value);
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
       case "backgroundColor":
         setBackgroundColor(value);
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
       case "borderWidth":
         setBorderWidth(value);
-        onUpdate(name, `${value}px`);
+        onUpdateStyle(name, `${value}px`);
         break;
       case "borderStyle":
         setBorderStyle(value);
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
       case "borderRadius":
         setBorderRadius(value);
-        onUpdate(name, `${value}px`);
+        onUpdateStyle(name, `${value}px`);
         break;
       case "fontSize":
         setFontSize(value);
-        onUpdate(name, `${value}px`);
+        onUpdateStyle(name, `${value}px`);
         break;
       case "fontFamily":
         setFont(value);
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
       case "customCSS":
         if (selectedElement) {
@@ -219,8 +197,26 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         }
         break;
       default:
-        onUpdate(name, value);
+        onUpdateStyle(name, value);
         break;
+    }
+  };
+
+  const handleTagDelete = (tagToDelete: string) => () => {
+    const updatedTags = tags.filter((tag) => tag !== tagToDelete);
+    setTags(updatedTags);
+    onUpdateField({ ...selectedElement!, tags: updatedTags });
+  };
+
+  const handleTagAdd = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      const value = (event.target as HTMLInputElement).value;
+      if (value && !tags.includes(value)) {
+        const updatedTags = [...tags, value];
+        setTags(updatedTags);
+        onUpdateField({ ...selectedElement!, tags: updatedTags });
+      }
+      (event.target as HTMLInputElement).value = "";
     }
   };
 
@@ -242,18 +238,18 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   };
 
   const handleRemoveBackground = () => {
-    onUpdate("backgroundColor", "transparent");
+    onUpdateStyle("backgroundColor", "transparent");
   };
 
   const handleRemoveBorder = () => {
-    onUpdate("border", "none");
+    onUpdateStyle("border", "none");
   };
 
   const updateTransform = (type: string, value1: string) => {
     const newRotate = type === "rotate" ? value1 : rotate;
     const transform = `rotate(${newRotate}deg)`;
 
-    onUpdate("transform", transform);
+    onUpdateStyle("transform", transform);
   };
 
   const getSizeValue = (size: string | number | undefined): string => {
@@ -263,10 +259,71 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     return size?.toString() || "";
   };
 
+  const handleTagChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newTags = [...tags];
+      console.log(newTags);
+      newTags[index] = event.target.value;
+      setTags(newTags);
+      onUpdateField({ ...selectedElement!, tags: newTags });
+    };
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setNameVar(newValue);
+
+    if (selectedElement) {
+      onUpdateField({ ...selectedElement, name: newValue });
+    }
+  };
+
   return (
     <Draggable>
       <div className="properties-panel" ref={propertiesPanelRef}>
         <div className="properties-panel__property-field position-controls">
+          <h4>{i18n.t("Rol.Sheet.Style.scriptProperties")}</h4>
+          <div className="name-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+            <label className="name-inputs__container__label">
+              {i18n.t("Rol.Sheet.Style.name")}:
+            </label>
+            <input
+              className="name-inputs__container__label"
+              type="text"
+              name="name"
+              value={nameVar}
+              onChange={handleNameChange}
+            />
+          </div>
+          <div className="tag-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+            <div className="tag-chips-container">
+              <label className="tags-label">
+                {i18n.t("Rol.Sheet.Style.tag")}:
+              </label>
+              <div className="tag-chips">
+                {tags.map((tag) => (
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    onDelete={handleTagDelete(tag)}
+                    style={{ margin: "4px" }}
+                  />
+                ))}
+                <input
+                  placeholder={i18n.t("Rol.Sheet.Style.addTag")}
+                  type="text"
+                  onKeyDown={handleTagAdd}
+                  style={{ width: "100%" }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="position-inputs__container properties-panel__property-field">
+            <label className="position-inputs__container__label">
+              {i18n.t("Rol.Sheet.Style.borderStyle")}:
+            </label>
+            <BorderStyleSelect value={borderStyle} onChange={handleChange} />
+          </div>
+
           {selectedElement?.type === typeField.text && (
             <>
               <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
@@ -281,11 +338,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (align != "center") {
                       setAlign("center");
-                      onUpdate("textAlign", `center`);
+                      onUpdateStyle("textAlign", `center`);
                     } else {
                       setAlign("initial");
 
-                      onUpdate("textAlign", `initial`);
+                      onUpdateStyle("textAlign", `initial`);
                     }
                   }}
                 >
@@ -301,11 +358,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (align != "justify") {
                       setAlign("justify");
-                      onUpdate("textAlign", `justify`);
+                      onUpdateStyle("textAlign", `justify`);
                     } else {
                       setAlign("initial");
 
-                      onUpdate("textAlign", `initial`);
+                      onUpdateStyle("textAlign", `initial`);
                     }
                   }}
                 >
@@ -321,11 +378,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (align != "left") {
                       setAlign("left");
-                      onUpdate("textAlign", `left`);
+                      onUpdateStyle("textAlign", `left`);
                     } else {
                       setAlign("initial");
 
-                      onUpdate("textAlign", `initial`);
+                      onUpdateStyle("textAlign", `initial`);
                     }
                   }}
                 >
@@ -341,11 +398,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (align != "right") {
                       setAlign("right");
-                      onUpdate("textAlign", `right`);
+                      onUpdateStyle("textAlign", `right`);
                     } else {
                       setAlign("initial");
 
-                      onUpdate("textAlign", `initial`);
+                      onUpdateStyle("textAlign", `initial`);
                     }
                   }}
                 >
@@ -360,9 +417,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   }}
                   onClick={() => {
                     if (isBold) {
-                      onUpdate("fontWeight", `normal`);
+                      onUpdateStyle("fontWeight", `normal`);
                     } else {
-                      onUpdate("fontWeight", `bold`);
+                      onUpdateStyle("fontWeight", `bold`);
                     }
                     setIsBold(!isBold);
                   }}
@@ -377,9 +434,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   }}
                   onClick={() => {
                     if (isItalic) {
-                      onUpdate("fontStyle", `normal`);
+                      onUpdateStyle("fontStyle", `normal`);
                     } else {
-                      onUpdate("fontStyle", `italic`);
+                      onUpdateStyle("fontStyle", `italic`);
                     }
                     setIsItalic(!isItalic);
                   }}
@@ -397,11 +454,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (decoration != "underline") {
                       setDecoration("underline");
-                      onUpdate("textDecoration", `underline`);
+                      onUpdateStyle("textDecoration", `underline`);
                     } else {
                       setDecoration("none");
 
-                      onUpdate("textDecoration", `none`);
+                      onUpdateStyle("textDecoration", `none`);
                     }
                   }}
                 >
@@ -420,11 +477,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   onClick={() => {
                     if (decoration != "line-through") {
                       setDecoration("line-through");
-                      onUpdate("textDecoration", `line-through`);
+                      onUpdateStyle("textDecoration", `line-through`);
                     } else {
                       setDecoration("none");
 
-                      onUpdate("textDecoration", `none`);
+                      onUpdateStyle("textDecoration", `none`);
                     }
                   }}
                 >

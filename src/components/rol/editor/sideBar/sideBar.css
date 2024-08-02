@@ -3,7 +3,7 @@
   color: var(--output-text-color, #ffffff);
   background-color: var(--output-background-color, #1e1e1e);
   transition: width 0.2s linear;
-  height: 100vh;
+  height: 100%;
   padding-top: 20px;
   overflow: hidden;
 }

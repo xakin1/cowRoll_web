@@ -14,6 +14,7 @@ import {
   FileSystemEnum,
   isDirectory,
   isFile,
+  isSheetsProps,
   type CreateCodeProps,
   type CreateDirectoryProps,
   type EditFileProps,
@@ -37,7 +38,7 @@ export function ContextMenu({
 
   const singleItem = items.length === 1 ? items[0] : null;
   const handleInsertFile = async (name: string) => {
-    if (singleItem && isDirectory(singleItem)) {
+    if ((singleItem && isDirectory(singleItem)) || isSheetsProps(singleItem)) {
       const data: CreateCodeProps = {
         name: name,
         directoryId: singleItem.id,
@@ -123,9 +124,8 @@ export function ContextMenu({
       onMouseDown={(e) => e.stopPropagation()}
     >
       {singleItem &&
-        singleItem.type === FileSystemEnum.Directory &&
-        items.length === 1 && (
-          <>
+        (singleItem.type === FileSystemEnum.Directory ||
+          (singleItem.type === FileSystemEnum.Sheet && items.length === 1 && (
             <li
               onClick={() =>
                 handleOpenModal({
@@ -137,20 +137,23 @@ export function ContextMenu({
             >
               {i18n.t("ContextualMenu.newFile")}
             </li>
-            <li
-              onClick={() =>
-                handleOpenModal({
-                  label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
-                  showInput: true,
-                  action: handleInsertDirectory,
-                })
-              }
-            >
-              {i18n.t("ContextualMenu.newFolder")}
-            </li>
-          </>
+          )))}
+      {singleItem &&
+        singleItem.type === FileSystemEnum.Directory &&
+        items.length === 1 && (
+          <li
+            onClick={() =>
+              handleOpenModal({
+                label: i18n.t("ContextualMenu.Modal.inputDirectoryName"),
+                showInput: true,
+                action: handleInsertDirectory,
+              })
+            }
+          >
+            {i18n.t("ContextualMenu.newFolder")}
+          </li>
         )}
-      {singleItem && (
+      {singleItem && singleItem.type !== FileSystemEnum.Sheet && (
         <li
           onClick={() =>
             handleOpenModal({
@@ -164,29 +167,34 @@ export function ContextMenu({
           {i18n.t("ContextualMenu.renameFile")}
         </li>
       )}
-      <li
-        onClick={() => {
-          const message =
-            items.length > 1
-              ? i18n.t(
-                  "ContextualMenu.Modal.multipleDelete",
-                  items.length.toString()
-                )
-              : singleItem
-                ? singleItem.type == FileSystemEnum.Directory
-                  ? i18n.t("ContextualMenu.Modal.deleteFolder", singleItem.name)
-                  : i18n.t("ContextualMenu.Modal.deleteFile", singleItem.name)
-                : ""; //No debería llegar aquí nunca
-          handleOpenModal({
-            label: message,
-            showInput: false,
-            action: handleDeleteItems,
-          });
-          onClose();
-        }}
-      >
-        {i18n.t("ContextualMenu.delete")}
-      </li>
+      {singleItem && singleItem.type !== FileSystemEnum.Sheet && (
+        <li
+          onClick={() => {
+            const message =
+              items.length > 1
+                ? i18n.t(
+                    "ContextualMenu.Modal.multipleDelete",
+                    items.length.toString()
+                  )
+                : singleItem
+                  ? singleItem.type == FileSystemEnum.Directory
+                    ? i18n.t(
+                        "ContextualMenu.Modal.deleteFolder",
+                        singleItem.name
+                      )
+                    : i18n.t("ContextualMenu.Modal.deleteFile", singleItem.name)
+                  : ""; //No debería llegar aquí nunca
+            handleOpenModal({
+              label: message,
+              showInput: false,
+              action: handleDeleteItems,
+            });
+            onClose();
+          }}
+        >
+          {i18n.t("ContextualMenu.delete")}
+        </li>
+      )}
     </ul>
   );
 

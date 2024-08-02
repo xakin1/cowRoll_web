@@ -152,3 +152,18 @@ body[data-theme="dark"] {
   display: flex;
   flex-direction: row;
 }
+
+.pdf-viewer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+
+.pdf-viewer {
+  width: 100%;
+  height: 100%;
+}

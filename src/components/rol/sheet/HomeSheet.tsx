@@ -180,7 +180,6 @@ export function HomeSheet() {
       <PhotoCardList
         elements={sheets}
         handleDoubleClick={handleDoubleClick}
-        upload={handleFileChange}
         handleDelete={handleDelete}
         handleMove={handleMove}
         children={

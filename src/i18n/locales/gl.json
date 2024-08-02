@@ -38,6 +38,7 @@
         "sheetName": "Nome da folla",
         "folderName": "Nome da  carpeta",
         "submit": "Enviar",
+        "changeMode": "Cambiar de modo",
         "Sheet": "Folla de personaxe",
         "deleteSheet": "Borrar folla actual",
         "saveSuccess": "Gardado completado con éxito",
@@ -50,6 +51,11 @@
       "Style": {
         "properties": "Propiedades xerais",
         "rotate": "Rotación",
+        "tag": "Tags",
+        "addTag": "Engadir tag",
+        "nameNotAvailable": "O nome {0} non está dispoñible",
+
+        "name": "Nome",
         "scale": "Escala",
         "width": "Ancho",
         "height": "Alto",

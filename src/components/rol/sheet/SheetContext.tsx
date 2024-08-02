@@ -1,37 +1,50 @@
-import React, { createContext, useState, type ReactNode } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
+import { useAppSelector } from "../../../hooks/customHooks";
 import i18n from "../../../i18n/i18n";
+import type { RootState } from "../../../redux/store";
 import { editFile } from "../../../services/codeApi";
 import {
-  findNodeById,
-  type DirectorySystemProps,
   type EditSheetProps,
-  type Id as IdField,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
 import { toastStyle } from "../../Route";
+import type { BlocklyRefProps } from "../editor/blockyEditor/BlocklyEditor";
 import type { Field, FieldWithoutId, Id } from "./types";
 
+// Define SheetContextProps interface
 interface SheetContextProps {
   sheets: Field[][];
   currentSheetIndex: number;
   addField: (field: FieldWithoutId) => Field;
+  updateField: (updatedField: Field) => void;
   updateFieldStyle: (id: Id, style: { [key: string]: any }) => void;
   removeField: (id: Id) => void;
   saveFields: (props: EditSheetProps) => void;
-  loadFields: (directorySystem: DirectorySystemProps, id: IdField) => void;
+  loadFields: (sheet: SheetProps) => void;
+  changeMode: (editing: boolean) => void;
   addSheet: () => void;
   removeSheet: (index: number) => void;
   nextSheet: () => void;
   previousSheet: () => void;
   goToSheet: (page: number) => void;
+  setBlocklyRef: (ref: RefObject<BlocklyRefProps>) => void;
 }
 
+// Create the context
 export const SheetContext = createContext<SheetContextProps | undefined>(
   undefined
 );
 
+// Define SheetProviderProps interface
 interface SheetProviderProps {
   children: ReactNode;
 }
@@ -39,24 +52,69 @@ interface SheetProviderProps {
 export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
   const [sheets, setSheets] = useState<Field[][]>([[]]);
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
+  const blocklyRef = useRef<BlocklyRefProps | null>(null);
 
-  const addField = (field: FieldWithoutId) => {
-    const newField = {
-      ...field,
-      id: uuidv4(),
-      name: field.type,
-    };
-    setSheets((prevSheets) => {
-      const newSheets = [...prevSheets];
-      newSheets[currentSheetIndex] = [
-        ...newSheets[currentSheetIndex],
-        newField,
-      ];
-      return newSheets;
-    });
-    return newField;
+  const file = useAppSelector(
+    (state: RootState) => state.directorySystem.selectedFile
+  );
+  useEffect(() => {
+    updateBlocklyVariables(sheets[currentSheetIndex]);
+  }, [file]);
+
+  // Function to set Blockly reference
+  const setBlocklyRef = (ref: RefObject<BlocklyRefProps>) => {
+    blocklyRef.current = ref.current;
   };
 
+  // Function to update Blockly variables
+  const updateBlocklyVariables = (fields: Field[]) => {
+    if (blocklyRef.current) {
+      blocklyRef.current.updateVariables(fields);
+    }
+  };
+
+  // Function to add a field
+  const addField = (field: FieldWithoutId): Field => {
+    const newSheets = [...sheets];
+    const currentFields = newSheets[currentSheetIndex];
+
+    // Function to check if a name already exists
+    const doesNameExist = (name: string): boolean => {
+      return newSheets.some((sheet) =>
+        sheet.some((existingField) => existingField.name === name)
+      );
+    };
+
+    let baseName: string = field.type;
+    let newName = baseName;
+    let counter = 1;
+
+    // Append a counter to the name until a unique one is found
+    while (doesNameExist(newName)) {
+      newName = `${baseName}${counter}`;
+      counter++;
+    }
+
+    // Create the new field with a unique name
+    const createdField: Field = {
+      ...field,
+      id: uuidv4(),
+      name: newName,
+    };
+
+    // Update the state with the new field
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+      newSheets[currentSheetIndex] = [...currentFields, createdField];
+
+      updateBlocklyVariables(newSheets[currentSheetIndex]);
+
+      return newSheets;
+    });
+
+    return createdField;
+  };
+  // Function to update field style
   const updateFieldStyle = (id: Id, style: { [key: string]: string }) => {
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
@@ -70,16 +128,61 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     });
   };
 
+  // Function to remove a field
   const removeField = (id: Id) => {
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
       newSheets[currentSheetIndex] = newSheets[currentSheetIndex].filter(
         (field) => field.id !== id
       );
+      updateBlocklyVariables(newSheets[currentSheetIndex]);
+
       return newSheets;
     });
   };
 
+  const updateField = (updatedField: Field) => {
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+
+      const fieldIndex = newSheets[currentSheetIndex].findIndex(
+        (field) => field.id === updatedField.id
+      );
+
+      if (fieldIndex !== -1) {
+        const existingField = newSheets[currentSheetIndex][fieldIndex];
+
+        const nameExists = newSheets[currentSheetIndex].some(
+          (field) =>
+            field.name === updatedField.name && field.id !== updatedField.id
+        );
+
+        if (nameExists) {
+          toast.error(
+            i18n.t("Rol.Sheet.Style.nameNotAvailable", updatedField.name),
+            toastStyle
+          );
+          return prevSheets;
+        }
+
+        newSheets[currentSheetIndex][fieldIndex] = updatedField;
+
+        if (blocklyRef.current && existingField.name !== updatedField.name) {
+          blocklyRef.current.renameVariable(
+            existingField.name,
+            updatedField.name
+          );
+        }
+
+        // Update Blockly variables
+        updateBlocklyVariables(newSheets[currentSheetIndex]);
+      }
+
+      return newSheets;
+    });
+  };
+
+  // Function to save fields
   const saveFields = async (props: EditSheetProps) => {
     const sheetsJSON = JSON.stringify(sheets);
     if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
@@ -88,6 +191,9 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         content: sheetsJSON,
       };
       const response = await editFile(fileProps);
+      if (blocklyRef.current) {
+        blocklyRef.current.saveContent();
+      }
       if (response && "message" in response) {
         toast.success(i18n.t("General.saveSuccess"), toastStyle);
       } else {
@@ -96,18 +202,25 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     }
   };
 
-  const loadFields = (directorySystem: DirectorySystemProps, id: IdField) => {
-    const sheet = findNodeById(directorySystem, id) as SheetProps;
-
-    if (sheet && sheet.content) {
+  // Function to load fields
+  const loadFields = (sheet: SheetProps) => {
+    if (sheet.content) {
       setSheets(JSON.parse(sheet.content));
+      // Call updateVariables after loading fields
+      updateBlocklyVariables(JSON.parse(sheet.content)[currentSheetIndex]);
     }
   };
 
+  // Function to add a sheet
   const addSheet = () => {
     setSheets((prevSheets) => [...prevSheets, []]);
     setCurrentSheetIndex(sheets.length);
   };
+
+  // Function to change mode (currently empty)
+  const changeMode = (editing: boolean) => {};
+
+  // Function to remove a sheet
   const removeSheet = (index: number) => {
     let sheetsCopy = [...sheets];
 
@@ -120,18 +233,21 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     );
   };
 
+  // Function to go to the next sheet
   const nextSheet = () => {
     setCurrentSheetIndex((prevIndex) =>
       prevIndex < sheets.length - 1 ? prevIndex + 1 : prevIndex
     );
   };
 
+  // Function to go to the previous sheet
   const previousSheet = () => {
     setCurrentSheetIndex((prevIndex) =>
       prevIndex > 0 ? prevIndex - 1 : prevIndex
     );
   };
 
+  // Function to go to a specific sheet
   const goToSheet = (page: number) => {
     setCurrentSheetIndex(page);
   };
@@ -141,7 +257,9 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
       value={{
         sheets,
         currentSheetIndex,
+        changeMode,
         addField,
+        updateField,
         updateFieldStyle,
         removeField,
         saveFields,
@@ -151,6 +269,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         nextSheet,
         goToSheet,
         previousSheet,
+        setBlocklyRef, // Expose setBlocklyRef in context
       }}
     >
       {children}

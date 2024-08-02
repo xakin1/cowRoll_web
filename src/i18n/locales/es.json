@@ -38,6 +38,7 @@
       "General": {
         "sheetName": "Nombre de la hoja",
         "folderName": "Nombre de la carpeta",
+        "changeMode": "Cambiar modo",
         "submit": "Enviar",
         "Sheet": "Hoja de personaje",
         "deleteSheet": "Borrar hoja actual",
@@ -50,6 +51,10 @@
       "Style": {
         "properties": "Propiedades generales",
         "addPlayer": "Agregar Personaje",
+        "tag": "Tags",
+        "addTag": "Añadir tag",
+        "nameNotAvailable": "El nombre {0} no está disponible",
+        "name": "Nombre",
         "send": "Enviar",
         "actualRoles": "Roles actuales",
         "rotate": "Rotación",

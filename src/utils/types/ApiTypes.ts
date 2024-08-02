@@ -34,6 +34,7 @@ export interface CodeProps extends FileProps {
 }
 
 export interface SheetProps extends FileProps {
+  codes: CodeProps[];
   type: FileSheetType;
 }
 

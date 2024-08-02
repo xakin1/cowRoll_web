@@ -10,10 +10,11 @@ import {
   findNodeById,
   isCodeFile,
   isDirectory,
-  isFile,
+  isSheetsProps,
   type DirectoryProps,
   type DirectorySystemProps,
   type NodeTree,
+  type SheetProps,
 } from "../../../../../utils/types/ApiTypes";
 import { ContextMenu } from "./ContextMenu";
 
@@ -30,10 +31,11 @@ import type {
   ModalConfig,
 } from "../../../../../utils/types/types";
 import Modal from "../../../../modal";
+import type { SideBarProps } from "../SideBar";
 import { CustomTreeItem } from "./BorderedTreeView";
 import "./folderTree.css";
 
-function FolderTree() {
+const FolderTree: React.FC<SideBarProps> = ({ directoryId }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<ModalConfig | null>(null);
   const [selectedItems, setSelectedItems] = useState<Items[]>([]);
@@ -42,15 +44,19 @@ function FolderTree() {
     (state: RootState) => state.directorySystem.directorySystem
   );
   const id = useAppSelector((state: RootState) => state.route.value);
-  const [rol, setRol] = useState<DirectoryProps>();
+  const [rol, setRol] = useState<DirectorySystemProps>();
 
-  useEffect(() => {
-    if (id) {
-      const rol = findNodeById(directorySystem!, id);
-
-      if (rol && isDirectory(rol)) setRol(rol);
+  const getDirectory = (directorySystem: DirectorySystemProps) => {
+    const idFolder = directoryId ? directoryId : id;
+    if (idFolder) {
+      const rol = findNodeById(directorySystem!, idFolder);
+      console.log(rol);
+      if (rol) setRol(rol);
     }
-  }, [directorySystem, id]);
+  };
+  useEffect(() => {
+    getDirectory(directorySystem!);
+  }, []);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuProps>({
     visible: false,
@@ -127,7 +133,10 @@ function FolderTree() {
   const addNode = async () => {
     setSelectedItems([]);
     const docs = await getFiles();
-    if (docs?.message) dispatch(setDirectorySystem(docs?.message));
+    if (docs?.message) {
+      dispatch(setDirectorySystem(docs?.message));
+      getDirectory(docs.message);
+    }
   };
 
   const handleDragStart = (
@@ -152,7 +161,7 @@ function FolderTree() {
 
   const handleDrop = async (
     e: React.DragEvent<any>,
-    targetDirectory: DirectoryProps
+    targetDirectory: DirectoryProps | SheetProps
   ) => {
     e.preventDefault();
     setHoveredItemId("");
@@ -197,7 +206,8 @@ function FolderTree() {
   function buildTreeItems(current: NodeTree): JSX.Element {
     const nodeId = current.id + "-" + current.type;
     const isSelected = selectedItems.some((item) => item.id === current.id);
-    if (isFile(current)) {
+
+    if (isCodeFile(current)) {
       return (
         <>
           <CustomTreeItem
@@ -334,6 +344,79 @@ function FolderTree() {
             )}
           </>
         );
+      } else if (isSheetsProps(current)) {
+        return (
+          <>
+            <CustomTreeItem
+              key={nodeId}
+              itemId={nodeId}
+              sx={{
+                "& .MuiTreeItem-content:hover": {
+                  backgroundColor: "rgba(25, 118, 210, 0.08)",
+                  cursor: "pointer",
+                },
+                backgroundColor: isSelected
+                  ? "rgba(25, 118, 210, 0.4)"
+                  : hoveredItemId === current.id
+                    ? "rgba(25, 118, 210, 0.18)"
+                    : "transparent",
+                cursor: "pointer",
+              }}
+              label={
+                <div
+                  className="nodeTree"
+                  draggable="true"
+                  onDragStart={(e) => handleDragStart(e, current)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDragOver(e, current);
+                  }}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, current)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="treeIcon"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" />
+                  </svg>
+                  <span className="directoryName">{current.name}</span>
+                </div>
+              }
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(event) => handleItemClick(event, current)}
+              onContextMenu={(event) => handleContextMenu(event, current)}
+            >
+              {current.codes &&
+                current.codes.map((child) => {
+                  if (isCodeFile(child)) {
+                    return buildTreeItems(child);
+                  }
+                })}
+            </CustomTreeItem>
+
+            {contextMenu.visible && (
+              <ContextMenu
+                x={contextMenu.x}
+                y={contextMenu.y}
+                items={contextMenu.items}
+                onClose={closeContextMenu}
+                onAddNode={addNode}
+                handleOpenModal={handleOpenModal}
+              />
+            )}
+          </>
+        );
       } else {
         return <></>;
       }
@@ -359,6 +442,6 @@ function FolderTree() {
       )}
     </>
   );
-}
+};
 
 export default FolderTree;
