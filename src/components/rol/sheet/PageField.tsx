@@ -8,6 +8,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
   type,
   name,
   tags = [],
+  value,
   label,
   style,
   setSelectedElement,
@@ -45,6 +46,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
         label,
         name,
         tags,
+        value,
         style: {
           ...styles,
           position: "absolute" as "absolute",
@@ -86,6 +88,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
           type={type}
           label={label}
           name={type}
+          value={value}
           tags={[]}
           style={{ position: "absolute", zIndex: 1, ...style }}
           id={id}

@@ -45,6 +45,7 @@ export interface Field {
   type: typeField;
   name: string;
   tags?: string[];
+  value?: any;
   label: string;
   style: { [key: string]: any };
   onChange?: (...args: any[]) => void;

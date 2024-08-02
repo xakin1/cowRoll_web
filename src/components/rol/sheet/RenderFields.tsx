@@ -78,9 +78,8 @@ export const fields = [
     },
   },
 ];
-
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
-  ({ type, label, id, onSelect, style, onChange }, ref) => {
+  ({ type, label, id, value, onSelect, style, onChange }, ref) => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -144,6 +143,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               style={style}
               type="text"
               draggable={false}
+              value={value}
               placeholder={label}
               onClick={handleClick}
               className="sheet-option"
@@ -155,6 +155,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               ref={targetRef as React.RefObject<HTMLInputElement>}
               style={style}
               type="checkbox"
+              checked={value}
               onClick={handleClick}
               className="sheet-option"
             />
@@ -164,6 +165,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
           return (
             <textarea
               style={style}
+              value={value}
               placeholder={label}
               className="textarea sheet-option"
             />
@@ -202,6 +204,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               ref={targetRef as React.RefObject<HTMLInputElement>}
               className="sheet-option"
               placeholder={label}
+              value={value}
               style={{
                 border: "none",
                 background: "none",

@@ -14,7 +14,7 @@ import React, {
   useState,
   type ChangeEvent,
 } from "react";
-import Draggable from "react-draggable"; // Ensure this is correctly imported
+import Draggable from "react-draggable";
 
 import i18n from "../../../../i18n/i18n";
 import { rgbToHex } from "../../../../utils/functions/utils";
@@ -58,9 +58,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderStyle, setBorderStyle] = useState<string>("solid");
   const [borderRadius, setBorderRadius] = useState<string>("0");
   const [customCSS, setCustomCSS] = useState<string>("");
-
-  // State to manage error display
-  const [showError, setShowError] = useState<boolean>(false);
 
   const { updateFieldStyle } = useContext(SheetContext)!;
   const previousElementRef = useRef<Field | null>(null);

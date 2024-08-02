@@ -20,6 +20,7 @@ export const iconStyle = { fill: "var(--text-color)" };
 
 const FieldMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const { mode } = useContext(SheetContext)!;
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -80,7 +81,7 @@ const FieldMenu: React.FC = () => {
           </ItemMenu>
           <ItemMenu
             onClick={() => {
-              changeMode(true);
+              changeMode(!mode);
               handleClose();
             }}
           >

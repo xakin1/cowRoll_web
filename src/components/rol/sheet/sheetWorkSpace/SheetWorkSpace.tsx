@@ -40,6 +40,7 @@ export const SheetWorkSpace: React.FC = () => {
     loadFields,
     updateField,
     setBlocklyRef,
+    mode,
   } = context;
 
   const handleUpdateStyle = (name: string, value: string | number) => {
@@ -88,13 +89,15 @@ export const SheetWorkSpace: React.FC = () => {
               fields={sheets[currentSheetIndex]}
             />
           </div>
-          <div className="container-blockly">
-            <WorkSpace
-              ref={blocklyRef}
-              directoryId={sheetId}
-              className="codeWorkSpace"
-            />
-          </div>
+          {mode && (
+            <div className="container-blockly">
+              <WorkSpace
+                ref={blocklyRef}
+                directoryId={sheetId}
+                className="codeWorkSpace"
+              />
+            </div>
+          )}
           {selectedElement && (
             <div
               className="properties-panel-wrapper"

@@ -25,6 +25,7 @@ export const menuFields = [
 
 const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const { addField } = useContext(SheetContext)!;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

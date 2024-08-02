@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { FetchCodeError, FetchRun } from "../../utils/types/ApiTypes";
 
 export interface CodeEditor {
-  output: string;
+  output: { [key: string]: any };
   error: {
     error?: string;
     errorCode?: string;
@@ -10,7 +10,7 @@ export interface CodeEditor {
   };
 }
 const initialState: CodeEditor = {
-  output: "",
+  output: {},
   error: {
     error: "",
     errorCode: "",
