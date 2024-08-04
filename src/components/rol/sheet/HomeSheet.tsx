@@ -146,10 +146,10 @@ export function HomeSheet() {
     try {
       const response = await createFile({
         name: file.name,
-        content: base64File,
+        pdf: base64File,
         type: FileSystemEnum.Sheet,
         directoryId: sheetsDirectory?.id,
-      });
+      } as SheetProps);
       if (response) {
         if ("message" in response) {
           toast.success(i18n.t("Rol.Sheet.Success.uploaded"), {
@@ -181,6 +181,7 @@ export function HomeSheet() {
         elements={sheets}
         handleDoubleClick={handleDoubleClick}
         handleDelete={handleDelete}
+        upload={handleFileChange}
         handleMove={handleMove}
         children={
           <SheetForm

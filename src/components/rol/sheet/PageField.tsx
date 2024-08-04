@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import RenderField from "./RenderFields";
 import "./styles.css";
 import type { DraggableFieldProps, Id } from "./types";
@@ -14,6 +14,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
   setSelectedElement,
   onContextMenu,
   onChange,
+  onClick,
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
@@ -36,35 +37,28 @@ const PageField: React.FC<DraggableFieldProps> = ({
     return {};
   };
 
-  const handleSelect = (selectedId: Id) => {
-    setIsSelected(selectedId === id);
-    const styles = getInlineStyles();
-    if (setSelectedElement) {
-      setSelectedElement({
-        id,
-        type,
-        label,
-        name,
-        tags,
-        value,
-        style: {
-          ...styles,
-          position: "absolute" as "absolute",
-        },
-      });
+  const handleSelect = (selectedId: Id | null) => {
+    if (selectedId != null) {
+      setIsSelected(selectedId === id);
+      const styles = getInlineStyles();
+      if (setSelectedElement) {
+        setSelectedElement({
+          id,
+          type,
+          label,
+          name,
+          tags,
+          value,
+          style: {
+            ...styles,
+            position: "absolute" as "absolute",
+          },
+        });
+      }
+    } else {
+      setSelectedElement(null);
     }
   };
-
-  const handleClickOutside = (event: MouseEvent) => {
-    setIsSelected(false);
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   const handleChange = (newStyle: { [key: string]: any }) => {
     if (onChange) {
@@ -90,11 +84,12 @@ const PageField: React.FC<DraggableFieldProps> = ({
           name={type}
           value={value}
           tags={[]}
-          style={{ position: "absolute", zIndex: 1, ...style }}
+          style={{ position: "absolute", ...style }}
           id={id}
+          onClick={onClick}
           onChange={handleChange}
           isSelected={isSelected}
-          onSelect={() => handleSelect(id)}
+          onSelect={handleSelect}
         />
       </div>
     </>

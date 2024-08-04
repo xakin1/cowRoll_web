@@ -118,29 +118,25 @@ body[data-theme="dark"] {
 }
 
 .page_container {
-  display: flex;
   position: relative;
-  flex-direction: column;
-  align-items: center;
   margin-left: auto;
   margin-right: auto;
-  overflow: auto;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
 }
+
+.custom-dimensions {
+  margin: 1rem;
+}
+
 .page_container__page {
   position: relative;
   display: flex;
   background-color: white;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid var(--text-color);
   width: 816px;
   height: 1056px;
-  max-width: 100%;
-  max-height: 100%;
+  border: 1px solid var(--text-color);
+
   overflow: hidden;
 }
 
@@ -152,18 +148,11 @@ body[data-theme="dark"] {
   display: flex;
   flex-direction: row;
 }
-
-.pdf-viewer-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-  padding-top: 20px;
-  box-sizing: border-box;
-}
-
-.pdf-viewer {
+.pdf-page {
   width: 100%;
   height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #ddd; /* Optional for visual debugging */
 }

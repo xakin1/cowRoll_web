@@ -10,8 +10,9 @@ export interface Position {
 
 export interface RenderFieldProps extends Field {
   isSelected?: boolean;
-  onSelect?: (selectedId: Id) => void;
+  onSelect?: (selectedId: Id | null) => void;
   onChange?: (...args: any[]) => void;
+  onClick?: (...args: any[]) => void;
 }
 
 export interface MenuFieldProps {
@@ -58,6 +59,7 @@ export interface DraggableFieldProps extends Field {
     field: Field
   ) => void;
   onChange?: (...args: any[]) => void;
+  onClick?: (...args: any[]) => void;
 }
 
 export interface MenuField {

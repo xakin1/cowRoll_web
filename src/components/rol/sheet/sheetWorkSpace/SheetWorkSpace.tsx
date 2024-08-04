@@ -8,11 +8,7 @@ import FieldMenu from "../menuField/FieldMenu";
 import PropertiesPanel from "../propertiesPanel/PropertiesPanel";
 import { type Field } from "../types";
 
-import {
-  findNodeById,
-  isSheetsProps,
-  type SheetProps,
-} from "../../../../utils/types/ApiTypes";
+import { findNodeById, isSheetsProps } from "../../../../utils/types/ApiTypes";
 import type { BlocklyRefProps } from "../../editor/blockyEditor/BlocklyEditor";
 import WorkSpace from "../../editor/terminal/WorkSpace";
 import "./sheetWorkSpace.css";
@@ -21,7 +17,6 @@ export const SheetWorkSpace: React.FC = () => {
   const { sheetId } = useParams<{ sheetId: string }>();
 
   const [selectedElement, setSelectedElement] = useState<Field | null>(null);
-  const [sheet, setSheet] = useState<SheetProps>();
   const directorySystem = useAppSelector(
     (state: RootState) => state.directorySystem.directorySystem
   );
@@ -37,6 +32,7 @@ export const SheetWorkSpace: React.FC = () => {
     sheets,
     currentSheetIndex,
     updateFieldStyle,
+    setSheet,
     loadFields,
     updateField,
     setBlocklyRef,
@@ -69,7 +65,7 @@ export const SheetWorkSpace: React.FC = () => {
     if (sheet && isSheetsProps(sheet)) {
       setSheet(sheet);
       if (!sheet.name.endsWith(".pdf")) {
-        loadFields(sheet);
+        loadFields();
       }
     }
   }, [sheetId]);

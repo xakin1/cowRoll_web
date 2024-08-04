@@ -1,5 +1,6 @@
 import React, {
   forwardRef,
+  useContext,
   useImperativeHandle,
   useRef,
   useState,
@@ -8,11 +9,13 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
+import { SheetContext } from "./SheetContext";
 import type { RenderFieldProps } from "./types";
 
 export enum typeField {
   input = "input",
   checkbox = "checkbox",
+  pdf = "pdfPage",
   textarea = "textarea",
   rectangle = "rectangle",
   circle = "circle",
@@ -20,22 +23,32 @@ export enum typeField {
   text = "text",
   photo = "photo",
 }
+
 export const fields = [
-  { type: typeField.input, label: "Input", style: {} },
+  { type: typeField.input, label: "Input", style: { zIndex: "2" } },
   {
     type: typeField.checkbox,
     label: "checkbox",
-    style: { width: "20px", height: "20px" },
+    style: { width: "20px", height: "20px", zIndex: "2" },
   },
   {
     type: typeField.textarea,
     label: "Text area",
-    style: { border: "1px solid var(--text-color)", width: "100px" },
+    style: {
+      border: "1px solid var(--text-color)",
+      width: "100px",
+      zIndex: "2",
+    },
   },
   {
     type: typeField.rectangle,
     label: "Rectangle",
-    style: { width: 50, height: 50, border: "1px solid lightgray" },
+    style: {
+      width: 50,
+      height: 50,
+      border: "1px solid lightgray",
+      zIndex: "2",
+    },
   },
   {
     type: typeField.circle,
@@ -45,6 +58,7 @@ export const fields = [
       height: 50,
       borderRadius: "50px",
       border: "1px solid lightgray",
+      zIndex: "2",
     },
   },
   {
@@ -57,6 +71,7 @@ export const fields = [
       left: "10px",
       maxHeight: "0px",
       border: "1px solid lightgray",
+      zIndex: "2",
     },
   },
   {
@@ -66,6 +81,7 @@ export const fields = [
       width: "50px",
       height: "50px",
       outline: "none",
+      zIndex: "2",
     },
   },
   {
@@ -75,11 +91,14 @@ export const fields = [
       width: 100,
       height: 100,
       backgroundImage: `url(/placeholder.png)`,
+      zIndex: "2",
     },
   },
 ];
+
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
-  ({ type, label, id, value, onSelect, style, onChange }, ref) => {
+  ({ type, label, id, value, onSelect, style, onChange, onClick }, ref) => {
+    const { setIsContextMenuVisible } = useContext(SheetContext)!;
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -134,6 +153,10 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         });
       }
     };
+
+    // Variable para determinar si el elemento es draggable
+    const isDraggable = type !== typeField.pdf; // Desactivar para PDF
+
     const renderComponent = () => {
       switch (type) {
         case typeField.input:
@@ -246,6 +269,26 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               </button>
             </div>
           );
+        case typeField.pdf:
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="pdf-page sheet-option"
+              style={{
+                ...style,
+                cursor: "default",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                zIndex: "1",
+              }}
+              onClick={() => {
+                if (onSelect) {
+                  onSelect(null);
+                }
+                setIsContextMenuVisible(false);
+              }}
+            ></div>
+          );
         default:
           return null;
       }
@@ -257,6 +300,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         onStop={(e, data) => {
           handleDragStop(e, data);
         }}
+        disabled={!isDraggable} // Deshabilitar arrastre si no es draggable
       >
         {renderComponent()}
       </Draggable>

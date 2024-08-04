@@ -29,6 +29,9 @@ const Page: React.FC<FieldContainerProps> = ({
 }) => {
   const {
     sheets,
+    sheet,
+    isContextMenuVisible,
+    setIsContextMenuVisible,
     saveFields,
     currentSheetIndex,
     updateFieldStyle,
@@ -38,6 +41,9 @@ const Page: React.FC<FieldContainerProps> = ({
     previousSheet,
     goToSheet,
   } = useContext(SheetContext)!;
+
+  const minIndex = 2;
+
   const [selectedElement, setSelectedElementState] = useState<Field | null>(
     null
   );
@@ -94,9 +100,8 @@ const Page: React.FC<FieldContainerProps> = ({
     (field: Field | null) => (event: React.MouseEvent) => {
       event.preventDefault();
       event.stopPropagation();
-
       const isOutsideClick = field === null;
-
+      setIsContextMenuVisible(true);
       setContextMenu({
         visible: true,
         position: { x: event.clientX, y: event.clientY },
@@ -109,6 +114,7 @@ const Page: React.FC<FieldContainerProps> = ({
     const target = event.target as HTMLElement;
     if (!target.closest(".field") && !target.closest(".properties-panel")) {
       setSelectedElement(null);
+      setIsContextMenuVisible(false);
       setContextMenu({ ...contextMenu, visible: false, isOutsideClick: true });
     }
   };
@@ -122,19 +128,19 @@ const Page: React.FC<FieldContainerProps> = ({
 
   const handleDelete = (id: Id) => {
     removeField(id);
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handleCopy = (field: Field) => {
     setClipboard(field);
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handleCut = (field: Field) => {
     setClipboard(field);
     removeField(field.id);
     setSelectedElement(null);
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handlePaste = () => {
@@ -155,7 +161,7 @@ const Page: React.FC<FieldContainerProps> = ({
       const newField = addField(fieldToInsert);
       setClipboard(newField);
     }
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handlePasteHere = () => {
@@ -178,27 +184,30 @@ const Page: React.FC<FieldContainerProps> = ({
 
       addField(newField);
     }
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handleUp = (field: Field) => {
     updateFieldStyle(field.id, { zIndex: field.style.zIndex + 1 });
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handleDown = (field: Field) => {
-    updateFieldStyle(field.id, { zIndex: field.style.zIndex - 1 });
-    setContextMenu({ ...contextMenu, visible: false });
+    const index = field.style.zIndex - 1;
+    updateFieldStyle(field.id, {
+      zIndex: index >= minIndex ? index : minIndex,
+    });
+    setIsContextMenuVisible(false);
   };
 
   const handleForward = (field: Field) => {
     updateFieldStyle(field.id, { zIndex: 100 });
-    setContextMenu({ ...contextMenu, visible: false });
+    setIsContextMenuVisible(false);
   };
 
   const handleBackward = (field: Field) => {
-    updateFieldStyle(field.id, { zIndex: 0 });
-    setContextMenu({ ...contextMenu, visible: false });
+    updateFieldStyle(field.id, { zIndex: minIndex });
+    setIsContextMenuVisible(false);
   };
 
   const handleSave = () => {
@@ -243,7 +252,7 @@ const Page: React.FC<FieldContainerProps> = ({
         />
       </div>
 
-      {contextMenu.visible && (
+      {isContextMenuVisible && (
         <div
           ref={menuRef}
           style={{
