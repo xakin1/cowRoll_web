@@ -34,7 +34,7 @@ export interface CodeProps extends FileProps {
 }
 
 export interface SheetProps extends FileProps {
-  codes: CodeProps[];
+  codes?: CodeProps[];
   pdf?: string;
   type: FileSheetType;
 }
@@ -70,7 +70,7 @@ export interface CreateCodeProps extends CreateFileProps {
 
 export interface CreateSheetProps extends CreateFileProps {
   type: FileSheetType;
-  pdf: string;
+  pdf?: string;
 }
 
 export interface insertContentProps {

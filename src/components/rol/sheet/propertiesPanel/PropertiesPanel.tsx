@@ -56,6 +56,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderColor, setBorderColor] = useState<string>("#000000");
   const [backgroundColor, setBackgroundColor] = useState<string>("transparent");
   const [borderWidth, setBorderWidth] = useState<string>("1");
+  const [textColor, setTextColor] = useState<string>("#000");
   const [borderStyle, setBorderStyle] = useState<string>("solid");
   const [borderRadius, setBorderRadius] = useState<string>("0");
   const [activeCheckboxColor, setActiveCheckboxColor] =
@@ -98,6 +99,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       setIsBold(selectedElement.style.fontWeight === "bold");
       setIsItalic(selectedElement.style.fontStyle === "italic");
       setAlign(selectedElement.style.textAlign || "initial");
+      setTextColor(selectedElement.style.color || "#000");
       setDecoration(selectedElement.style.textDecoration || "none");
       setFont(selectedElement.style.fontFamily || "Arial");
       setXPosition(getSizeValue(selectedElement.style?.left));
@@ -198,6 +200,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         break;
       case "fontFamily":
         setFont(value);
+        onUpdateStyle(name, value);
+        break;
+      case "color":
+        setTextColor(value);
         onUpdateStyle(name, value);
         break;
       case "customCSS":
@@ -319,11 +325,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         <div className="properties-panel__property-field position-controls">
           <h4>{i18n.t("Rol.Sheet.Style.scriptProperties")}</h4>
           <div className="name-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-            <label className="name-inputs__container__label">
+            <label className="position-inputs__container__label">
               {i18n.t("Rol.Sheet.Style.name")}:
             </label>
             <input
-              className="name-inputs__container__label"
+              className="position-inputs__container__input"
               type="text"
               name="name"
               value={nameVar}
@@ -381,221 +387,227 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               </div>
             </>
           )}
-          <div className="position-inputs__container properties-panel__property-field">
-            <label className="position-inputs__container__label">
-              {i18n.t("Rol.Sheet.Style.borderStyle")}:
-            </label>
-            <BorderStyleSelect value={borderStyle} onChange={handleChange} />
-          </div>
 
-          {selectedElement?.type === typeField.text && (
-            <>
-              <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
-              <div className="alignment-buttons">
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      align == "center" ? "lightgray" : "transparent",
-                    border: align == "center" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (align != "center") {
-                      setAlign("center");
-                      onUpdateStyle("textAlign", `center`);
-                    } else {
-                      setAlign("initial");
+          {selectedElement?.type === typeField.text ||
+            (selectedElement?.type === typeField.textarea && (
+              <>
+                <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
+                <div className="alignment-buttons">
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        align == "center" ? "lightgray" : "transparent",
+                      border: align == "center" ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (align != "center") {
+                        setAlign("center");
+                        onUpdateStyle("textAlign", `center`);
+                      } else {
+                        setAlign("initial");
 
-                      onUpdateStyle("textAlign", `initial`);
-                    }
-                  }}
-                >
-                  <FormatAlignCenterIcon></FormatAlignCenterIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      align == "justify" ? "lightgray" : "transparent",
-                    border: align == "justify" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (align != "justify") {
-                      setAlign("justify");
-                      onUpdateStyle("textAlign", `justify`);
-                    } else {
-                      setAlign("initial");
+                        onUpdateStyle("textAlign", `initial`);
+                      }
+                    }}
+                  >
+                    <FormatAlignCenterIcon></FormatAlignCenterIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        align == "justify" ? "lightgray" : "transparent",
+                      border: align == "justify" ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (align != "justify") {
+                        setAlign("justify");
+                        onUpdateStyle("textAlign", `justify`);
+                      } else {
+                        setAlign("initial");
 
-                      onUpdateStyle("textAlign", `initial`);
-                    }
-                  }}
-                >
-                  <FormatAlignJustifyIcon></FormatAlignJustifyIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      align == "left" ? "lightgray" : "transparent",
-                    border: align == "left" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (align != "left") {
-                      setAlign("left");
-                      onUpdateStyle("textAlign", `left`);
-                    } else {
-                      setAlign("initial");
+                        onUpdateStyle("textAlign", `initial`);
+                      }
+                    }}
+                  >
+                    <FormatAlignJustifyIcon></FormatAlignJustifyIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        align == "left" ? "lightgray" : "transparent",
+                      border: align == "left" ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (align != "left") {
+                        setAlign("left");
+                        onUpdateStyle("textAlign", `left`);
+                      } else {
+                        setAlign("initial");
 
-                      onUpdateStyle("textAlign", `initial`);
-                    }
-                  }}
-                >
-                  <FormatAlignLeftIcon></FormatAlignLeftIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      align == "right" ? "lightgray" : "transparent",
-                    border: align == "right" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (align != "right") {
-                      setAlign("right");
-                      onUpdateStyle("textAlign", `right`);
-                    } else {
-                      setAlign("initial");
+                        onUpdateStyle("textAlign", `initial`);
+                      }
+                    }}
+                  >
+                    <FormatAlignLeftIcon></FormatAlignLeftIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        align == "right" ? "lightgray" : "transparent",
+                      border: align == "right" ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (align != "right") {
+                        setAlign("right");
+                        onUpdateStyle("textAlign", `right`);
+                      } else {
+                        setAlign("initial");
 
-                      onUpdateStyle("textAlign", `initial`);
-                    }
-                  }}
-                >
-                  <FormatAlignRightIcon></FormatAlignRightIcon>
-                </IconButton>
+                        onUpdateStyle("textAlign", `initial`);
+                      }
+                    }}
+                  >
+                    <FormatAlignRightIcon></FormatAlignRightIcon>
+                  </IconButton>
 
-                <IconButton
-                  sx={{
-                    backgroundColor: isBold ? "lightgray" : "transparent",
-                    border: isBold ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (isBold) {
-                      onUpdateStyle("fontWeight", `normal`);
-                    } else {
-                      onUpdateStyle("fontWeight", `bold`);
-                    }
-                    setIsBold(!isBold);
-                  }}
-                >
-                  <FormatBoldIcon></FormatBoldIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor: isItalic ? "lightgray" : "transparent",
-                    border: isItalic ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (isItalic) {
-                      onUpdateStyle("fontStyle", `normal`);
-                    } else {
-                      onUpdateStyle("fontStyle", `italic`);
-                    }
-                    setIsItalic(!isItalic);
-                  }}
-                >
-                  <FormatItalicIcon></FormatItalicIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      decoration == "underline" ? "lightgray" : "transparent",
-                    border:
-                      decoration == "underline" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (decoration != "underline") {
-                      setDecoration("underline");
-                      onUpdateStyle("textDecoration", `underline`);
-                    } else {
-                      setDecoration("none");
+                  <IconButton
+                    sx={{
+                      backgroundColor: isBold ? "lightgray" : "transparent",
+                      border: isBold ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (isBold) {
+                        onUpdateStyle("fontWeight", `normal`);
+                      } else {
+                        onUpdateStyle("fontWeight", `bold`);
+                      }
+                      setIsBold(!isBold);
+                    }}
+                  >
+                    <FormatBoldIcon></FormatBoldIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor: isItalic ? "lightgray" : "transparent",
+                      border: isItalic ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (isItalic) {
+                        onUpdateStyle("fontStyle", `normal`);
+                      } else {
+                        onUpdateStyle("fontStyle", `italic`);
+                      }
+                      setIsItalic(!isItalic);
+                    }}
+                  >
+                    <FormatItalicIcon></FormatItalicIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        decoration == "underline" ? "lightgray" : "transparent",
+                      border:
+                        decoration == "underline" ? "2px solid black" : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (decoration != "underline") {
+                        setDecoration("underline");
+                        onUpdateStyle("textDecoration", `underline`);
+                      } else {
+                        setDecoration("none");
 
-                      onUpdateStyle("textDecoration", `none`);
-                    }
-                  }}
-                >
-                  <FormatUnderlinedIcon></FormatUnderlinedIcon>
-                </IconButton>
-                <IconButton
-                  sx={{
-                    backgroundColor:
-                      decoration == "line-through"
-                        ? "lightgray"
-                        : "transparent",
-                    border:
-                      decoration == "line-through" ? "2px solid black" : "none",
-                    borderRadius: "4px",
-                  }}
-                  onClick={() => {
-                    if (decoration != "line-through") {
-                      setDecoration("line-through");
-                      onUpdateStyle("textDecoration", `line-through`);
-                    } else {
-                      setDecoration("none");
+                        onUpdateStyle("textDecoration", `none`);
+                      }
+                    }}
+                  >
+                    <FormatUnderlinedIcon></FormatUnderlinedIcon>
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      backgroundColor:
+                        decoration == "line-through"
+                          ? "lightgray"
+                          : "transparent",
+                      border:
+                        decoration == "line-through"
+                          ? "2px solid black"
+                          : "none",
+                      borderRadius: "4px",
+                    }}
+                    onClick={() => {
+                      if (decoration != "line-through") {
+                        setDecoration("line-through");
+                        onUpdateStyle("textDecoration", `line-through`);
+                      } else {
+                        setDecoration("none");
 
-                      onUpdateStyle("textDecoration", `none`);
-                    }
-                  }}
-                >
-                  <FormatStrikethroughIcon></FormatStrikethroughIcon>
-                </IconButton>
-              </div>
+                        onUpdateStyle("textDecoration", `none`);
+                      }
+                    }}
+                  >
+                    <FormatStrikethroughIcon></FormatStrikethroughIcon>
+                  </IconButton>
+                </div>
 
-              <h4>{i18n.t("Rol.Sheet.Style.textProperties")}</h4>
-              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-                <label className="position-inputs__container__label">
-                  {i18n.t("Rol.Sheet.Style.fontSize")}:
-                </label>
-                <input
-                  className="position-inputs__container__input"
-                  type="number"
-                  name="fontSize"
-                  value={fontSize}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-                <label className="position-inputs__container__label">
-                  {i18n.t("Rol.Sheet.Style.font")}:
-                </label>
-                <select
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                  }}
-                  value={font}
-                  name="fontFamily"
-                  onChange={handleChange}
-                >
-                  {fonts.map((fontOption) => (
-                    <option
-                      style={{ fontFamily: fontOption }}
-                      onClick={(e) => e.stopPropagation()}
-                      key={fontOption}
-                      value={fontOption}
-                    >
-                      {fontOption}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
+                <h4>{i18n.t("Rol.Sheet.Style.textProperties")}</h4>
+                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                  <label className="position-inputs__container__label">
+                    {i18n.t("Rol.Sheet.Style.fontSize")}:
+                  </label>
+                  <input
+                    className="position-inputs__container__input"
+                    type="number"
+                    name="fontSize"
+                    value={fontSize}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                  <label className="position-inputs__container__label">
+                    {i18n.t("Rol.Sheet.Style.font")}:
+                  </label>
+                  <select
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                    }}
+                    value={font}
+                    name="fontFamily"
+                    onChange={handleChange}
+                  >
+                    {fonts.map((fontOption) => (
+                      <option
+                        style={{ fontFamily: fontOption }}
+                        onClick={(e) => e.stopPropagation()}
+                        key={fontOption}
+                        value={fontOption}
+                      >
+                        {fontOption}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                  <SelectColor
+                    value={textColor}
+                    name={"color"}
+                    label={`${i18n.t("Rol.Sheet.Style.textColor")}:`}
+                    onChange={handleChange}
+                  ></SelectColor>
+                </div>
+              </>
+            ))}
           <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
 
           <div className="position-inputs">
@@ -702,6 +714,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           </>
         )}
         {selectedElement?.type !== typeField.line &&
+          selectedElement?.type !== typeField.textarea &&
           selectedElement?.type !== typeField.text && (
             <div className="position-inputs__container properties-panel__property-field">
               <label className="position-inputs__container__label">
@@ -719,6 +732,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {selectedElement?.type !== typeField.text &&
           selectedElement?.type !== typeField.checkbox &&
+          selectedElement?.type !== typeField.textarea &&
           selectedElement?.type !== typeField.line && (
             <div className="properties-panel__property-field">
               <SelectColor

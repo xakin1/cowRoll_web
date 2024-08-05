@@ -1,8 +1,10 @@
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import RectangleIcon from "@mui/icons-material/CropSquare";
+import FormatShapesRoundedIcon from "@mui/icons-material/FormatShapesRounded";
 import InputIcon from "@mui/icons-material/Input";
 import CircleIcon from "@mui/icons-material/PanoramaFishEye";
 import LineIcon from "@mui/icons-material/Remove";
+import TextIncreaseRoundedIcon from "@mui/icons-material/TextIncreaseRounded";
 import {
   IconButton,
   ListItemIcon,
@@ -15,7 +17,6 @@ import { fields, typeField } from "../RenderFields";
 import { SheetContext } from "../SheetContext";
 import type { MenuFieldProps } from "../types";
 import { iconStyle } from "./FieldMenu";
-
 export const menuFields = [
   { id: "textTool", type: "textTool", label: "Text" },
   { id: "inputTool", type: "inputTool", label: "Input" },
@@ -50,13 +51,44 @@ const MenuField: React.FC<
     switch (type) {
       case "textTool":
         return (
-          <div className="tool-item" title="Add Text">
-            <span
-              onClick={() => handleAddField(typeField.text)}
-              className="tool-item-icon"
+          <div className="tool-item">
+            <IconButton
+              aria-label="text"
+              aria-controls="text-menu"
+              aria-haspopup="true"
+              onClick={handleClick}
             >
-              T
-            </span>
+              <span className="tool-item-icon" title="Add Text">
+                T
+              </span>
+            </IconButton>
+            <Menu
+              id="text-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              slotProps={{
+                paper: {
+                  style: {
+                    zIndex: 1000,
+                  },
+                },
+              }}
+            >
+              <MenuItem onClick={() => handleAddField(typeField.text)}>
+                <ListItemIcon>
+                  <TextIncreaseRoundedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Text" />
+              </MenuItem>
+              <MenuItem onClick={() => handleAddField(typeField.textarea)}>
+                <ListItemIcon>
+                  <FormatShapesRoundedIcon />
+                </ListItemIcon>
+                <ListItemText primary="Text Area" />
+              </MenuItem>
+            </Menu>
           </div>
         );
       case "inputTool":

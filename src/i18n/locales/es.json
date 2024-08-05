@@ -52,6 +52,7 @@
         "scriptProperties": "Propiedades para el comportamiento",
         "options": "Opciones",
         "allowAdditions": "Permitir añadir opciones",
+        "textColor": "Color del texto",
         "properties": "Propiedades generales",
         "addPlayer": "Agregar Personaje",
         "tag": "Tags",

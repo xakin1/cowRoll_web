@@ -259,10 +259,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         case typeField.textarea:
           return (
             <textarea
-              style={style}
+              ref={targetRef as React.RefObject<HTMLTextAreaElement>}
+              style={{ ...style, resize: "none" }}
               value={value}
               placeholder={label}
               className="textarea sheet-option"
+              onClick={handleClick}
             />
           );
 
