@@ -1,4 +1,3 @@
-// src/components/LoadData.jsx
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

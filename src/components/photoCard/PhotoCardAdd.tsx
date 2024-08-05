@@ -3,7 +3,7 @@ import i18n from "../../i18n/i18n";
 import "./styles.css";
 
 export interface PhotoCardProps {
-  handleOpen: (...args: any[]) => void; // Agrega el id como prop
+  handleOpen: (...args: any[]) => void;
 }
 
 const PhotoCardAdd: React.FC<PhotoCardProps> = ({ handleOpen }) => {

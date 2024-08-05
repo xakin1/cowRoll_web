@@ -122,11 +122,13 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [selectOptions, setSelectOptions] = useState<string>(options || "");
     const [newOption, setNewOption] = useState("");
+    const [isSelectActive, setSelectActive] = useState(false);
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
 
     const [selectedValue, setSelectedValue] = useState("solid");
+    const [isSelectOpen, setSelectOpen] = useState(false);
 
     const handleClick = () => {
       if (onSelect) {
@@ -149,7 +151,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
     };
 
     const handleDragStop = (_e: DraggableEvent, data: DraggableData) => {
-      if (onChange && targetRef.current) {
+      if (onChange && targetRef.current && !isSelectOpen) {
         const rect = targetRef.current.getBoundingClientRect();
         const parentRect =
           targetRef.current.offsetParent?.getBoundingClientRect() || {
@@ -180,11 +182,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
 
     const isDraggable = type !== typeField.pdf; // Desactivar para PDF
 
-    const handleAddOption = () => {
-      if (newOption.trim() !== "" && !selectOptions.includes(newOption)) {
-        setSelectOptions(newOption);
-        setNewOption("");
-        onChange && onChange({ options: newOption });
+    const handleAddOptionSelected = () => {
+      const input = prompt("Enter a new option:"); // Ask user for new option
+      if (input && input.trim() !== "" && !selectOptions.includes(input)) {
+        setSelectOptions((prevOptions) => prevOptions + ";" + input);
+        onChange && onChange({ options: selectOptions + ";" + input });
+        setSelectedValue(input); // Update selected value
       }
     };
 
@@ -324,6 +327,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
           const optionsArray = selectOptions
             .split(";")
             .map((option) => option.trim());
+
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
@@ -332,11 +336,21 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 minWidth: "30px",
                 ...style,
               }}
-              onClick={handleClick}
+              onClick={() => {
+                handleClick();
+                setSelectActive(!isSelectActive); // Toggle select activation on click
+              }}
             >
               <select
                 value={selectedValue}
-                onChange={(e) => setSelectedValue(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "addOption") {
+                    handleAddOptionSelected(); // Handle special option selection
+                  } else {
+                    setSelectedValue(value);
+                  }
+                }}
                 style={{
                   minWidth: "30px",
                   width: "100%",
@@ -344,26 +358,23 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   boxSizing: "border-box",
                 }}
                 onMouseDown={(e) => {
-                  e.preventDefault();
+                  // Prevent default behavior unless select is active
+                  if (!isSelectActive) {
+                    e.preventDefault();
+                  }
                 }}
+                onFocus={() => setSelectOpen(true)} // Open select menu
+                onBlur={() => setSelectOpen(false)} // Close select menu
               >
                 {optionsArray.map((option, index) => (
                   <option key={index} value={option}>
                     {option}
                   </option>
                 ))}
+                {allowAdditions && (
+                  <option value="addOption">➕ Add Option</option> // Special add option
+                )}
               </select>
-              {allowAdditions && (
-                <div>
-                  <input
-                    type="text"
-                    value={newOption}
-                    onChange={(e) => setNewOption(e.target.value)}
-                    placeholder="Add option"
-                  />
-                  <button onClick={handleAddOption}>Add</button>
-                </div>
-              )}
             </div>
           );
         default:
@@ -377,7 +388,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         onStop={(e, data) => {
           handleDragStop(e, data);
         }}
-        disabled={!isDraggable}
+        disabled={!isDraggable || isSelectOpen}
       >
         {renderComponent()}
       </Draggable>
