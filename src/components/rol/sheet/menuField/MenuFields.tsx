@@ -87,6 +87,9 @@ const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
               <MenuItem onClick={() => handleAddField(typeField.checkbox)}>
                 Checkbox
               </MenuItem>
+              <MenuItem onClick={() => handleAddField(typeField.selectable)}>
+                List
+              </MenuItem>
             </Menu>
           </div>
         );

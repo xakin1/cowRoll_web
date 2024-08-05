@@ -11,6 +11,8 @@ const PageField: React.FC<DraggableFieldProps> = ({
   value,
   label,
   style,
+  options = "",
+  allowAdditions = false,
   setSelectedElement,
   onContextMenu,
   onChange,
@@ -49,6 +51,8 @@ const PageField: React.FC<DraggableFieldProps> = ({
           name,
           tags,
           value,
+          options,
+          allowAdditions,
           style: {
             ...styles,
             position: "absolute" as "absolute",
@@ -90,6 +94,8 @@ const PageField: React.FC<DraggableFieldProps> = ({
           onChange={handleChange}
           isSelected={isSelected}
           onSelect={handleSelect}
+          options={options} // Pass options
+          allowAdditions={allowAdditions} // Pass allowAdditions
         />
       </div>
     </>

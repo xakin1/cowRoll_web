@@ -47,6 +47,9 @@
         "previousSheet": "Previous sheet"
       },
       "Style": {
+        "scriptProperties": "Script properties",
+        "options": "Options",
+        "allowAdditions": "Allow add options",
         "properties": "General Properties",
         "rotate": "Rotate",
         "tag": "Tags",

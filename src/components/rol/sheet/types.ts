@@ -49,6 +49,8 @@ export interface Field {
   value?: any;
   label: string;
   style: { [key: string]: any };
+  options?: string;
+  allowAdditions?: boolean;
   onChange?: (...args: any[]) => void;
 }
 

@@ -38,6 +38,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 }) => {
   const [width, setWidth] = useState<string>("");
   const [nameVar, setNameVar] = useState<string>("");
+  const [options, setOptions] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isBold, setIsBold] = useState<boolean>(false);
@@ -63,6 +64,10 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const previousElementRef = useRef<Field | null>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
 
+  const [selectOptions, setSelectOptions] = useState<string>("");
+  const [allowAdditions, setAllowAdditions] = useState<boolean>(true);
+  const [newOption, setNewOption] = useState<string>("");
+
   const fonts = [
     "Arial",
     "Helvetica",
@@ -85,6 +90,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     ) {
       setWidth(getSizeValue(selectedElement.style?.width));
       setNameVar(selectedElement.name);
+      setOptions(selectedElement.options || "");
       setTags(selectedElement.tags || []); // Use selectedElement.tags
       setFontSize(selectedElement.style?.fontSize || "12");
       setHeight(getSizeValue(selectedElement.style?.height));
@@ -123,7 +129,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setXPosition(parseInt(translateMatch[1], 10).toString());
         setYPosition(parseInt(translateMatch[2], 10).toString());
       }
-      // setCustomCSS(generateCustomCSS(selectedElement.style));
+      setSelectOptions(selectedElement.options || "");
+      setAllowAdditions(selectedElement.allowAdditions || false);
+
       previousElementRef.current = selectedElement;
     }
   }, [selectedElement]);
@@ -256,21 +264,39 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     return size?.toString() || "";
   };
 
-  const handleTagChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newTags = [...tags];
-      console.log(newTags);
-      newTags[index] = event.target.value;
-      setTags(newTags);
-      onUpdateField({ ...selectedElement!, tags: newTags });
-    };
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = event.target;
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    setNameVar(newValue);
+    // Actualizar el estado dependiendo del campo
+    switch (name) {
+      case "name":
+        setNameVar(value);
+        break;
+      case "options":
+        setOptions(value);
+        break;
+      case "allowAdditions":
+        if (type === "checkbox") {
+          const isChecked: boolean = (event.target as HTMLInputElement).checked;
+          setAllowAdditions(isChecked);
+          if (selectedElement) {
+            onUpdateField({
+              ...selectedElement,
+              allowAdditions: isChecked,
+            });
+          }
+        }
+        break;
+    }
 
-    if (selectedElement) {
-      onUpdateField({ ...selectedElement, name: newValue });
+    // Actualizar el elemento seleccionado
+    if (selectedElement && name !== "allowAdditions") {
+      onUpdateField({
+        ...selectedElement,
+        [name]: value,
+      });
     }
   };
 
@@ -288,7 +314,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               type="text"
               name="name"
               value={nameVar}
-              onChange={handleNameChange}
+              onChange={handleInputChange}
             />
           </div>
           <div className="tag-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
@@ -314,6 +340,34 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               </div>
             </div>
           </div>
+          {selectedElement?.type === typeField.selectable && (
+            <>
+              <div className="position-inputs__container properties-panel__property-field">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.options")}:
+                </label>
+                <textarea
+                  className="position-inputs__container__input"
+                  name="options"
+                  value={options}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="position-inputs__container properties-panel__property-field">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.allowAdditions")}:
+                </label>
+                <input
+                  type="checkbox"
+                  className="position-inputs__container__input"
+                  name="allowAdditions"
+                  checked={allowAdditions}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </>
+          )}
           <div className="position-inputs__container properties-panel__property-field">
             <label className="position-inputs__container__label">
               {i18n.t("Rol.Sheet.Style.borderStyle")}:
@@ -649,6 +703,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               />
             </div>
           )}
+
         {selectedElement?.type !== typeField.text && (
           <>
             <div className="properties-panel__property-field">
@@ -673,6 +728,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             )}
           </>
         )}
+
         {/* <h4>{i18n.t("Rol.Sheet.Style.css")}</h4>
         <textarea
           name="customCSS"

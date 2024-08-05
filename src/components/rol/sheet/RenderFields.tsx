@@ -22,6 +22,7 @@ export enum typeField {
   line = "line",
   text = "text",
   photo = "photo",
+  selectable = "selectable", // Nuevo tipo de campo
 }
 
 export const fields = [
@@ -94,15 +95,38 @@ export const fields = [
       zIndex: "2",
     },
   },
+  {
+    type: typeField.selectable,
+    label: "Selectable",
+    style: { zIndex: "2" },
+  },
 ];
 
 const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
-  ({ type, label, id, value, onSelect, style, onChange, onClick }, ref) => {
+  (
+    {
+      type,
+      label,
+      id,
+      value,
+      options,
+      allowAdditions,
+      onSelect,
+      style,
+      onChange,
+      onClick,
+    },
+    ref
+  ) => {
     const { setIsContextMenuVisible } = useContext(SheetContext)!;
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [selectOptions, setSelectOptions] = useState<string>(options || "");
+    const [newOption, setNewOption] = useState("");
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
+
+    const [selectedValue, setSelectedValue] = useState("solid");
 
     const handleClick = () => {
       if (onSelect) {
@@ -154,8 +178,15 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       }
     };
 
-    // Variable para determinar si el elemento es draggable
     const isDraggable = type !== typeField.pdf; // Desactivar para PDF
+
+    const handleAddOption = () => {
+      if (newOption.trim() !== "" && !selectOptions.includes(newOption)) {
+        setSelectOptions(newOption);
+        setNewOption("");
+        onChange && onChange({ options: newOption });
+      }
+    };
 
     const renderComponent = () => {
       switch (type) {
@@ -242,7 +273,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
-              className="photo-container"
+              className="photo-container sheet-option"
               style={style}
               onClick={handleClick}
             >
@@ -289,6 +320,52 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               }}
             ></div>
           );
+        case typeField.selectable:
+          const optionsArray = selectOptions
+            .split(";")
+            .map((option) => option.trim());
+          return (
+            <div
+              ref={targetRef as React.RefObject<HTMLDivElement>}
+              className="select-container sheet-option"
+              style={{
+                minWidth: "30px",
+                ...style,
+              }}
+              onClick={handleClick}
+            >
+              <select
+                value={selectedValue}
+                onChange={(e) => setSelectedValue(e.target.value)}
+                style={{
+                  minWidth: "30px",
+                  width: "100%",
+                  height: "100%",
+                  boxSizing: "border-box",
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                {optionsArray.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              {allowAdditions && (
+                <div>
+                  <input
+                    type="text"
+                    value={newOption}
+                    onChange={(e) => setNewOption(e.target.value)}
+                    placeholder="Add option"
+                  />
+                  <button onClick={handleAddOption}>Add</button>
+                </div>
+              )}
+            </div>
+          );
         default:
           return null;
       }
@@ -300,7 +377,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         onStop={(e, data) => {
           handleDragStop(e, data);
         }}
-        disabled={!isDraggable} // Deshabilitar arrastre si no es draggable
+        disabled={!isDraggable}
       >
         {renderComponent()}
       </Draggable>

@@ -49,12 +49,15 @@
         "previousSheet": "Folla anterior"
       },
       "Style": {
+        "scriptProperties": "Propiedades para o comportamento",
+        "options": "Opcions",
+        "allowAdditions": "Permitir engafir opcions",
+
         "properties": "Propiedades xerais",
         "rotate": "Rotación",
         "tag": "Tags",
         "addTag": "Engadir tag",
         "nameNotAvailable": "O nome {0} non está dispoñible",
-
         "name": "Nome",
         "scale": "Escala",
         "width": "Ancho",

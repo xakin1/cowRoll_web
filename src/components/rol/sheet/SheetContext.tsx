@@ -21,7 +21,7 @@ import { toastStyle } from "../../Route";
 import type { BlocklyRefProps } from "../editor/blockyEditor/BlocklyEditor";
 import { typeField } from "./RenderFields";
 import type { Field, FieldWithoutId, Id } from "./types";
-// Define SheetContextProps interface
+
 interface SheetContextProps {
   sheets: Field[][];
   sheet: SheetProps | undefined;
@@ -213,12 +213,10 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
   };
 
   const saveFields = async (props: EditSheetProps) => {
-    // Filtra los campos que no son de tipo PDF
     const filteredSheets = sheets.map((sheet) =>
       sheet.filter((field) => field.type !== typeField.pdf)
     );
 
-    // Convierte los campos filtrados a JSON
     const sheetsJSON = JSON.stringify(filteredSheets);
 
     if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
@@ -228,27 +226,24 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
       };
 
       try {
-        // Llamada a la función para editar el archivo
         const response = await editFile(fileProps);
 
-        // Guarda el contenido de blockly si está disponible
         if (blocklyRef.current) {
           blocklyRef.current.saveContent();
         }
 
-        // Manejo de la respuesta
         if (response && "message" in response) {
           toast.success(i18n.t("General.saveSuccess"), toastStyle);
         } else {
           toast.error(i18n.t("Errors." + response?.error), toastStyle);
         }
       } catch (error) {
-        // Manejo de errores de la llamada asincrónica
         console.error("Error saving fields:", error);
         toast.error(i18n.t("Errors.generalError"), toastStyle);
       }
     }
   };
+
   const loadFields = () => {
     if (sheet && sheet.content) {
       setSheets(JSON.parse(sheet.content));
@@ -308,10 +303,8 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
     try {
-      // Si estás usando datos base64, asegúrate de que estén decodificados en ArrayBuffer
       const pdfDataBuffer = base64ToArrayBuffer(pdfData);
 
-      // Cargar el documento
       const loadingTask = pdfjsLib.getDocument({ data: pdfDataBuffer });
       const pdf = await loadingTask.promise;
       const pages: Field[][] = [];
@@ -320,7 +313,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         const page = await pdf.getPage(i);
         const originalViewport = page.getViewport({ scale: 1.0 });
 
-        // Calcula la escala basada en las dimensiones deseadas
         const scaleX = 816 / originalViewport.width;
         const scaleY = 1056 / originalViewport.height;
         const scale = Math.min(scaleX, scaleY);
@@ -336,7 +328,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
-        // Asegurar que el canvas tenga un fondo blanco
         context.fillStyle = "white";
         context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -345,7 +336,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
           viewport: viewport,
         };
 
-        // Renderizar la página
         await page.render(renderContext).promise;
 
         const imgData = canvas.toDataURL("image/png");
@@ -358,8 +348,8 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
             style: {
               backgroundImage: `url(${imgData})`,
               backgroundSize: "cover",
-              width: `${viewport.width}px`, // Ajuste de ancho
-              height: `${viewport.height}px`, // Ajuste de altura
+              width: `${viewport.width}px`,
+              height: `${viewport.height}px`,
             },
             label: `Page ${i}`,
             value: "",
