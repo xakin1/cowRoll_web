@@ -58,15 +58,16 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [borderWidth, setBorderWidth] = useState<string>("1");
   const [borderStyle, setBorderStyle] = useState<string>("solid");
   const [borderRadius, setBorderRadius] = useState<string>("0");
+  const [activeCheckboxColor, setActiveCheckboxColor] =
+    useState<string>("#2196F3");
+  const [inactiveCheckboxColor, setInactiveCheckboxColor] =
+    useState<string>("#FFFFFF");
+  const [allowAdditions, setAllowAdditions] = useState<boolean>(true);
   const [customCSS, setCustomCSS] = useState<string>("");
 
   const { updateFieldStyle } = useContext(SheetContext)!;
   const previousElementRef = useRef<Field | null>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
-
-  const [selectOptions, setSelectOptions] = useState<string>("");
-  const [allowAdditions, setAllowAdditions] = useState<boolean>(true);
-  const [newOption, setNewOption] = useState<string>("");
 
   const fonts = [
     "Arial",
@@ -91,7 +92,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       setWidth(getSizeValue(selectedElement.style?.width));
       setNameVar(selectedElement.name);
       setOptions(selectedElement.options || "");
-      setTags(selectedElement.tags || []); // Use selectedElement.tags
+      setTags(selectedElement.tags || []);
       setFontSize(selectedElement.style?.fontSize || "12");
       setHeight(getSizeValue(selectedElement.style?.height));
       setIsBold(selectedElement.style.fontWeight === "bold");
@@ -129,7 +130,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setXPosition(parseInt(translateMatch[1], 10).toString());
         setYPosition(parseInt(translateMatch[2], 10).toString());
       }
-      setSelectOptions(selectedElement.options || "");
+      console.log(selectedElement);
+      setActiveCheckboxColor(selectedElement.style?.activeColor || "#2196F3");
+      setInactiveCheckboxColor(
+        selectedElement.style?.inactiveColor || "#FFFFFF"
+      );
       setAllowAdditions(selectedElement.allowAdditions || false);
 
       previousElementRef.current = selectedElement;
@@ -200,6 +205,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
           setCustomCSS(value);
           applyCustomCSS(value);
         }
+        break;
+      case "activeCheckboxColor":
+        setActiveCheckboxColor(value);
+        onUpdateStyle("activeColor", value);
+        break;
+      case "inactiveCheckboxColor":
+        setInactiveCheckboxColor(value);
+        onUpdateStyle("inactiveColor", value);
         break;
       default:
         onUpdateStyle(name, value);
@@ -704,28 +717,57 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             </div>
           )}
 
-        {selectedElement?.type !== typeField.text && (
-          <>
+        {selectedElement?.type !== typeField.text &&
+          selectedElement?.type !== typeField.checkbox &&
+          selectedElement?.type !== typeField.line && (
             <div className="properties-panel__property-field">
               <SelectColor
-                value={borderColor}
-                name={"borderColor"}
-                label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
+                value={backgroundColor}
+                name={"backgroundColor"}
+                label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
                 onChange={handleChange}
-                onRemove={handleRemoveBorder}
+                onRemove={handleRemoveBackground}
               ></SelectColor>
             </div>
-            {selectedElement?.type !== typeField.line && (
-              <div className="properties-panel__property-field">
-                <SelectColor
-                  value={backgroundColor}
-                  name={"backgroundColor"}
-                  label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
-                  onChange={handleChange}
-                  onRemove={handleRemoveBackground}
-                ></SelectColor>
-              </div>
-            )}
+          )}
+        {selectedElement?.type !== typeField.text && (
+          <div className="properties-panel__property-field">
+            <SelectColor
+              value={borderColor}
+              name={"borderColor"}
+              label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
+              onChange={handleChange}
+              onRemove={handleRemoveBorder}
+            ></SelectColor>
+          </div>
+        )}
+        {selectedElement?.type === typeField.checkbox && (
+          <>
+            <h4>Checkbox Colors</h4>
+            <div className="position-inputs__container properties-panel__property-field">
+              <label className="position-inputs__container__label">
+                Active Color:
+              </label>
+              <input
+                type="color"
+                className="position-inputs__container__input"
+                name="activeCheckboxColor"
+                value={activeCheckboxColor}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="position-inputs__container properties-panel__property-field">
+              <label className="position-inputs__container__label">
+                Inactive Color:
+              </label>
+              <input
+                type="color"
+                className="position-inputs__container__input"
+                name="inactiveCheckboxColor"
+                value={inactiveCheckboxColor}
+                onChange={handleChange}
+              />
+            </div>
           </>
         )}
 

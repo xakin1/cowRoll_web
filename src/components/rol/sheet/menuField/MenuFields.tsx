@@ -23,17 +23,20 @@ export const menuFields = [
   { id: "photoTool", type: "photoTool", label: "Photo" },
 ];
 
-const MenuField: React.FC<MenuFieldProps> = ({ type }) => {
+const MenuField: React.FC<
+  MenuFieldProps & { setIsDraggable: (draggable: boolean) => void }
+> = ({ type, setIsDraggable }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const { addField } = useContext(SheetContext)!;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    setIsDraggable(false); // Disable dragging when menu is open
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setIsDraggable(true); // Re-enable dragging when menu is closed
   };
 
   const handleAddField = (type: typeField) => {

@@ -129,6 +129,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
 
     const [selectedValue, setSelectedValue] = useState("solid");
     const [isSelectOpen, setSelectOpen] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
 
     const handleClick = () => {
       if (onSelect) {
@@ -172,7 +173,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         targetRef.current.style.position = "absolute";
 
         setPosition({ x: 0, y: 0 });
-
+        console.log(newXPosition, newYPosition);
         onChange({
           left: `${newXPosition}px`,
           top: `${newYPosition}px`,
@@ -180,14 +181,14 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       }
     };
 
-    const isDraggable = type !== typeField.pdf; // Desactivar para PDF
+    const isDraggable = type !== typeField.pdf;
 
     const handleAddOptionSelected = () => {
       const input = prompt("Enter a new option:"); // Ask user for new option
       if (input && input.trim() !== "" && !selectOptions.includes(input)) {
         setSelectOptions((prevOptions) => prevOptions + ";" + input);
         onChange && onChange({ options: selectOptions + ";" + input });
-        setSelectedValue(input); // Update selected value
+        setSelectedValue(input);
       }
     };
 
@@ -207,15 +208,52 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             />
           );
         case typeField.checkbox:
+          const { top, left, ...restOfStyle } = style;
           return (
-            <input
-              ref={targetRef as React.RefObject<HTMLInputElement>}
-              style={style}
-              type="checkbox"
-              checked={value}
+            <label
+              ref={targetRef as React.RefObject<HTMLLabelElement>}
+              style={{
+                display: "inline-block",
+                top: top,
+                left: left,
+                zIndex: 2,
+                position: "absolute",
+              }}
               onClick={handleClick}
-              className="sheet-option"
-            />
+            >
+              <input
+                type="checkbox"
+                style={{
+                  position: "absolute",
+                  opacity: 0,
+                  width: 0,
+                  height: 0,
+                  margin: 0,
+                  zIndex: -1,
+                }}
+                checked={isChecked}
+                onChange={(e) => {
+                  setIsChecked(e.target.checked);
+                  onChange && onChange(e.target.checked);
+                }}
+              />
+
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
+                  border: "1px solid #999",
+                  backgroundColor: isChecked
+                    ? restOfStyle.activeColor || "#2196F3"
+                    : restOfStyle.inactiveColor || "#FFF",
+                  transition: "background-color 0.3s",
+                  cursor: "pointer",
+                  zIndex: 2,
+                  ...restOfStyle,
+                }}
+              />
+            </label>
           );
 
         case typeField.textarea:

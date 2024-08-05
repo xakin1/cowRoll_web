@@ -16,11 +16,15 @@ import { SheetContext } from "../SheetContext";
 import type { MenuItemProps } from "../types";
 import MenuField, { menuFields } from "./MenuFields";
 import "./menu.css";
+
 export const iconStyle = { fill: "var(--text-color)" };
 
 const FieldMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { mode } = useContext(SheetContext)!;
+
+  // New state to control draggable
+  const [isDraggable, setIsDraggable] = useState(true);
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -37,10 +41,14 @@ const FieldMenu: React.FC = () => {
   const { currentSheetIndex, addSheet, removeSheet, changeMode } = context;
 
   return (
-    <Draggable>
+    <Draggable disabled={!isDraggable}>
       <div className="menu">
         {menuFields.map((field) => (
-          <MenuItem key={field.id} field={field} />
+          <MenuItem
+            key={field.id}
+            field={field}
+            setIsDraggable={setIsDraggable} // Pass down the function to control draggable state
+          />
         ))}
         <IconButton
           aria-label="more"
@@ -96,8 +104,10 @@ const FieldMenu: React.FC = () => {
   );
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({ field }) => {
-  return <MenuField type={field.type} />;
+const MenuItem: React.FC<
+  MenuItemProps & { setIsDraggable: (draggable: boolean) => void }
+> = ({ field, setIsDraggable }) => {
+  return <MenuField type={field.type} setIsDraggable={setIsDraggable} />;
 };
 
 export default FieldMenu;

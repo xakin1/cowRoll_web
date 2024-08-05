@@ -54,6 +54,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
           options,
           allowAdditions,
           style: {
+            ...style,
             ...styles,
             position: "absolute" as "absolute",
           },
