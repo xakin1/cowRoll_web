@@ -1,14 +1,17 @@
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
-import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
-import { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import React, { useEffect, useRef, useState } from "react";
+// Import your necessary components and hooks
+import { Divider, IconButton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import i18n from "../../../i18n/i18n";
 import { addMessage } from "../../../redux/slice/chatSlice";
 import type { RootState } from "../../../redux/store";
-import { createFile, executeCode, getFiles } from "../../../services/codeApi";
+import {
+  createFile,
+  deleteFile,
+  executeCode,
+  getFiles,
+} from "../../../services/codeApi";
 import {
   getCodesOfRol,
   getPlayerSheets,
@@ -22,9 +25,15 @@ import {
 } from "../../../utils/types/ApiTypes";
 import { toastStyle } from "../../Route";
 import CustomModal from "../../utils/CustomModal";
-import { Divider } from "../../utils/Divider";
+import ConfirmationModal from "./ConfirmationModal";
 import PlayerNameModal from "./PlayerModal";
 import ViewSheet from "./ViewSheet";
+
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
+import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
+import ReactMarkdown from "react-markdown";
 import "./chat.css";
 
 const Chat = () => {
@@ -45,6 +54,11 @@ const Chat = () => {
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] =
+    useState<boolean>(false);
+  const [selectedRoleForDeletion, setSelectedRoleForDeletion] = useState<
+    string | null
+  >(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -121,7 +135,7 @@ const Chat = () => {
       setMessageHistory((prev) => [...prev, input.trim()]);
       setHistoryIndex(-1);
       setInput("");
-      setIsEditing(false); // Desactivar edición al enviar el mensaje
+      setIsEditing(false); // Deactivate editing after sending the message
     }
   };
 
@@ -132,7 +146,7 @@ const Chat = () => {
   }, [messages]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    setIsEditing(true); // Activar edición al presionar cualquier tecla
+    setIsEditing(true); // Activate editing when pressing any key
 
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -397,7 +411,7 @@ const Chat = () => {
   const handleAddRole = () => {
     handleClose();
     if (selectedFile && selectedFile.content) {
-      setShowPlayerNameModal(true); // Open the player name modal
+      setShowPlayerNameModal(true);
     }
   };
 
@@ -438,7 +452,48 @@ const Chat = () => {
     }
   };
 
-  // Handle role change and load the appropriate sheet if not GM
+  const handleDeleteCharacter = (roleName: string) => {
+    setShowDeleteConfirmation(true);
+    setSelectedRoleForDeletion(roleName);
+  };
+
+  const confirmDeleteCharacter = async () => {
+    if (selectedRoleForDeletion) {
+      // Get the sheet associated with the selected role
+      const sheetToDelete = playerSheets.get(selectedRoleForDeletion);
+
+      if (sheetToDelete) {
+        try {
+          // Call deleteFile with the sheet's ID
+          await deleteFile(sheetToDelete.id);
+
+          // Remove the role from the roles list
+          setRoles((prevRoles) =>
+            prevRoles.filter((role) => role !== selectedRoleForDeletion)
+          );
+
+          // Remove the player sheet from the map
+          setPlayerSheets((prevPlayerSheets) => {
+            const newPlayerSheets = new Map(prevPlayerSheets);
+            newPlayerSheets.delete(selectedRoleForDeletion);
+            return newPlayerSheets;
+          });
+
+          // Show success toast
+          toast.success(i18n.t("Success.RoleDeleted"), toastStyle);
+        } catch (error) {
+          // Handle deletion error
+          console.error("Failed to delete file:", error);
+          toast.error(i18n.t("Errors.FileDeletionFailed"), toastStyle);
+        }
+      }
+
+      // Hide the confirmation modal
+      setShowDeleteConfirmation(false);
+      setSelectedRoleForDeletion(null);
+    }
+  };
+
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
     if (newRole !== "GM") {
@@ -508,6 +563,21 @@ const Chat = () => {
                 <div>
                   {i18n.t("General.actualRoles")}: {roles.join(", ")}
                 </div>
+                <ul>
+                  {roles.map(
+                    (role, index) =>
+                      role !== "GM" && (
+                        <li key={index}>
+                          {role}
+                          <IconButton
+                            onClick={() => handleDeleteCharacter(role)}
+                          >
+                            <DeleteIcon></DeleteIcon>
+                          </IconButton>
+                        </li>
+                      )
+                  )}
+                </ul>
               </div>
             )}
           </div>
@@ -591,6 +661,14 @@ const Chat = () => {
         open={showPlayerNameModal}
         onClose={() => setShowPlayerNameModal(false)}
         onAddPlayer={handleAddPlayer}
+      />
+
+      <ConfirmationModal
+        open={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onConfirm={confirmDeleteCharacter}
+        title="Confirm Delete"
+        description={`Are you sure you want to delete ${selectedRoleForDeletion}?`}
       />
     </>
   );

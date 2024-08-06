@@ -142,3 +142,8 @@
   align-items: center;
   margin-top: 20px;
 }
+
+.confirmation-modal__buttons {
+  display: flex;
+  justify-content: space-between;
+}
