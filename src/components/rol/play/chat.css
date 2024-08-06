@@ -108,3 +108,37 @@
   flex-direction: row;
   align-items: center;
 }
+
+.chat-page {
+  display: flex;
+  flex-direction: row;
+}
+
+.chat-container__footer__role_selector {
+  overflow: hidden;
+}
+
+.page_container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page_container__page {
+  position: relative;
+  display: flex;
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto;
+  width: 816px;
+  height: 1056px;
+  border: 1px solid var(--text-color);
+  overflow: hidden;
+}
+
+.page_selector_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}

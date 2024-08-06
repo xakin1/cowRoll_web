@@ -6,7 +6,7 @@ import { default as FormatBoldIcon } from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
 import FormatStrikethroughIcon from "@mui/icons-material/FormatStrikethrough";
 import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
-import { Chip, IconButton } from "@mui/material"; // Import necessary components
+import { Chip, IconButton } from "@mui/material";
 import React, {
   useContext,
   useEffect,
@@ -85,6 +85,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     "Impact",
   ];
 
+  const [isDraggable, setIsDraggable] = useState<boolean>(true);
+
   useEffect(() => {
     if (
       selectedElement &&
@@ -151,6 +153,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const { name, value } = e.target;
     switch (name) {
       case "width":
+        console.log(name, value);
         setWidth(value);
         onUpdateStyle(name, `${value}px`);
         break;
@@ -288,7 +291,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   ) => {
     const { name, value, type } = event.target;
 
-    // Actualizar el estado dependiendo del campo
     switch (name) {
       case "name":
         setNameVar(value);
@@ -310,8 +312,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         break;
     }
 
-    // Actualizar el elemento seleccionado
     if (selectedElement && name !== "allowAdditions") {
+      console.log(selectedElement);
       onUpdateField({
         ...selectedElement,
         [name]: value,
@@ -319,8 +321,12 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     }
   };
 
+  const handleFocus = () => setIsDraggable(false);
+
+  const handleBlur = () => setIsDraggable(true);
+
   return (
-    <Draggable>
+    <Draggable disabled={!isDraggable}>
       <div className="properties-panel" ref={propertiesPanelRef}>
         <div className="properties-panel__property-field position-controls">
           <h4>{i18n.t("Rol.Sheet.Style.scriptProperties")}</h4>
@@ -329,10 +335,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               {i18n.t("Rol.Sheet.Style.name")}:
             </label>
             <input
+              onKeyDown={(e) => {
+                e.stopPropagation();
+              }}
               className="position-inputs__container__input"
               type="text"
               name="name"
               value={nameVar}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onChange={handleInputChange}
             />
           </div>
@@ -351,9 +362,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   />
                 ))}
                 <input
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                    handleTagAdd(e);
+                  }}
                   placeholder={i18n.t("Rol.Sheet.Style.addTag")}
                   type="text"
-                  onKeyDown={handleTagAdd}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   style={{ width: "100%" }}
                 />
               </div>
@@ -366,9 +382,14 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   {i18n.t("Rol.Sheet.Style.options")}:
                 </label>
                 <textarea
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                  }}
                   className="position-inputs__container__input"
                   name="options"
                   value={options}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   onChange={handleInputChange}
                 />
               </div>
@@ -378,256 +399,281 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   {i18n.t("Rol.Sheet.Style.allowAdditions")}:
                 </label>
                 <input
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                  }}
                   type="checkbox"
                   className="position-inputs__container__input"
                   name="allowAdditions"
                   checked={allowAdditions}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                   onChange={handleInputChange}
                 />
               </div>
             </>
           )}
-
           {selectedElement?.type === typeField.text ||
-            (selectedElement?.type === typeField.textarea && (
-              <>
-                <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
-                <div className="alignment-buttons">
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        align == "center" ? "lightgray" : "transparent",
-                      border: align == "center" ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (align != "center") {
-                        setAlign("center");
-                        onUpdateStyle("textAlign", `center`);
-                      } else {
-                        setAlign("initial");
-
-                        onUpdateStyle("textAlign", `initial`);
-                      }
-                    }}
-                  >
-                    <FormatAlignCenterIcon></FormatAlignCenterIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        align == "justify" ? "lightgray" : "transparent",
-                      border: align == "justify" ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (align != "justify") {
-                        setAlign("justify");
-                        onUpdateStyle("textAlign", `justify`);
-                      } else {
-                        setAlign("initial");
-
-                        onUpdateStyle("textAlign", `initial`);
-                      }
-                    }}
-                  >
-                    <FormatAlignJustifyIcon></FormatAlignJustifyIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        align == "left" ? "lightgray" : "transparent",
-                      border: align == "left" ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (align != "left") {
-                        setAlign("left");
-                        onUpdateStyle("textAlign", `left`);
-                      } else {
-                        setAlign("initial");
-
-                        onUpdateStyle("textAlign", `initial`);
-                      }
-                    }}
-                  >
-                    <FormatAlignLeftIcon></FormatAlignLeftIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        align == "right" ? "lightgray" : "transparent",
-                      border: align == "right" ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (align != "right") {
-                        setAlign("right");
-                        onUpdateStyle("textAlign", `right`);
-                      } else {
-                        setAlign("initial");
-
-                        onUpdateStyle("textAlign", `initial`);
-                      }
-                    }}
-                  >
-                    <FormatAlignRightIcon></FormatAlignRightIcon>
-                  </IconButton>
-
-                  <IconButton
-                    sx={{
-                      backgroundColor: isBold ? "lightgray" : "transparent",
-                      border: isBold ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (isBold) {
-                        onUpdateStyle("fontWeight", `normal`);
-                      } else {
-                        onUpdateStyle("fontWeight", `bold`);
-                      }
-                      setIsBold(!isBold);
-                    }}
-                  >
-                    <FormatBoldIcon></FormatBoldIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor: isItalic ? "lightgray" : "transparent",
-                      border: isItalic ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (isItalic) {
-                        onUpdateStyle("fontStyle", `normal`);
-                      } else {
-                        onUpdateStyle("fontStyle", `italic`);
-                      }
-                      setIsItalic(!isItalic);
-                    }}
-                  >
-                    <FormatItalicIcon></FormatItalicIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        decoration == "underline" ? "lightgray" : "transparent",
-                      border:
-                        decoration == "underline" ? "2px solid black" : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (decoration != "underline") {
-                        setDecoration("underline");
-                        onUpdateStyle("textDecoration", `underline`);
-                      } else {
-                        setDecoration("none");
-
-                        onUpdateStyle("textDecoration", `none`);
-                      }
-                    }}
-                  >
-                    <FormatUnderlinedIcon></FormatUnderlinedIcon>
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      backgroundColor:
-                        decoration == "line-through"
-                          ? "lightgray"
-                          : "transparent",
-                      border:
-                        decoration == "line-through"
-                          ? "2px solid black"
-                          : "none",
-                      borderRadius: "4px",
-                    }}
-                    onClick={() => {
-                      if (decoration != "line-through") {
-                        setDecoration("line-through");
-                        onUpdateStyle("textDecoration", `line-through`);
-                      } else {
-                        setDecoration("none");
-
-                        onUpdateStyle("textDecoration", `none`);
-                      }
-                    }}
-                  >
-                    <FormatStrikethroughIcon></FormatStrikethroughIcon>
-                  </IconButton>
-                </div>
-
-                <h4>{i18n.t("Rol.Sheet.Style.textProperties")}</h4>
-                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-                  <label className="position-inputs__container__label">
-                    {i18n.t("Rol.Sheet.Style.fontSize")}:
-                  </label>
-                  <input
-                    className="position-inputs__container__input"
-                    type="number"
-                    name="fontSize"
-                    value={fontSize}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-                  <label className="position-inputs__container__label">
-                    {i18n.t("Rol.Sheet.Style.font")}:
-                  </label>
-                  <select
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    onMouseDown={(e) => {
-                      e.stopPropagation();
-                    }}
-                    value={font}
-                    name="fontFamily"
-                    onChange={handleChange}
-                  >
-                    {fonts.map((fontOption) => (
-                      <option
-                        style={{ fontFamily: fontOption }}
-                        onClick={(e) => e.stopPropagation()}
-                        key={fontOption}
-                        value={fontOption}
-                      >
-                        {fontOption}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-                  <SelectColor
-                    value={textColor}
-                    name={"color"}
-                    label={`${i18n.t("Rol.Sheet.Style.textColor")}:`}
-                    onChange={handleChange}
-                  ></SelectColor>
-                </div>
-              </>
+            selectedElement?.type === typeField.textarea ||
+            (selectedElement?.type === typeField.input && (
+              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                <SelectColor
+                  value={textColor}
+                  name={"color"}
+                  label={`${i18n.t("Rol.Sheet.Style.textColor")}:`}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                ></SelectColor>
+              </div>
             ))}
+
+          {(selectedElement?.type === typeField.text ||
+            selectedElement?.type === typeField.textarea) && (
+            <>
+              <h4>{i18n.t("Rol.Sheet.Style.textAling")}</h4>
+              <div className="alignment-buttons">
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "center" ? "lightgray" : "transparent",
+                    border: align == "center" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "center") {
+                      setAlign("center");
+                      onUpdateStyle("textAlign", `center`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdateStyle("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignCenterIcon></FormatAlignCenterIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "justify" ? "lightgray" : "transparent",
+                    border: align == "justify" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "justify") {
+                      setAlign("justify");
+                      onUpdateStyle("textAlign", `justify`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdateStyle("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignJustifyIcon></FormatAlignJustifyIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "left" ? "lightgray" : "transparent",
+                    border: align == "left" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "left") {
+                      setAlign("left");
+                      onUpdateStyle("textAlign", `left`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdateStyle("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignLeftIcon></FormatAlignLeftIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      align == "right" ? "lightgray" : "transparent",
+                    border: align == "right" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (align != "right") {
+                      setAlign("right");
+                      onUpdateStyle("textAlign", `right`);
+                    } else {
+                      setAlign("initial");
+
+                      onUpdateStyle("textAlign", `initial`);
+                    }
+                  }}
+                >
+                  <FormatAlignRightIcon></FormatAlignRightIcon>
+                </IconButton>
+
+                <IconButton
+                  sx={{
+                    backgroundColor: isBold ? "lightgray" : "transparent",
+                    border: isBold ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (isBold) {
+                      onUpdateStyle("fontWeight", `normal`);
+                    } else {
+                      onUpdateStyle("fontWeight", `bold`);
+                    }
+                    setIsBold(!isBold);
+                  }}
+                >
+                  <FormatBoldIcon></FormatBoldIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor: isItalic ? "lightgray" : "transparent",
+                    border: isItalic ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (isItalic) {
+                      onUpdateStyle("fontStyle", `normal`);
+                    } else {
+                      onUpdateStyle("fontStyle", `italic`);
+                    }
+                    setIsItalic(!isItalic);
+                  }}
+                >
+                  <FormatItalicIcon></FormatItalicIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      decoration == "underline" ? "lightgray" : "transparent",
+                    border:
+                      decoration == "underline" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (decoration != "underline") {
+                      setDecoration("underline");
+                      onUpdateStyle("textDecoration", `underline`);
+                    } else {
+                      setDecoration("none");
+
+                      onUpdateStyle("textDecoration", `none`);
+                    }
+                  }}
+                >
+                  <FormatUnderlinedIcon></FormatUnderlinedIcon>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    backgroundColor:
+                      decoration == "line-through"
+                        ? "lightgray"
+                        : "transparent",
+                    border:
+                      decoration == "line-through" ? "2px solid black" : "none",
+                    borderRadius: "4px",
+                  }}
+                  onClick={() => {
+                    if (decoration != "line-through") {
+                      setDecoration("line-through");
+                      onUpdateStyle("textDecoration", `line-through`);
+                    } else {
+                      setDecoration("none");
+
+                      onUpdateStyle("textDecoration", `none`);
+                    }
+                  }}
+                >
+                  <FormatStrikethroughIcon></FormatStrikethroughIcon>
+                </IconButton>
+              </div>
+
+              <h4>{i18n.t("Rol.Sheet.Style.textProperties")}</h4>
+              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.fontSize")}:
+                </label>
+                <input
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className="position-inputs__container__input"
+                  type="number"
+                  name="fontSize"
+                  value={fontSize}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+                <label className="position-inputs__container__label">
+                  {i18n.t("Rol.Sheet.Style.font")}:
+                </label>
+                <select
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  value={font}
+                  name="fontFamily"
+                  onChange={handleChange}
+                >
+                  {fonts.map((fontOption) => (
+                    <option
+                      style={{ fontFamily: fontOption }}
+                      onClick={(e) => e.stopPropagation()}
+                      key={fontOption}
+                      value={fontOption}
+                    >
+                      {fontOption}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
           <h4>{i18n.t("Rol.Sheet.Style.position")}</h4>
 
           <div className="position-inputs">
             <div className="position-inputs__container properties_inputs">
               <label className="position-inputs__container__label">X:</label>
               <input
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 type="number"
                 className="position-inputs__container__input"
                 name="xPosition"
                 value={xPosition}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
               />
             </div>
             <div className="position-inputs__container properties_inputs">
               <label className="position-inputs__container__label">Y:</label>
               <input
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 type="number"
                 className="position-inputs__container__input"
                 name="yPosition"
                 value={yPosition}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
               />
             </div>
@@ -639,80 +685,107 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             {i18n.t("Rol.Sheet.Style.rotate")}:
           </label>
           <input
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
             type="number"
             className="position-inputs__container__input"
             name="rotate"
             value={rotate}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={handleChange}
           />
         </div>
-        {selectedElement?.type !== typeField.text && (
+
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.width")}:
+          </label>
+          <input
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
+            type="number"
+            className="position-inputs__container__input"
+            name="width"
+            value={width}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+        </div>
+
+        {selectedElement?.type !== typeField.line && (
           <div className="position-inputs__container properties-panel__property-field">
             <label className="position-inputs__container__label">
-              {i18n.t("Rol.Sheet.Style.width")}:
+              {i18n.t("Rol.Sheet.Style.height")}:
             </label>
             <input
+              onKeyDown={(e) => {
+                e.stopPropagation();
+              }}
               type="number"
               className="position-inputs__container__input"
-              name="width"
-              value={width}
+              name="height"
+              value={height}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onChange={handleChange}
             />
           </div>
         )}
-        {selectedElement?.type !== typeField.text &&
-          selectedElement?.type !== typeField.line && (
-            <div className="position-inputs__container properties-panel__property-field">
-              <label className="position-inputs__container__label">
-                {i18n.t("Rol.Sheet.Style.height")}:
-              </label>
-              <input
-                type="number"
-                className="position-inputs__container__input"
-                name="height"
-                value={height}
-                onChange={handleChange}
-              />
-            </div>
-          )}
         <div className="position-inputs__container properties-panel__property-field">
           <label className="position-inputs__container__label">
             {i18n.t("Rol.Sheet.Style.opacity")}:
           </label>
           <input
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
             type="number"
             className="position-inputs__container__input"
             name="opacity"
             value={opacity}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             onChange={handleChange}
             step={0.1}
             min={0}
             max={1}
           />
         </div>
-        {selectedElement?.type !== typeField.text && (
-          <>
-            <h4>{i18n.t("Rol.Sheet.Style.borderStyle")}</h4>
-            <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
-              <label className="position-inputs__container__label">
-                {i18n.t("Rol.Sheet.Style.borderWidth")}:
-              </label>
-              <input
-                className="position-inputs__container__input"
-                type="number"
-                name="borderWidth"
-                value={borderWidth}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="position-inputs__container properties-panel__property-field">
-              <label className="position-inputs__container__label">
-                {i18n.t("Rol.Sheet.Style.borderStyle")}:
-              </label>
-              <BorderStyleSelect value={borderStyle} onChange={handleChange} />
-            </div>
-          </>
-        )}
+
+        <h4>{i18n.t("Rol.Sheet.Style.borderStyle")}</h4>
+        <div className="position-inputs__container properties-panel__property-field position-inputs__container properties_inputs">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.borderWidth")}:
+          </label>
+          <input
+            onKeyDown={(e) => {
+              e.stopPropagation();
+            }}
+            className="position-inputs__container__input"
+            type="number"
+            name="borderWidth"
+            value={borderWidth}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="position-inputs__container properties-panel__property-field">
+          <label className="position-inputs__container__label">
+            {i18n.t("Rol.Sheet.Style.borderStyle")}:
+          </label>
+          <BorderStyleSelect
+            value={borderStyle}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
+        </div>
+
         {selectedElement?.type !== typeField.line &&
           selectedElement?.type !== typeField.textarea &&
           selectedElement?.type !== typeField.text && (
@@ -721,10 +794,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 {i18n.t("Rol.Sheet.Style.borderRadius")}:
               </label>
               <input
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 type="number"
                 className="position-inputs__container__input"
                 name="borderRadius"
                 value={borderRadius}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
               />
             </div>
@@ -739,6 +817,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 value={backgroundColor}
                 name={"backgroundColor"}
                 label={`${i18n.t("Rol.Sheet.Style.backgroundColor")}:`}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
                 onRemove={handleRemoveBackground}
               ></SelectColor>
@@ -750,6 +830,8 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               value={borderColor}
               name={"borderColor"}
               label={`${i18n.t("Rol.Sheet.Style.borderColor")}:`}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               onChange={handleChange}
               onRemove={handleRemoveBorder}
             ></SelectColor>
@@ -763,10 +845,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 Active Color:
               </label>
               <input
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 type="color"
                 className="position-inputs__container__input"
                 name="activeCheckboxColor"
                 value={activeCheckboxColor}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
               />
             </div>
@@ -775,10 +862,15 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                 Inactive Color:
               </label>
               <input
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 type="color"
                 className="position-inputs__container__input"
                 name="inactiveCheckboxColor"
                 value={inactiveCheckboxColor}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
                 onChange={handleChange}
               />
             </div>
@@ -787,8 +879,11 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 
         {/* <h4>{i18n.t("Rol.Sheet.Style.css")}</h4>
         <textarea
+              onKeyDown={(e) => {e.stopPropagation()}}
           name="customCSS"
           value={customCSS}
+          onFocus={handleFocus} 
+          onBlur={handleBlur}   
           onChange={handleChange}
           placeholder="Enter custom CSS"
         /> */}

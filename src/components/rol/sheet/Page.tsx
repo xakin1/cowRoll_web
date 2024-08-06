@@ -35,6 +35,7 @@ const Page: React.FC<FieldContainerProps> = ({
     saveFields,
     currentSheetIndex,
     updateFieldStyle,
+    updatePartialField,
     addField,
     removeField,
     nextSheet,
@@ -221,7 +222,6 @@ const Page: React.FC<FieldContainerProps> = ({
       console.error("sheetId undefined");
     }
   };
-
   return (
     <>
       <div className="page_container">
@@ -233,7 +233,8 @@ const Page: React.FC<FieldContainerProps> = ({
           {fields.map((field) => (
             <PageField
               onContextMenu={handleContextMenu(field)}
-              onChange={updateFieldStyle}
+              onChange={updatePartialField}
+              setIsContextMenuVisible={setIsContextMenuVisible}
               key={field.id}
               {...field}
               setSelectedElement={(element) => {

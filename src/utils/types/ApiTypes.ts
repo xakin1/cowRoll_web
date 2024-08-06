@@ -36,6 +36,7 @@ export interface CodeProps extends FileProps {
 export interface SheetProps extends FileProps {
   codes?: CodeProps[];
   pdf?: string;
+  player?: boolean;
   type: FileSheetType;
 }
 
@@ -71,6 +72,7 @@ export interface CreateCodeProps extends CreateFileProps {
 export interface CreateSheetProps extends CreateFileProps {
   type: FileSheetType;
   pdf?: string;
+  player?: boolean;
 }
 
 export interface insertContentProps {
@@ -271,3 +273,20 @@ export const fetchFiles = async () => {
   }
   return await response.json();
 };
+
+export function getPlayerSheets(directory: DirectoryProps): FileProps[] {
+  const playerSheets: FileProps[] = [];
+
+  const processDirectory = (dir: DirectoryProps) => {
+    dir.children.forEach((child) => {
+      if (isDirectory(child)) {
+        processDirectory(child);
+      } else if (isSheetsProps(child) && child.player) {
+        playerSheets.push(child);
+      }
+    });
+  };
+
+  processDirectory(directory);
+  return playerSheets;
+}

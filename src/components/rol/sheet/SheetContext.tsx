@@ -31,6 +31,7 @@ interface SheetContextProps {
   addField: (field: FieldWithoutId) => Field;
   updateField: (updatedField: Field) => void;
   updateFieldStyle: (id: Id, style: { [key: string]: any }) => void;
+  updatePartialField: (id: Id, changes: Partial<Field>) => void;
   setSheet: (sheet: SheetProps) => void;
   setIsContextMenuVisible: (visible: boolean) => void;
   removeField: (id: Id) => void;
@@ -65,33 +66,10 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
   const file = useAppSelector(
     (state: RootState) => state.directorySystem.selectedFile
   );
+
   useEffect(() => {
     updateBlocklyVariables(sheets[currentSheetIndex]);
   }, [file]);
-
-  const output = useAppSelector((state) => state.code.output);
-
-  useEffect(() => {
-    setSheets((prevSheets) => {
-      const newSheets = [...prevSheets];
-      newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
-        (field) => {
-          if (output.hasOwnProperty(field.name)) {
-            return {
-              ...field,
-              value: output[field.name as string],
-            };
-          }
-          return field;
-        }
-      );
-      return newSheets;
-    });
-  }, [output]);
-
-  const setBlocklyRef = (ref: RefObject<BlocklyRefProps>) => {
-    blocklyRef.current = ref.current;
-  };
 
   const updateBlocklyVariables = (fields: Field[]) => {
     if (blocklyRef.current) {
@@ -103,6 +81,29 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         })
       );
     }
+  };
+
+  // const output = useAppSelector((state) => state.code.output);
+  // useEffect(() => {
+  //   setSheets((prevSheets) => {
+  //     const newSheets = [...prevSheets];
+  //     newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
+  //       (field) => {
+  //         if (output.hasOwnProperty(field.name)) {
+  //           return {
+  //             ...field,
+  //             value: output[field.name as string],
+  //           };
+  //         }
+  //         return field;
+  //       }
+  //     );
+  //     return newSheets;
+  //   });
+  // }, [output]);
+
+  const setBlocklyRef = (ref: RefObject<BlocklyRefProps>) => {
+    blocklyRef.current = ref.current;
   };
 
   const addField = (field: FieldWithoutId): Field => {
@@ -159,6 +160,39 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     });
   };
 
+  const updatePartialField = (fieldId: string, changes: Partial<Field>) => {
+    const newSheets = sheets.map((sheetFields, index) =>
+      index === currentSheetIndex
+        ? sheetFields.map((field) => {
+            if (field.id === fieldId) {
+              const updatedField = { ...field };
+
+              for (const key in changes) {
+                if (
+                  changes.hasOwnProperty(key) &&
+                  typeof changes[key as keyof Field] === "object" &&
+                  changes[key as keyof Field] !== null
+                ) {
+                  updatedField[key as keyof Field] = {
+                    ...field[key as keyof Field],
+                    ...(changes[key as keyof Field] as object),
+                  };
+                } else {
+                  updatedField[key as keyof Field] =
+                    changes[key as keyof Field];
+                }
+              }
+
+              return updatedField;
+            }
+            return field;
+          })
+        : sheetFields
+    );
+
+    setSheets(newSheets);
+  };
+
   // Function to remove a field
   const removeField = (id: Id) => {
     setSheets((prevSheets) => {
@@ -180,6 +214,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         (field) => field.id === updatedField.id
       );
 
+      console.log(newSheets[currentSheetIndex][fieldIndex]);
       if (fieldIndex !== -1) {
         const existingField = newSheets[currentSheetIndex][fieldIndex];
 
@@ -196,7 +231,12 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
           return prevSheets;
         }
 
-        newSheets[currentSheetIndex][fieldIndex] = updatedField;
+        for (const key in updatedField) {
+          if (updatedField.hasOwnProperty(key) && !["style"].includes(key)) {
+            newSheets[currentSheetIndex][fieldIndex][key as keyof Field] =
+              updatedField[key as keyof Field]!;
+          }
+        }
 
         if (blocklyRef.current && existingField.name !== updatedField.name) {
           blocklyRef.current.renameVariable(
@@ -213,11 +253,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
   };
 
   const saveFields = async (props: EditSheetProps) => {
-    const filteredSheets = sheets.map((sheet) =>
-      sheet.filter((field) => field.type !== typeField.pdf)
-    );
-
-    const sheetsJSON = JSON.stringify(filteredSheets);
+    const sheetsJSON = JSON.stringify(sheets);
 
     if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
       const fileProps = {
@@ -366,8 +402,12 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
 
   useEffect(() => {
     loadFields();
-
-    if (sheet && sheet.name.endsWith(".pdf") && sheet.pdf) {
+    if (
+      sheet &&
+      sheet.name.endsWith(".pdf") &&
+      sheet.pdf &&
+      JSON.parse(sheet.content || "").length === 0
+    ) {
       renderPDFPages(sheet.pdf)
         .then((pdfSheets) => {
           // Combine the pdfSheets with existing sheets
@@ -411,6 +451,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         addField,
         updateField,
         updateFieldStyle,
+        updatePartialField,
         removeField,
         saveFields,
         loadFields,

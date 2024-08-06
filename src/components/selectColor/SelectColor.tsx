@@ -7,6 +7,8 @@ interface ColorSelectorProps {
   name: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Changed type
   onRemove?: () => void;
+  onFocus?: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
 }
 
 // Utility function to convert RGB to Hex
@@ -32,6 +34,8 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
   name,
   onChange,
   onRemove,
+  onFocus,
+  onBlur,
 }) => {
   // Convert the initial value to Hex if it's in RGB
   const hexValue = value.startsWith("#") ? value : rgbToHex(value);
@@ -58,6 +62,8 @@ const ColorSelector: React.FC<ColorSelectorProps> = ({
     <>
       <label className="label">{label}</label>
       <input
+        onFocus={onFocus}
+        onBlur={onBlur}
         type="color"
         name={name}
         value={hexValue}

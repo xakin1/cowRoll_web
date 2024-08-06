@@ -68,7 +68,7 @@ export const SheetWorkSpace: React.FC = () => {
         loadFields();
       }
     }
-  }, [sheetId]);
+  }, []);
 
   useEffect(() => {
     setBlocklyRef(blocklyRef);
@@ -76,38 +76,36 @@ export const SheetWorkSpace: React.FC = () => {
 
   return (
     <>
-      <>
-        <FieldMenu />
-        <div className="container-parent">
-          <div className="container-page">
-            <Page
-              setSelectedElement={setSelectedElement}
-              fields={sheets[currentSheetIndex]}
+      <FieldMenu />
+      <div className="container-parent">
+        <div className="container-page">
+          <Page
+            setSelectedElement={setSelectedElement}
+            fields={sheets[currentSheetIndex]}
+          />
+        </div>
+        {mode && (
+          <div className="container-blockly">
+            <WorkSpace
+              ref={blocklyRef}
+              directoryId={sheetId}
+              className="codeWorkSpace"
             />
           </div>
-          {mode && (
-            <div className="container-blockly">
-              <WorkSpace
-                ref={blocklyRef}
-                directoryId={sheetId}
-                className="codeWorkSpace"
-              />
-            </div>
-          )}
-          {selectedElement && (
-            <div
-              className="properties-panel-wrapper"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <PropertiesPanel
-                selectedElement={selectedElement}
-                onUpdateStyle={handleUpdateStyle}
-                onUpdateField={updateField}
-              />
-            </div>
-          )}
-        </div>
-      </>
+        )}
+        {selectedElement && (
+          <div
+            className="properties-panel-wrapper"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <PropertiesPanel
+              selectedElement={selectedElement}
+              onUpdateStyle={handleUpdateStyle}
+              onUpdateField={updateField}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };

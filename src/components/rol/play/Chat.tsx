@@ -4,20 +4,27 @@ import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRound
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import i18n from "../../../i18n/i18n";
 import { addMessage } from "../../../redux/slice/chatSlice";
 import type { RootState } from "../../../redux/store";
-import { executeCode, getFiles } from "../../../services/codeApi"; // Import executeCode here
+import { createFile, executeCode, getFiles } from "../../../services/codeApi";
 import {
   getCodesOfRol,
+  getPlayerSheets,
   getSheetsOfRol,
   isCodeFile,
   isDirectory,
+  isSheetsProps,
+  type CreateSheetProps,
   type DirectoryProps,
   type FileProps,
 } from "../../../utils/types/ApiTypes";
+import { toastStyle } from "../../Route";
 import CustomModal from "../../utils/CustomModal";
 import { Divider } from "../../utils/Divider";
+import PlayerNameModal from "./PlayerModal";
+import ViewSheet from "./ViewSheet";
 import "./chat.css";
 
 const Chat = () => {
@@ -28,8 +35,13 @@ const Chat = () => {
   const [role, setRole] = useState("GM");
   const [scripts, setScripts] = useState<{ [key: string]: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileProps>();
-  const [roles, setRoles] = useState(["GM"]);
+  const [roles, setRoles] = useState<string[]>(["GM"]);
+  const [playerSheets, setPlayerSheets] = useState<Map<string, FileProps>>(
+    new Map()
+  );
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showPlayerNameModal, setShowPlayerNameModal] =
+    useState<boolean>(false);
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -59,7 +71,6 @@ const Chat = () => {
       }
 
       const scriptsDirectory = getCodesOfRol(response.message, rolId);
-      console.log(scriptsDirectory);
 
       if (scriptsDirectory) {
         const processDirectory = (directory: DirectoryProps) => {
@@ -79,8 +90,19 @@ const Chat = () => {
         };
         processDirectory(scriptsDirectory);
       }
+
+      // Initialize roles with GM and sheets marked with player: true
+      const playerSheetsList = getPlayerSheets(response.message);
+      const playerRoles = playerSheetsList.map((sheet) => sheet.name);
+
+      // Create a map of player sheets for easy access
+      const playerSheetsMap = new Map<string, FileProps>(
+        playerSheetsList.map((sheet) => [sheet.name, sheet])
+      );
+
+      setRoles(["GM", ...playerRoles]);
+      setPlayerSheets(playerSheetsMap);
     }
-    console.log(scripts);
     setLoading(false);
   };
 
@@ -375,8 +397,37 @@ const Chat = () => {
   const handleAddRole = () => {
     handleClose();
     if (selectedFile && selectedFile.content) {
-      setRoles([...roles, selectedFile.name]);
-      setScripts([...scripts, { [selectedFile.name]: selectedFile.content }]);
+      setShowPlayerNameModal(true); // Open the player name modal
+    }
+  };
+
+  const handleAddPlayer = async (playerName: string) => {
+    if (selectedFile && selectedFile.content && isSheetsProps(selectedFile)) {
+      const { id, ...restOfFile } = selectedFile;
+      const newSheet: CreateSheetProps = {
+        ...restOfFile,
+        name: playerName,
+        content: selectedFile.content,
+        player: true,
+      };
+
+      const response = await createFile(newSheet);
+      if (response && "message" in response) {
+        setRoles([...roles, newSheet.name]);
+        setPlayerSheets(
+          (prev) =>
+            new Map(
+              prev.set(newSheet.name, {
+                ...newSheet,
+                id: response.message,
+                directoryId: selectedFile.directoryId,
+              })
+            )
+        );
+        setScripts([...scripts, { [newSheet.name]: selectedFile.content }]);
+      } else {
+        response && toast.error(i18n.t("Errors." + response.error), toastStyle);
+      }
     }
   };
 
@@ -387,62 +438,85 @@ const Chat = () => {
     }
   };
 
+  // Handle role change and load the appropriate sheet if not GM
+  const handleRoleChange = (newRole: string) => {
+    setRole(newRole);
+    if (newRole !== "GM") {
+      const sheet = playerSheets.get(newRole);
+      if (sheet && isSheetsProps(sheet)) {
+        setSelectedFile(sheet);
+      }
+    } else {
+      setSelectedFile(undefined);
+    }
+  };
+
   return (
     <>
-      <div style={{ padding: "20px" }}>
-        <div className="chat-container">
-          <div className="chat-container__header">
-            <button onClick={() => setActiveTab("chat")}>Chat</button>
-            <button onClick={() => setActiveTab("addCharacter")}>
-              {i18n.t("General.addPlayer")}
-            </button>
-          </div>
-          {activeTab === "chat" ? (
-            <>
-              <div className="chat-container__body">
-                {messages.map((message, index) => (
-                  <div className="chat-container__body__message" key={index}>
-                    <div>
-                      <strong>{message.user}:</strong>{" "}
-                      <ReactMarkdown>{message.text}</ReactMarkdown>
-                    </div>
-                    <div style={{ fontSize: "0.8em", color: "gray" }}>
-                      {message.time}
-                    </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-              <div className="chat-container__footer">
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                  {roles.map((role, index) => (
-                    <option key={index} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onKeyDown={handleKeyDown}
-                  onChange={(e) => setInput(e.target.value)}
-                  style={{ flex: 1, padding: "5px" }}
-                />
-                <button onClick={handleSend}>{i18n.t("General.send")}</button>
-              </div>
-            </>
-          ) : (
-            <div className="add-character">
-              <button onClick={handleOpen}>
+      <div className="chat-page">
+        <div style={{ padding: "20px" }}>
+          <div className="chat-container">
+            <div className="chat-container__header">
+              <button onClick={() => setActiveTab("chat")}>Chat</button>
+              <button onClick={() => setActiveTab("addCharacter")}>
                 {i18n.t("General.addPlayer")}
               </button>
-              <div>
-                {i18n.t("General.actualRoles")}: {roles.join(", ")}
-              </div>
             </div>
-          )}
+            {activeTab === "chat" ? (
+              <>
+                <div className="chat-container__body">
+                  {messages.map((message, index) => (
+                    <div className="chat-container__body__message" key={index}>
+                      <div>
+                        <strong>{message.user}:</strong>{" "}
+                        <ReactMarkdown>{message.text}</ReactMarkdown>
+                      </div>
+                      <div style={{ fontSize: "0.8em", color: "gray" }}>
+                        {message.time}
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="chat-container__footer">
+                  <select
+                    className="chat-container__footer__role_selector"
+                    value={role}
+                    onChange={(e) => handleRoleChange(e.target.value)}
+                  >
+                    {roles.map((role, index) => (
+                      <option key={index} value={role}>
+                        {role}
+                      </option>
+                    ))}
+                  </select>
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onKeyDown={handleKeyDown}
+                    onChange={(e) => setInput(e.target.value)}
+                    style={{ flex: 1, padding: "5px" }}
+                  />
+                  <button onClick={handleSend}>{i18n.t("General.send")}</button>
+                </div>
+              </>
+            ) : (
+              <div className="add-character">
+                <button onClick={handleOpen}>
+                  {i18n.t("General.addPlayer")}
+                </button>
+                <div>
+                  {i18n.t("General.actualRoles")}: {roles.join(", ")}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+        {selectedFile && isSheetsProps(selectedFile) && (
+          <ViewSheet sheet={selectedFile}></ViewSheet>
+        )}
       </div>
+
       <CustomModal open={showModal} onClose={handleClose}>
         <div>
           <header className="modal-header">
@@ -458,7 +532,9 @@ const Chat = () => {
           <Divider />
           <article className={"item-container"}>
             {sheetsDirectory?.children.map((sheet, index) =>
-              isDirectory(sheet) ? (
+              isSheetsProps(sheet) && sheet.player ? (
+                <></>
+              ) : isDirectory(sheet) ? (
                 <div
                   className="item-container__item"
                   onClick={() => {
@@ -510,6 +586,12 @@ const Chat = () => {
           </div>
         </div>
       </CustomModal>
+
+      <PlayerNameModal
+        open={showPlayerNameModal}
+        onClose={() => setShowPlayerNameModal(false)}
+        onAddPlayer={handleAddPlayer}
+      />
     </>
   );
 };

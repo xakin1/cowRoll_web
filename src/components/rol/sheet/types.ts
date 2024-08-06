@@ -10,6 +10,7 @@ export interface Position {
 
 export interface RenderFieldProps extends Field {
   isSelected?: boolean;
+  editable?: boolean;
   onSelect?: (selectedId: Id | null) => void;
   onChange?: (...args: any[]) => void;
   onClick?: (...args: any[]) => void;
@@ -49,14 +50,16 @@ export interface Field {
   value?: any;
   label: string;
   style: { [key: string]: any };
+  editable?: boolean;
   options?: string;
   allowAdditions?: boolean;
   onChange?: (...args: any[]) => void;
+  setIsContextMenuVisible?: (...args: any[]) => void;
 }
 
 export interface DraggableFieldProps extends Field {
-  setSelectedElement: (element: Field | null) => void;
-  onContextMenu: (
+  setSelectedElement?: (element: Field | null) => void;
+  onContextMenu?: (
     event: React.MouseEvent<Element, MouseEvent>,
     field: Field
   ) => void;

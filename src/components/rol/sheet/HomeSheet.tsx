@@ -178,7 +178,9 @@ export function HomeSheet() {
         image={"/back-arrow.svg"}
       />
       <PhotoCardList
-        elements={sheets}
+        elements={sheets.filter(
+          (sheet) => !(isSheetsProps(sheet) && sheet.player === true)
+        )}
         handleDoubleClick={handleDoubleClick}
         handleDelete={handleDelete}
         upload={handleFileChange}

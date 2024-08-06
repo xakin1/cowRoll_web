@@ -1,6 +1,6 @@
 import React, {
   forwardRef,
-  useContext,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -9,7 +9,6 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
-import { SheetContext } from "./SheetContext";
 import type { RenderFieldProps } from "./types";
 
 export enum typeField {
@@ -22,7 +21,7 @@ export enum typeField {
   line = "line",
   text = "text",
   photo = "photo",
-  selectable = "selectable", // Nuevo tipo de campo
+  selectable = "selectable",
 }
 
 export const fields = [
@@ -115,27 +114,34 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       style,
       onChange,
       onClick,
+      setIsContextMenuVisible,
+      editable = true,
     },
     ref
   ) => {
-    const { setIsContextMenuVisible } = useContext(SheetContext)!;
     const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [selectOptions, setSelectOptions] = useState<string>(options || "");
-    const [newOption, setNewOption] = useState("");
+    const [selectOptions, setSelectOptions] = useState<string[]>([]);
     const [isSelectActive, setSelectActive] = useState(false);
     const targetRef = useRef<HTMLElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => targetRef.current!);
 
-    const [selectedValue, setSelectedValue] = useState("solid");
+    const [selectedValue, setSelectedValue] = useState(value);
     const [isSelectOpen, setSelectOpen] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
 
     const handleClick = () => {
-      if (onSelect) {
+      if (onSelect && editable) {
         onSelect(id);
       }
     };
+
+    useEffect(() => {
+      if (options) {
+        const initialOptions = options.split(";").map((opt) => opt.trim());
+        setSelectOptions(initialOptions);
+      }
+    }, [options]);
 
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -144,7 +150,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         reader.onload = () => {
           const newPhotoSrc = reader.result as string;
           if (onChange) {
-            onChange({ backgroundImage: `url(${newPhotoSrc})` });
+            onChange(id, { style: { backgroundImage: `url(${newPhotoSrc})` } });
           }
         };
         reader.readAsDataURL(file);
@@ -173,21 +179,23 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
         targetRef.current.style.position = "absolute";
 
         setPosition({ x: 0, y: 0 });
-        console.log(newXPosition, newYPosition);
-        onChange({
-          left: `${newXPosition}px`,
-          top: `${newYPosition}px`,
+        onChange(id, {
+          style: {
+            left: `${newXPosition}px`,
+            top: `${newYPosition}px`,
+          },
         });
       }
     };
 
-    const isDraggable = type !== typeField.pdf;
+    const isDraggable = editable && type !== typeField.pdf;
 
     const handleAddOptionSelected = () => {
-      const input = prompt("Enter a new option:"); // Ask user for new option
+      const input = prompt("Enter a new option:");
       if (input && input.trim() !== "" && !selectOptions.includes(input)) {
-        setSelectOptions((prevOptions) => prevOptions + ";" + input);
-        onChange && onChange({ options: selectOptions + ";" + input });
+        const updatedOptions = [...selectOptions, input];
+        setSelectOptions(updatedOptions);
+        onChange && onChange(id, { options: updatedOptions.join(";") });
         setSelectedValue(input);
       }
     };
@@ -205,6 +213,9 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               placeholder={label}
               onClick={handleClick}
               className="sheet-option"
+              onChange={(e) => {
+                onChange && onChange(id, { value: e.target.value });
+              }}
             />
           );
         case typeField.checkbox:
@@ -233,8 +244,10 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 }}
                 checked={isChecked}
                 onChange={(e) => {
-                  setIsChecked(e.target.checked);
-                  onChange && onChange(e.target.checked);
+                  if (editable) {
+                    setIsChecked(e.target.checked);
+                    onChange && onChange(id, { value: e.target.checked });
+                  }
                 }}
               />
 
@@ -245,7 +258,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   height: "20px",
                   border: "1px solid #999",
                   backgroundColor: isChecked
-                    ? restOfStyle.activeColor || "#2196F3"
+                    ? restOfStyle.active || "#2196F3"
                     : restOfStyle.inactiveColor || "#FFF",
                   transition: "background-color 0.3s",
                   cursor: "pointer",
@@ -265,6 +278,9 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               placeholder={label}
               className="textarea sheet-option"
               onClick={handleClick}
+              onChange={(e) => {
+                onChange && onChange({ value: e.target.value });
+              }}
             />
           );
 
@@ -306,10 +322,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 border: "none",
                 background: "none",
                 ...style,
-                width: "fit-content",
                 height: "fit-content",
               }}
               onClick={handleClick}
+              onChange={(e) => {
+                onChange && onChange({ value: e.target.value });
+              }}
             ></input>
           );
         case typeField.photo:
@@ -326,21 +344,24 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 accept="image/*"
                 onChange={handlePhotoChange}
                 style={{ display: "none" }}
+                disabled={!editable}
               />
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  fileInputRef.current?.click();
-                }}
-                style={{
-                  position: "absolute",
-                  bottom: "0px",
-                  right: "0px",
-                }}
-              >
-                Browse
-              </button>
+              {editable && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: "0px",
+                    right: "0px",
+                  }}
+                >
+                  Browse
+                </button>
+              )}
             </div>
           );
         case typeField.pdf:
@@ -359,14 +380,14 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 if (onSelect) {
                   onSelect(null);
                 }
-                setIsContextMenuVisible(false);
+                if (setIsContextMenuVisible) {
+                  setIsContextMenuVisible(false);
+                }
               }}
             ></div>
           );
         case typeField.selectable:
-          const optionsArray = selectOptions
-            .split(";")
-            .map((option) => option.trim());
+          const optionsArray = selectOptions;
 
           return (
             <div
@@ -378,7 +399,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
               }}
               onClick={() => {
                 handleClick();
-                setSelectActive(!isSelectActive); // Toggle select activation on click
+                setSelectActive(!isSelectActive);
               }}
             >
               <select
@@ -386,10 +407,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value === "addOption") {
-                    handleAddOptionSelected(); // Handle special option selection
+                    handleAddOptionSelected();
                   } else {
                     setSelectedValue(value);
                   }
+                  console.log(value);
+                  onChange && onChange(id, { value: value });
                 }}
                 style={{
                   minWidth: "30px",
@@ -398,13 +421,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   boxSizing: "border-box",
                 }}
                 onMouseDown={(e) => {
-                  // Prevent default behavior unless select is active
-                  if (!isSelectActive) {
+                  if (!isSelectActive && editable) {
                     e.preventDefault();
                   }
                 }}
-                onFocus={() => setSelectOpen(true)} // Open select menu
-                onBlur={() => setSelectOpen(false)} // Close select menu
+                onFocus={() => setSelectOpen(true)}
+                onBlur={() => setSelectOpen(false)}
               >
                 {optionsArray.map((option, index) => (
                   <option key={index} value={option}>

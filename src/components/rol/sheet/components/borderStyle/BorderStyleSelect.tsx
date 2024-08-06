@@ -5,11 +5,15 @@ import "./borderStyle.css";
 interface BorderStyleSelectProps {
   value: string;
   onChange: (e: React.ChangeEvent<{ name: string; value: string }>) => void;
+  onFocus?: (...args: any[]) => void;
+  onBlur?: (...args: any[]) => void;
 }
 
 const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
   value,
   onChange,
+  onBlur,
+  onFocus,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [border, setBorder] = useState(value);
@@ -40,7 +44,12 @@ const BorderStyleSelect: React.FC<BorderStyleSelectProps> = ({
 
   return (
     <div className="border-style-select">
-      <div className="select-header" onClick={() => setIsOpen(!isOpen)}>
+      <div
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className="select-header"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         {i18n.t("Rol.Sheet.Style." + value)}
         <div
           style={{

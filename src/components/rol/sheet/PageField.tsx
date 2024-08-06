@@ -13,10 +13,12 @@ const PageField: React.FC<DraggableFieldProps> = ({
   style,
   options = "",
   allowAdditions = false,
+  editable = true,
   setSelectedElement,
   onContextMenu,
   onChange,
   onClick,
+  setIsContextMenuVisible,
 }) => {
   const [isSelected, setIsSelected] = useState(false);
   const renderFieldRef = useRef<HTMLDivElement>(null);
@@ -61,13 +63,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
         });
       }
     } else {
-      setSelectedElement(null);
-    }
-  };
-
-  const handleChange = (newStyle: { [key: string]: any }) => {
-    if (onChange) {
-      onChange(id, newStyle);
+      setSelectedElement && setSelectedElement(null);
     }
   };
 
@@ -76,6 +72,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
       <div
         className={`field`}
         onContextMenu={(e) =>
+          onContextMenu &&
           onContextMenu(e, { id, type, name, tags, label, style })
         }
         onClick={(e) => {
@@ -92,11 +89,13 @@ const PageField: React.FC<DraggableFieldProps> = ({
           style={{ position: "absolute", ...style }}
           id={id}
           onClick={onClick}
-          onChange={handleChange}
+          onChange={onChange}
           isSelected={isSelected}
           onSelect={handleSelect}
-          options={options} // Pass options
-          allowAdditions={allowAdditions} // Pass allowAdditions
+          editable={editable}
+          setIsContextMenuVisible={setIsContextMenuVisible}
+          options={options}
+          allowAdditions={allowAdditions}
         />
       </div>
     </>
