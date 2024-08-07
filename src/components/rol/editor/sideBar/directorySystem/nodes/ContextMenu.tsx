@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import { toast } from "react-toastify";
-import { getI18N } from "../../../../../i18n";
-import { getLang } from "../../../../../i18n/utils";
+import { getI18N } from "../../../../../../i18n";
+import { getLang } from "../../../../../../i18n/utils";
 import {
   createDirectory,
   createFile,
@@ -9,7 +9,7 @@ import {
   deleteFile,
   editDirectory,
   editFile,
-} from "../../../../../services/codeApi";
+} from "../../../../../../services/codeApi";
 import {
   FileSystemEnum,
   isDirectory,
@@ -19,9 +19,9 @@ import {
   type CreateDirectoryProps,
   type EditFileProps,
   type editDirectoryProps,
-} from "../../../../../utils/types/ApiTypes";
-import type { ContextMenuProps } from "../../../../../utils/types/types";
-import { toastStyle } from "../../../../Route";
+} from "../../../../../../utils/types/ApiTypes";
+import type { ContextMenuProps } from "../../../../../../utils/types/types";
+import { toastStyle } from "../../../../../Route";
 import "./contextMenu.css";
 
 const i18n = getI18N({ currentLocale: getLang() });

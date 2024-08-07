@@ -26,6 +26,10 @@
   display: flex;
   align-items: center;
   font-weight: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  max-width: 100px;
 }
 
 .nodeTree {
