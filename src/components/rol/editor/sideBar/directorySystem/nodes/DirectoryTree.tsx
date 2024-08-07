@@ -6,6 +6,7 @@ import type {
 import type {
   ContextMenuProps,
   Items,
+  ModalConfig,
 } from "../../../../../../utils/types/types";
 import { CustomTreeItem } from "../BorderedTreeView";
 import { ContextMenu } from "./ContextMenu";
@@ -18,7 +19,7 @@ interface DirectoryTreeProps {
   handleDrop: (...args: any[]) => void;
   handleItemClick: (...args: any[]) => void;
   addNode: (...args: any[]) => void;
-  handleOpenModal: (...args: any[]) => void;
+  handleOpenModal: (config: ModalConfig) => void;
 }
 
 export const DirectoryTree: React.FC<DirectoryTreeProps> = ({
@@ -154,9 +155,9 @@ export const DirectoryTree: React.FC<DirectoryTreeProps> = ({
           items={contextMenu.items}
           onClose={closeContextMenu}
           onAddNode={addNode}
-          handleOpenModal={() => {
-            closeContextMenu;
-            handleOpenModal;
+          handleOpenModal={(config) => {
+            closeContextMenu();
+            handleOpenModal(config);
           }}
         />
       )}
