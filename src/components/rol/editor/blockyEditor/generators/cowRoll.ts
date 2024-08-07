@@ -40,7 +40,7 @@ cowRollGenerator.forBlock = {};
 cowRollGenerator.forBlock["text"] = function (block) {
   const textValue = block.getFieldValue("TEXT");
   const code = `"${textValue}"`;
-  return [code, Order.ORDER_ATOMIC];
+  return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["math_number"] = function (block) {
@@ -157,10 +157,15 @@ cowRollGenerator.forBlock["array_element"] = function (block) {
 };
 
 cowRollGenerator.forBlock["map"] = function (block) {
+  // Obtenemos todos los campos de FIELDS como un array
   const fields = cowRollGenerator
     .statementToCode(block, "FIELDS")
-    .replace(/[\n\s]/g, "");
-  const code = `{${fields}}`;
+    .split("\n") // Dividimos los campos por línea para manejar cada uno individualmente
+    .map((field) => field.trim()) // Eliminamos espacios en blanco innecesarios
+    .filter((field) => field.length > 0); // Eliminamos cualquier entrada vacía
+
+  // Creamos el código, uniendo los campos con comas, pero asegurándonos de que el último no tenga una coma
+  const code = `{${fields.join(", ")}}`;
   return [code, Order.ORDER_LIST];
 };
 

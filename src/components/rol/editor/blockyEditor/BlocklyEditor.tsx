@@ -190,7 +190,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           const field = fields.find((field) => field.name === variableName);
 
           // Determine the initial value for the variable
-          const initialValue = field?.value ?? 0;
+          const initialValue = field?.value ?? "text";
 
           // Create a new variable if it does not exist
           if (!currentVariableNames.includes(variableName)) {
@@ -262,9 +262,24 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
               if (!existingSetBlocks.has(variableName)) {
                 const topBlocks = workspace.getTopBlocks(true);
                 const topBlockCount = topBlocks.length;
-                setBlock.moveBy(20, topBlockCount * 50);
+                if (!setBlock.getParent()) {
+                  setBlock.moveBy(20, topBlockCount * 50);
+                }
               }
             }
+          }
+        });
+
+        // Delete variables that are no longer in use (neither field.name nor tag)
+        currentVariables.forEach((variable) => {
+          const variableName = variable.name;
+          const isFieldVariable = fields.some(
+            (field) => field.name === variableName
+          );
+          const isTagVariable = allTags.has(variableName);
+
+          if (!isFieldVariable && !isTagVariable) {
+            workspace.deleteVariableById(variable.getId()); // Now using the ID properly
           }
         });
 
@@ -286,68 +301,58 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
                 mapFieldBlock.initSvg();
                 mapFieldBlock.render();
 
-                // Set key-value pairs
+                // Set the key in the map field block
                 mapFieldBlock.getField("KEY")?.setValue(field.name);
-                const valueBlock = workspace.newBlock(
-                  typeof field.value === "number" ? "math_number" : "text"
-                );
+
+                // Determine the block type for using variables
+                const valueBlock = workspace.newBlock("variables_get");
+
                 if (valueBlock) {
                   valueBlock.initSvg();
                   valueBlock.render();
 
-                  const defaultValue = field.value ?? 0;
-                  if (typeof defaultValue === "number") {
-                    valueBlock.setFieldValue(String(defaultValue), "NUM");
-                  } else {
-                    valueBlock.setFieldValue(String(defaultValue), "TEXT");
-                  }
+                  // Set the existing variable in the value block
+                  valueBlock.getField("VAR").setValue(field.name);
 
+                  // Connect the value block to the map field block
                   const connection =
                     mapFieldBlock.getInput("VALUE")?.connection;
                   if (connection) {
                     connection.connect(valueBlock.outputConnection);
                   }
-                }
 
-                // Connect map field to the map block
-                const mapConnection = mapBlock.getInput("FIELDS")?.connection;
-                if (mapConnection) {
-                  mapConnection.connect(mapFieldBlock.previousConnection);
+                  // Connect map field to the map block
+                  const mapConnection = mapBlock.getInput("FIELDS")?.connection;
+                  if (mapConnection) {
+                    mapConnection.connect(mapFieldBlock.previousConnection);
+                  }
                 }
               }
-
-              // Add to the variable map
-              variableValueMap[field.name] = field.value;
             });
+
+            const returnBlock = workspace.newBlock("return");
+            returnBlock.initSvg();
+            returnBlock.render();
+            // Conectar mapBlock al valor de entrada de returnBlock
+            returnBlock
+              .getInput("VALUE")
+              .connection.connect(mapBlock.outputConnection);
 
             // Connect the last set block to the map block if exists
             if (lastSetBlock) {
-              const connection = lastSetBlock.nextConnection;
-              if (connection) {
-                connection.connect(mapBlock.previousConnection);
+              const previousConnection = lastSetBlock.nextConnection;
+              if (previousConnection) {
+                previousConnection.connect(returnBlock.previousConnection);
               }
             }
-
-            // Position the map block
-            mapBlock.moveBy(
-              20,
-              (workspace.getTopBlocks(false).length + 1) * 50
-            );
+            if (!mapBlock.getParent()) {
+              mapBlock.moveBy(
+                20,
+                (workspace.getTopBlocks(false).length + 1) * 50
+              );
+            }
           }
         }
-
-        // Delete variables that are no longer in use (neither field.name nor tag)
-        currentVariables.forEach((variable) => {
-          const variableName = variable.name;
-          const isFieldVariable = fields.some(
-            (field) => field.name === variableName
-          );
-          const isTagVariable = allTags.has(variableName);
-
-          if (!isFieldVariable && !isTagVariable) {
-            workspace.deleteVariableById(variable.getId()); // Now using the ID properly
-          }
-        });
 
         // Log the variable-value map at the end
         console.log("Variable Value Map:", variableValueMap);

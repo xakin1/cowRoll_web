@@ -83,24 +83,24 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     }
   };
 
-  // const output = useAppSelector((state) => state.code.output);
-  // useEffect(() => {
-  //   setSheets((prevSheets) => {
-  //     const newSheets = [...prevSheets];
-  //     newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
-  //       (field) => {
-  //         if (output.hasOwnProperty(field.name)) {
-  //           return {
-  //             ...field,
-  //             value: output[field.name as string],
-  //           };
-  //         }
-  //         return field;
-  //       }
-  //     );
-  //     return newSheets;
-  //   });
-  // }, [output]);
+  const output = useAppSelector((state) => state.code.output);
+  useEffect(() => {
+    setSheets((prevSheets) => {
+      const newSheets = [...prevSheets];
+      newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
+        (field) => {
+          if (output.hasOwnProperty(field.name)) {
+            return {
+              ...field,
+              value: output[field.name as string],
+            };
+          }
+          return field;
+        }
+      );
+      return newSheets;
+    });
+  }, [output]);
 
   const setBlocklyRef = (ref: RefObject<BlocklyRefProps>) => {
     blocklyRef.current = ref.current;
