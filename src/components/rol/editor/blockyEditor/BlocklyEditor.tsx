@@ -24,6 +24,7 @@ import {
 } from "../../../../redux/slice/DirectorySystemSlice";
 import type { RootState } from "../../../../redux/store";
 import { editFile } from "../../../../services/codeApi";
+import { typeField } from "../../sheet/RenderFields";
 import type { Field } from "../../sheet/types";
 import "./BlocklyEditor.css";
 import { cowRollGenerator } from "./generators/cowRoll";
@@ -34,10 +35,32 @@ interface BlocklyEditorProps {
   style?: React.CSSProperties;
 }
 
+//Parece ser que la función render sí existe aunque ts diga lo contrario
+// así que hacemos esto para que no marque error
+declare module "blockly/core" {
+  interface Block {
+    render: () => void;
+  }
+}
+//aquí lo mismo
+declare module "blockly/core/clipboard" {
+  export function copy(workspace: Blockly.Workspace): void;
+  export function paste(workspace: Blockly.Workspace): void;
+}
+
 export interface BlocklyRefProps {
   updateVariables: (fields: Field[]) => void;
   renameVariable: (oldName: string, newName: string) => void;
   saveContent: () => void;
+}
+
+function sanitizeVariableName(name: string) {
+  return name
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
@@ -132,230 +155,62 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
     useImperativeHandle(ref, () => ({
       updateVariables(fields: Field[]) {
         const workspace = Blockly.getMainWorkspace();
+        const sufixSelectable = "_selected_value";
         if (!workspace) {
           console.error("No workspace found.");
           return;
         }
 
-        // Get all variables as objects to access both names and IDs
         const currentVariables = workspace.getAllVariables();
-
-        // Extract the names for comparison
         const currentVariableNames = currentVariables.map(
           (variable) => variable.name
         );
 
-        // Object to store the mapping of variable names to values
-        const variableValueMap: { [key: string]: any } = {};
+        const allTags = extractAllTags(fields);
+        const allVariableNames = extractAllVariableNames(
+          fields,
+          sufixSelectable,
+          allTags
+        );
 
-        // Extract all unique tags from fields
-        const allTags = new Set<string>();
-        fields.forEach((field) => {
-          field.tags?.forEach((tag) => {
-            allTags.add(tag);
-          });
-        });
+        const existingSetBlocks = getExistingBlocks(workspace, "variables_set");
+        const existingMapBlocks = getExistingBlocks(workspace, "map");
 
-        // Create a set for unique variable names
-        const allVariableNames = new Set<string>();
-        fields.forEach((field) => {
-          allVariableNames.add(field.name);
-        });
-
-        // Add tags to variable names set
-        allTags.forEach((tag) => {
-          allVariableNames.add(tag);
-        });
-
-        // Check for existing set blocks and map blocks
-        const existingSetBlocks = new Set<string>();
-        const existingMapBlocks = new Set<string>();
-
-        workspace.getAllBlocks(false).forEach((block) => {
-          if (block.type === "variables_set") {
-            const varName = block.getFieldValue("VAR");
-            existingSetBlocks.add(varName);
-          }
-          if (block.type === "map") {
-            existingMapBlocks.add(block.id);
-          }
-        });
-
-        // Track the last set block to connect them sequentially
         let lastSetBlock: Blockly.Block | null = null;
 
-        // Create set blocks for variables if they don't exist
         allVariableNames.forEach((variableName) => {
-          // Find the field associated with the variable
           const field = fields.find((field) => field.name === variableName);
 
-          // Determine the initial value for the variable
-          const initialValue = field?.value ?? "text";
+          if (field) {
+            const initialValue = determineInitialValue(field);
+            createVariableIfNeeded(
+              workspace,
+              currentVariableNames,
+              variableName,
+              sufixSelectable,
+              field
+            );
 
-          // Create a new variable if it does not exist
-          if (!currentVariableNames.includes(variableName)) {
-            // Create the variable with the name
-            workspace.createVariable(variableName, null, variableName);
-          }
-
-          // Create a set block only if it doesn't already exist
-          if (!existingSetBlocks.has(variableName)) {
-            // Retrieve the variable object from the workspace
-            const variable = workspace.getVariable(variableName);
-            if (!variable) {
-              console.error(`Variable ${variableName} not found.`);
-              return;
-            }
-
-            // Create a new block to set the variable's value
-            const setBlock = workspace.newBlock("variables_set");
-            if (setBlock) {
-              setBlock.initSvg(); // Initialize the block's SVG
-              // Set the block as read-only
-              setBlock.setDeletable(false);
-              setBlock.setEditable(false);
-
-              // Assign the variable to the block
-              setBlock.getField("VAR")?.setValue(variableName);
-
-              // Determine the type of block to create for the initial value
-              let valueBlock: Blockly.Block | null = null;
-              console.log(typeof initialValue);
-              if (typeof initialValue === "number") {
-                valueBlock = workspace.newBlock("math_number");
-                if (valueBlock) {
-                  valueBlock.initSvg();
-                  valueBlock.setFieldValue(String(initialValue), "NUM");
-                }
-              } else if (typeof initialValue === "string") {
-                valueBlock = workspace.newBlock("text");
-                if (valueBlock) {
-                  valueBlock.initSvg();
-                  valueBlock.setFieldValue(initialValue, "TEXT");
-                }
-              }
-
-              // Connect the value block to the set block
-              if (valueBlock) {
-                const connection = setBlock.getInput("VALUE")?.connection;
-                if (connection) {
-                  connection.connect(valueBlock.outputConnection);
-                }
-
-                // Render blocks only after all connections are set
-                setBlock.render();
-                valueBlock.render();
-              }
-
-              // Connect this set block to the previous one
-              if (lastSetBlock) {
-                const previousConnection = lastSetBlock.nextConnection;
-                if (previousConnection) {
-                  previousConnection.connect(setBlock.previousConnection);
-                }
-              }
-
-              // Update lastSetBlock to current setBlock
-              lastSetBlock = setBlock;
-
-              // Position blocks vertically for the first block
-              if (!existingSetBlocks.has(variableName)) {
-                const topBlocks = workspace.getTopBlocks(true);
-                const topBlockCount = topBlocks.length;
-                if (!setBlock.getParent()) {
-                  setBlock.moveBy(20, topBlockCount * 50);
-                }
-              }
-            }
-          }
-        });
-
-        // Delete variables that are no longer in use (neither field.name nor tag)
-        currentVariables.forEach((variable) => {
-          const variableName = variable.name;
-          const isFieldVariable = fields.some(
-            (field) => field.name === variableName
-          );
-          const isTagVariable = allTags.has(variableName);
-
-          if (!isFieldVariable && !isTagVariable) {
-            workspace.deleteVariableById(variable.getId()); // Now using the ID properly
-          }
-        });
-
-        // Now create a map block at the end of all variable blocks if not exists
-        if (existingMapBlocks.size === 0) {
-          const mapBlock = workspace.newBlock("map");
-          if (mapBlock) {
-            mapBlock.initSvg();
-            mapBlock.render();
-
-            // Set the block as read-only
-            mapBlock.setDeletable(false);
-            mapBlock.setEditable(false);
-
-            // Populate map with fields
-            fields.forEach((field) => {
-              const mapFieldBlock = workspace.newBlock("map_field");
-              if (mapFieldBlock) {
-                mapFieldBlock.initSvg();
-                mapFieldBlock.render();
-
-                // Set the key in the map field block
-                mapFieldBlock.getField("KEY")?.setValue(field.name);
-
-                // Determine the block type for using variables
-                const valueBlock = workspace.newBlock("variables_get");
-
-                if (valueBlock) {
-                  valueBlock.initSvg();
-                  valueBlock.render();
-
-                  // Set the existing variable in the value block
-                  valueBlock.getField("VAR").setValue(field.name);
-
-                  // Connect the value block to the map field block
-                  const connection =
-                    mapFieldBlock.getInput("VALUE")?.connection;
-                  if (connection) {
-                    connection.connect(valueBlock.outputConnection);
-                  }
-
-                  // Connect map field to the map block
-                  const mapConnection = mapBlock.getInput("FIELDS")?.connection;
-                  if (mapConnection) {
-                    mapConnection.connect(mapFieldBlock.previousConnection);
-                  }
-                }
-              }
-            });
-
-            const returnBlock = workspace.newBlock("return");
-            returnBlock.initSvg();
-            returnBlock.render();
-            // Conectar mapBlock al valor de entrada de returnBlock
-            returnBlock
-              .getInput("VALUE")
-              .connection.connect(mapBlock.outputConnection);
-
-            // Connect the last set block to the map block if exists
-            if (lastSetBlock) {
-              const previousConnection = lastSetBlock.nextConnection;
-              if (previousConnection) {
-                previousConnection.connect(returnBlock.previousConnection);
-              }
-            }
-            if (!mapBlock.getParent()) {
-              mapBlock.moveBy(
-                20,
-                (workspace.getTopBlocks(false).length + 1) * 50
+            if (!existingSetBlocks.has(variableName)) {
+              lastSetBlock = createSetBlockForVariable(
+                workspace,
+                field,
+                variableName,
+                initialValue,
+                lastSetBlock,
+                sufixSelectable
               );
             }
           }
-        }
+        });
 
-        // Log the variable-value map at the end
-        console.log("Variable Value Map:", variableValueMap);
+        deleteUnusedVariables(workspace, currentVariables, fields, allTags);
+        createMapBlockIfNotExists(
+          workspace,
+          existingMapBlocks,
+          fields,
+          lastSetBlock
+        );
       },
       renameVariable(oldName: string, newName: string) {
         const workspace = Blockly.getMainWorkspace();
@@ -369,7 +224,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
     }));
 
     const saveContent = () => {
-      const workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg; // Explicitly cast to WorkspaceSvg
+      const workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
       const backpack = new Backpack(workspace);
       backpackContentRef.current = backpack.getContents();
       generateCode();
@@ -429,20 +284,19 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           if (variableList.length > 0) {
             for (let i = 0; i < variableList.length; i++) {
               const variable = variableList[i];
-              const getBlockText = `<block type="variables_get"><field name="VAR">${variable.name}</field></block>`;
+              const sanitizedVariableName = sanitizeVariableName(variable.name);
+              const getBlockText = `<block type="variables_get"><field name="VAR">${sanitizedVariableName}</field></block>`;
               const getBlock = Blockly.utils.xml.textToDom(getBlockText);
               xmlList.push(getBlock);
             }
 
-            // Add a single variables_set block
-            const setBlockText = `<block type="variables_set"><field name="VAR">${variableList[0].name}</field></block>`;
+            const setBlockText = `<block type="variables_set"><field name="VAR">${sanitizeVariableName(variableList[0].name)}</field></block>`;
             const setBlock = Blockly.utils.xml.textToDom(setBlockText);
             xmlList.push(setBlock);
           }
           return xmlList;
         }
       );
-
       const handleThemeChange = (event: Event) => {
         backpackContentRef.current = backpack.getContents(); // Store backpack contents in ref
         Blockly.svgResize(workspace);
@@ -533,6 +387,387 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
         </div>
       </>
     );
+    function extractAllTags(fields: Field[]): Set<string> {
+      const allTags = new Set<string>();
+      fields.forEach((field) => {
+        field.tags?.forEach((tag) => {
+          allTags.add(tag);
+        });
+      });
+      return allTags;
+    }
+
+    function extractAllVariableNames(
+      fields: Field[],
+      sufixSelectable: string,
+      allTags: Set<string>
+    ): Set<string> {
+      const allVariableNames = new Set<string>();
+      fields.forEach((field) => {
+        if (field.type == typeField.selectable) {
+          allVariableNames.add(field.name + sufixSelectable);
+          allVariableNames.add(field.name);
+        } else {
+          allVariableNames.add(field.name);
+        }
+      });
+
+      allTags.forEach((tag) => {
+        allVariableNames.add(tag);
+      });
+
+      return allVariableNames;
+    }
+
+    function getExistingBlocks(workspace: any, blockType: string): Set<string> {
+      const existingBlocks = new Set<string>();
+      workspace.getAllBlocks(false).forEach((block: Blockly.Block) => {
+        if (block.type === blockType) {
+          const varName = block.getFieldValue("VAR");
+          existingBlocks.add(varName);
+        }
+      });
+      return existingBlocks;
+    }
+
+    function determineInitialValue(field: Field): any {
+      if (field.type === typeField.selectable) {
+        const options = field.options?.split(";") || [];
+        return field.value || options[0];
+      } else if (field.type === typeField.checkbox) {
+        return false;
+      } else {
+        return field.value ?? "";
+      }
+    }
+
+    function createVariableIfNeeded(
+      workspace: any,
+      currentVariableNames: string[],
+      variableName: string,
+      sufixSelectable: string,
+      field: Field
+    ) {
+      if (!currentVariableNames.includes(variableName)) {
+        workspace.createVariable(variableName, null, variableName);
+      }
+
+      if (field.type === typeField.selectable) {
+        workspace.createVariable(
+          variableName + sufixSelectable,
+          null,
+          variableName + sufixSelectable
+        );
+      }
+    }
+
+    function createSetBlockForVariable(
+      workspace: any,
+      field: Field,
+      variableName: string,
+      initialValue: any,
+      lastSetBlock: Blockly.Block | null,
+      sufixSelectable: string
+    ): Blockly.Block | null {
+      const variable = workspace.getVariable(variableName);
+      if (!variable) {
+        console.error(`Variable ${variableName} not found.`);
+        return lastSetBlock;
+      }
+
+      const setBlock = workspace.newBlock("variables_set");
+      if (!setBlock) {
+        return lastSetBlock;
+      }
+
+      setBlock.initSvg();
+      setBlock.setDeletable(false);
+      setBlock.setEditable(false);
+      setBlock.getField("VAR")?.setValue(variableName);
+
+      let valueBlock: Blockly.Block | null = null;
+      if (field.type === typeField.selectable) {
+        valueBlock = createArrayBlockForSelectable(workspace, field);
+        connectSetBlock(setBlock, valueBlock, lastSetBlock);
+        lastSetBlock = createSetSelectedValueBlock(
+          workspace,
+          field,
+          variableName,
+          sufixSelectable,
+          lastSetBlock
+        );
+      } else {
+        valueBlock = createValueBlock(workspace, initialValue);
+        connectSetBlock(setBlock, valueBlock, lastSetBlock);
+      }
+
+      if (!workspace.getAllVariables().includes(variableName)) {
+        positionBlockVertically(workspace, setBlock);
+      }
+
+      return setBlock;
+    }
+
+    function createArrayBlockForSelectable(
+      workspace: any,
+      field: Field
+    ): Blockly.Block | null {
+      const valueBlock = workspace.newBlock("array");
+      if (!valueBlock) {
+        return null;
+      }
+
+      valueBlock.initSvg();
+      const options = field.options?.split(";") || [];
+      let previousBlock: Blockly.Block | null = null;
+
+      options.forEach((item) => {
+        const textBlock = workspace.newBlock("text");
+        if (!textBlock) {
+          return;
+        }
+
+        textBlock.initSvg();
+        textBlock.setFieldValue(item, "TEXT");
+
+        const arrayElementBlock = workspace.newBlock("array_element");
+        if (!arrayElementBlock) {
+          return;
+        }
+
+        arrayElementBlock.initSvg();
+        arrayElementBlock
+          .getInput("VALUE")
+          .connection.connect(textBlock.outputConnection);
+
+        if (previousBlock && previousBlock.nextConnection) {
+          previousBlock.nextConnection.connect(
+            arrayElementBlock.previousConnection
+          );
+        } else {
+          valueBlock
+            .getInput("ELEMENTS")
+            .connection.connect(arrayElementBlock.previousConnection);
+        }
+
+        previousBlock = arrayElementBlock;
+      });
+
+      return valueBlock;
+    }
+
+    function connectSetBlock(
+      setBlock: Blockly.Block,
+      valueBlock: Blockly.Block | null,
+      lastSetBlock: Blockly.Block | null
+    ) {
+      if (valueBlock && valueBlock.outputConnection) {
+        const connection = setBlock.getInput("VALUE")?.connection;
+        if (connection) {
+          connection.connect(valueBlock.outputConnection);
+        }
+
+        setBlock.render();
+        valueBlock.render();
+      }
+
+      if (lastSetBlock && setBlock.previousConnection) {
+        const previousConnection = lastSetBlock.nextConnection;
+        if (previousConnection) {
+          previousConnection.connect(setBlock.previousConnection);
+        }
+      }
+    }
+
+    function createSetSelectedValueBlock(
+      workspace: any,
+      field: Field,
+      variableName: string,
+      sufixSelectable: string,
+      lastSetBlock: Blockly.Block | null
+    ): Blockly.Block | null {
+      const SetSelectedValue = workspace.newBlock("variables_set");
+      if (!SetSelectedValue) {
+        return lastSetBlock;
+      }
+
+      SetSelectedValue.initSvg();
+      SetSelectedValue.setDeletable(false);
+      SetSelectedValue.setEditable(false);
+      SetSelectedValue.getField("VAR")?.setValue(
+        variableName + sufixSelectable
+      );
+
+      const indexBlock = createIndexBlock(workspace, field, variableName);
+      const connection = SetSelectedValue.getInput("VALUE")?.connection;
+      if (connection && indexBlock) {
+        connection.connect(indexBlock.outputConnection!);
+      }
+
+      SetSelectedValue.render();
+      indexBlock?.render();
+
+      const previousConnection = lastSetBlock?.nextConnection;
+      if (previousConnection) {
+        previousConnection.connect(SetSelectedValue.previousConnection!);
+      }
+
+      return SetSelectedValue;
+    }
+
+    function createIndexBlock(
+      workspace: any,
+      field: Field,
+      variableName: string
+    ): Blockly.Block | null {
+      const index = workspace.newBlock("array_get");
+      if (!index) {
+        return null;
+      }
+
+      index.initSvg();
+      index.getField("ARRAY")?.setValue(variableName);
+
+      const numberBlock = workspace.newBlock("math_number");
+      if (!numberBlock) {
+        return null;
+      }
+
+      numberBlock.initSvg();
+      const options = field.options?.split(";") || [];
+      let selectedIndex = options.indexOf(field.value || options[0]);
+      if (selectedIndex === -1) {
+        selectedIndex = 0;
+      }
+      numberBlock.setFieldValue(String(selectedIndex), "NUM");
+
+      const indexConnection = index.getInput("INDEX")?.connection;
+      if (indexConnection) {
+        indexConnection.connect(numberBlock.outputConnection);
+      }
+
+      return index;
+    }
+
+    function createValueBlock(
+      workspace: any,
+      initialValue: any
+    ): Blockly.Block | null {
+      if (typeof initialValue === "number") {
+        const numberBlock = workspace.newBlock("math_number");
+        if (numberBlock) {
+          numberBlock.initSvg();
+          numberBlock.setFieldValue(String(initialValue), "NUM");
+          return numberBlock;
+        }
+      } else if (typeof initialValue === "string") {
+        const textBlock = workspace.newBlock("text");
+        if (textBlock) {
+          textBlock.initSvg();
+          textBlock.setFieldValue(initialValue, "TEXT");
+          return textBlock;
+        }
+      } else if (typeof initialValue === "boolean") {
+        const booleanBlock = workspace.newBlock("logic_boolean");
+        if (booleanBlock) {
+          booleanBlock.initSvg();
+          booleanBlock.setFieldValue(initialValue ? "TRUE" : "FALSE", "BOOL");
+          return booleanBlock;
+        }
+      }
+
+      return null;
+    }
+
+    function positionBlockVertically(workspace: any, setBlock: Blockly.Block) {
+      const topBlocks = workspace.getTopBlocks(true);
+      const topBlockCount = topBlocks.length;
+      if (!setBlock.getParent()) {
+        setBlock.moveBy(20, topBlockCount * 50);
+      }
+    }
+
+    function deleteUnusedVariables(
+      workspace: any,
+      currentVariables: any[],
+      fields: Field[],
+      allTags: Set<string>
+    ) {
+      currentVariables.forEach((variable) => {
+        const variableName = variable.name;
+        const isFieldVariable = fields.some(
+          (field) => field.name === variableName
+        );
+        const isTagVariable = allTags.has(variableName);
+
+        if (!isFieldVariable && !isTagVariable) {
+          workspace.deleteVariableById(variable.getId());
+        }
+      });
+    }
+
+    function createMapBlockIfNotExists(
+      workspace: any,
+      existingMapBlocks: Set<string>,
+      fields: Field[],
+      lastSetBlock: Blockly.Block | null
+    ) {
+      if (existingMapBlocks.size === 0) {
+        const mapBlock = workspace.newBlock("map");
+        if (mapBlock) {
+          mapBlock.initSvg();
+          mapBlock.render();
+          mapBlock.setDeletable(false);
+          mapBlock.setEditable(false);
+
+          fields.forEach((field) => {
+            const mapFieldBlock = workspace.newBlock("map_field");
+            if (mapFieldBlock) {
+              mapFieldBlock.initSvg();
+              mapFieldBlock.render();
+              mapFieldBlock.getField("KEY")?.setValue(field.name);
+
+              const valueBlock = workspace.newBlock("variables_get");
+              if (valueBlock) {
+                valueBlock.initSvg();
+                valueBlock.render();
+                valueBlock.getField("VAR").setValue(field.name);
+
+                const connection = mapFieldBlock.getInput("VALUE")?.connection;
+                if (connection) {
+                  connection.connect(valueBlock.outputConnection);
+                }
+
+                const mapConnection = mapBlock.getInput("FIELDS")?.connection;
+                if (mapConnection) {
+                  mapConnection.connect(mapFieldBlock.previousConnection);
+                }
+              }
+            }
+          });
+
+          const returnBlock = workspace.newBlock("return");
+          returnBlock.initSvg();
+          returnBlock.render();
+          returnBlock
+            .getInput("VALUE")
+            .connection.connect(mapBlock.outputConnection);
+
+          if (lastSetBlock) {
+            const previousConnection = lastSetBlock.nextConnection;
+            if (previousConnection) {
+              previousConnection.connect(returnBlock.previousConnection);
+            }
+          }
+          if (!mapBlock.getParent()) {
+            mapBlock.moveBy(
+              20,
+              (workspace.getTopBlocks(false).length + 1) * 50
+            );
+          }
+        }
+      }
+    }
   }
 );
 
