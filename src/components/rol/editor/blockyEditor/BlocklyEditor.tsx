@@ -39,9 +39,11 @@ interface BlocklyEditorProps {
 // así que hacemos esto para que no marque error
 declare module "blockly/core" {
   interface Block {
+    arguments_: any[];
     render: () => void;
   }
 }
+
 //aquí lo mismo
 declare module "blockly/core/clipboard" {
   export function copy(workspace: Blockly.Workspace): void;
@@ -209,7 +211,8 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           workspace,
           existingMapBlocks,
           fields,
-          lastSetBlock
+          lastSetBlock,
+          sufixSelectable
         );
       },
       renameVariable(oldName: string, newName: string) {
@@ -710,7 +713,8 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
       workspace: any,
       existingMapBlocks: Set<string>,
       fields: Field[],
-      lastSetBlock: Blockly.Block | null
+      lastSetBlock: Blockly.Block | null,
+      sufixSelectable: string
     ) {
       if (existingMapBlocks.size === 0) {
         const mapBlock = workspace.newBlock("map");
@@ -721,28 +725,16 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           mapBlock.setEditable(false);
 
           fields.forEach((field) => {
-            const mapFieldBlock = workspace.newBlock("map_field");
-            if (mapFieldBlock) {
-              mapFieldBlock.initSvg();
-              mapFieldBlock.render();
-              mapFieldBlock.getField("KEY")?.setValue(field.name);
+            // Add original field to the map
+            addFieldToMapBlock(workspace, mapBlock, field.name);
 
-              const valueBlock = workspace.newBlock("variables_get");
-              if (valueBlock) {
-                valueBlock.initSvg();
-                valueBlock.render();
-                valueBlock.getField("VAR").setValue(field.name);
-
-                const connection = mapFieldBlock.getInput("VALUE")?.connection;
-                if (connection) {
-                  connection.connect(valueBlock.outputConnection);
-                }
-
-                const mapConnection = mapBlock.getInput("FIELDS")?.connection;
-                if (mapConnection) {
-                  mapConnection.connect(mapFieldBlock.previousConnection);
-                }
-              }
+            // If the field is selectable, add the suffixed field
+            if (field.type === typeField.selectable) {
+              addFieldToMapBlock(
+                workspace,
+                mapBlock,
+                field.name + sufixSelectable
+              );
             }
           });
 
@@ -764,6 +756,36 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
               20,
               (workspace.getTopBlocks(false).length + 1) * 50
             );
+          }
+        }
+      }
+    }
+
+    function addFieldToMapBlock(
+      workspace: any,
+      mapBlock: Blockly.Block,
+      fieldName: string
+    ) {
+      const mapFieldBlock = workspace.newBlock("map_field");
+      if (mapFieldBlock) {
+        mapFieldBlock.initSvg();
+        mapFieldBlock.render();
+        mapFieldBlock.getField("KEY")?.setValue(fieldName);
+
+        const valueBlock = workspace.newBlock("variables_get");
+        if (valueBlock) {
+          valueBlock.initSvg();
+          valueBlock.render();
+          valueBlock.getField("VAR").setValue(fieldName);
+
+          const connection = mapFieldBlock.getInput("VALUE")?.connection;
+          if (connection) {
+            connection.connect(valueBlock.outputConnection);
+          }
+
+          const mapConnection = mapBlock.getInput("FIELDS")?.connection;
+          if (mapConnection) {
+            mapConnection.connect(mapFieldBlock.previousConnection);
           }
         }
       }

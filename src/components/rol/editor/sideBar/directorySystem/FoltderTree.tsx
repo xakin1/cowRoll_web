@@ -136,6 +136,8 @@ const FolderTree: React.FC<SideBarProps> = ({ directoryId }) => {
           node={current}
           selectedItems={selectedItems}
           handleItemClick={handleItemClick}
+          addNode={addNode}
+          handleOpenModal={handleOpenModal}
         ></FileTree>
       );
     } else {

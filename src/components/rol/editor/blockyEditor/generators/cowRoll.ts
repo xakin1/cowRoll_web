@@ -211,7 +211,7 @@ cowRollGenerator.forBlock["array_get"] = function (block) {
   var index = cowRollGenerator.valueToCode(block, "INDEX", Order.ORDER_NONE);
 
   var code = array + "[" + index + "]";
-  return code;
+  return [code, Order.ORDER_NONE];
 };
 
 cowRollGenerator.forBlock["procedures_defnoreturn"] = function (block) {

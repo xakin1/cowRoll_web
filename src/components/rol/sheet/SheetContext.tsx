@@ -76,7 +76,10 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
       blocklyRef.current.updateVariables(
         fields.filter((field) => {
           return (
-            field.type == typeField.input || field.type == typeField.checkbox
+            field.type != typeField.rectangle &&
+            field.type != typeField.circle &&
+            field.type != typeField.pdf &&
+            field.type != typeField.photo
           );
         })
       );
@@ -137,7 +140,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
       newSheets[currentSheetIndex] = [...currentFields, createdField];
-
       updateBlocklyVariables(newSheets[currentSheetIndex]);
 
       return newSheets;
@@ -282,6 +284,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
 
   const loadFields = () => {
     if (sheet && sheet.content) {
+      console.log(currentSheetIndex);
       setSheets(JSON.parse(sheet.content));
       updateBlocklyVariables(JSON.parse(sheet.content)[currentSheetIndex]);
     }
