@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 // Import your necessary components and hooks
-import { Divider, IconButton } from "@mui/material";
+import { Divider, IconButton, Tab, Tabs } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import i18n from "../../../i18n/i18n";
@@ -40,7 +40,7 @@ const Chat = () => {
   const dispatch = useDispatch();
   const messages = useSelector((state: RootState) => state.chat.messages);
   const [input, setInput] = useState("");
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState(0);
   const [role, setRole] = useState("GM");
   const [scripts, setScripts] = useState<{ [key: string]: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileProps>();
@@ -72,7 +72,6 @@ const Chat = () => {
     null
   );
   const [loading, setLoading] = useState<boolean>(true);
-
   const fetchDocuments = async () => {
     const response = await getFiles();
     setScripts([]);
@@ -108,6 +107,16 @@ const Chat = () => {
       // Initialize roles with GM and sheets marked with player: true
       const playerSheetsList = getPlayerSheets(response.message);
       const playerRoles = playerSheetsList.map((sheet) => sheet.name);
+      playerSheetsList.map((sheet) => {
+        if (!sheet.codes) return;
+        sheet.codes.map((code) => {
+          if (code.content && code.content != "")
+            setScripts((prevScripts) => [
+              ...prevScripts,
+              { [code.name]: code.content ?? "" },
+            ]);
+        });
+      });
 
       // Create a map of player sheets for easy access
       const playerSheetsMap = new Map<string, FileProps>(
@@ -265,7 +274,7 @@ const Chat = () => {
       return "No scripts available.";
     }
 
-    const scriptList = scriptNames.map((name) => `**/${name}**`).join("\n");
+    const scriptList = scriptNames.map((name) => `- **/${name}**`).join("\n");
     return `\n${scriptList}`;
   };
 
@@ -426,6 +435,10 @@ const Chat = () => {
 
       const response = await createFile(newSheet);
       if (response && "message" in response) {
+        restOfFile.codes?.map((code) => {
+          console.log(code.name);
+          createFile({ ...code, directoryId: response.message });
+        });
         setRoles([...roles, newSheet.name]);
         setPlayerSheets(
           (prev) =>
@@ -437,7 +450,15 @@ const Chat = () => {
               })
             )
         );
-        setScripts([...scripts, { [newSheet.name]: selectedFile.content }]);
+        restOfFile.codes?.forEach((code) => {
+          if (code.content && code.content !== "") {
+            console.log(code.name);
+            setScripts((prevScripts) => [
+              ...prevScripts,
+              { [code.name]: code.content ?? "" },
+            ]);
+          }
+        });
       } else {
         response && toast.error(i18n.t("Errors." + response.error), toastStyle);
       }
@@ -479,7 +500,7 @@ const Chat = () => {
           });
 
           // Show success toast
-          toast.success(i18n.t("Success.RoleDeleted"), toastStyle);
+          toast.success(i18n.t("Success.rolDeleted"), toastStyle);
         } catch (error) {
           // Handle deletion error
           console.error("Failed to delete file:", error);
@@ -495,14 +516,25 @@ const Chat = () => {
 
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
+    setScripts([]);
     if (newRole !== "GM") {
       const sheet = playerSheets.get(newRole);
       if (sheet && isSheetsProps(sheet)) {
         setSelectedFile(sheet);
+        sheet.codes?.map((child) => {
+          setScripts((prevScripts) => [
+            ...prevScripts,
+            { [child.name]: child.content ?? "" },
+          ]);
+        });
       }
     } else {
       setSelectedFile(undefined);
     }
+  };
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
   };
 
   return (
@@ -510,13 +542,15 @@ const Chat = () => {
       <div className="chat-page">
         <div style={{ padding: "20px" }}>
           <div className="chat-container">
-            <div className="chat-container__header">
-              <button onClick={() => setActiveTab("chat")}>Chat</button>
-              <button onClick={() => setActiveTab("addCharacter")}>
-                {i18n.t("General.addPlayer")}
-              </button>
-            </div>
-            {activeTab === "chat" ? (
+            <Tabs
+              value={activeTab}
+              onChange={handleTabChange}
+              aria-label="chat tabs"
+            >
+              <Tab label="Chat" />
+              <Tab label={i18n.t("General.addPlayer")} />
+            </Tabs>
+            {activeTab === 0 && (
               <>
                 <div className="chat-container__body">
                   {messages.map((message, index) => (
@@ -554,13 +588,17 @@ const Chat = () => {
                   <button onClick={handleSend}>{i18n.t("General.send")}</button>
                 </div>
               </>
-            ) : (
+            )}
+            {activeTab === 1 && (
               <div className="add-character">
-                <button onClick={handleOpen}>
+                <button className="button-addPlayer" onClick={handleOpen}>
                   {i18n.t("General.addPlayer")}
+                  <span style={{ fontSize: "20px" }}>+</span>
                 </button>
-                <div>
-                  {i18n.t("General.actualRoles")}: {roles.join(", ")}
+                <Divider></Divider>
+                <div className="roles-div">
+                  {i18n.t("General.actualRoles")}:{" "}
+                  <strong>{roles.join(", ")}</strong>
                 </div>
                 <ul>
                   {roles.map(

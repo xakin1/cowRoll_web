@@ -1,3 +1,4 @@
+import { TextField } from "@mui/material";
 import React, { useState } from "react";
 import i18n from "../../../i18n/i18n";
 import CustomModal from "../../utils/CustomModal";
@@ -26,16 +27,16 @@ const PlayerNameModal: React.FC<PlayerNameModalProps> = ({
     <CustomModal open={open} onClose={onClose}>
       <div>
         <header className="modal-header">
-          <h3>Enter Player Name</h3>
+          <h3>{i18n.t("General.enterPlayerName")}</h3>
         </header>
         <Divider />
         <div className="modal-body">
-          <input
-            type="text"
+          <TextField
+            id="outlined-basic"
             value={playerName}
+            label={i18n.t("General.playerName")}
             onChange={(e) => setPlayerName(e.target.value)}
-            placeholder="Player Name"
-            className="player-name-input"
+            variant="outlined"
           />
         </div>
         <Divider />

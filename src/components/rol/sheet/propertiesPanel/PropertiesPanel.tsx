@@ -838,11 +838,9 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         )}
         {selectedElement?.type === typeField.checkbox && (
           <>
-            <h4>Checkbox Colors</h4>
+            <h4>{i18n.t("Rol.Sheet.General.checkBoxColors")}</h4>
             <div className="position-inputs__container properties-panel__property-field">
-              <label className="position-inputs__container__label">
-                Active Color:
-              </label>
+              <label className="position-inputs__container__label"></label>
               <input
                 onKeyDown={(e) => {
                   e.stopPropagation();
@@ -858,7 +856,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
             </div>
             <div className="position-inputs__container properties-panel__property-field">
               <label className="position-inputs__container__label">
-                Inactive Color:
+                {i18n.t("Rol.Sheet.Style.inactiveColor")}:
               </label>
               <input
                 onKeyDown={(e) => {

@@ -52,7 +52,7 @@
 
 .buttons-modal_container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: 1rem;
 }
 
@@ -146,4 +146,18 @@
 .confirmation-modal__buttons {
   display: flex;
   justify-content: space-between;
+}
+
+.button-addPlayer {
+  display: flex;
+  margin: 1rem auto;
+  padding: 10px;
+  border-radius: 12px;
+  background: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.roles-div {
+  margin-top: 1rem;
 }

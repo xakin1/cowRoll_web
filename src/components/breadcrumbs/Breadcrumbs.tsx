@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import i18n from "../../i18n/i18n";
 import "./breadcrumbs.css";
 
 const Breadcrumbs: React.FC = () => {
@@ -21,7 +22,7 @@ const Breadcrumbs: React.FC = () => {
           onClick={handleBackNavigation}
           style={{ cursor: "pointer" }}
         >
-          ← Back
+          ← {i18n.t("General.back")}
         </span>
       </div>
     )

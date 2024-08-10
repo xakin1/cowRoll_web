@@ -36,6 +36,9 @@
     "Sheet": {
       "General": {
         "sheetName": "Name of the sheet",
+        "checkBoxColors": "Checkbox colors",
+        "activeColor": "Active Color:",
+        "inactiveColor": "Inactive Color:",
         "folderName": "Folder name",
         "submit": "Submit",
         "changeMode": "Change Mode",
@@ -121,6 +124,10 @@
   },
   "General": {
     "accept": "Accept",
+    "back": "Back",
+    "addOption": "Add Option",
+    "enterPlayerName": "Enter player name",
+    "playerName": "Player name",
     "alreadyAccount": "Already have an account?",
     "add": " Add",
     "upload": " Upload",
@@ -129,6 +136,7 @@
     "send": "Send",
     "actualRoles": "Actual roles",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "roles": "Roles",
     "codes": "Codes",
     "saveSuccess": "Save successfully",
@@ -338,6 +346,7 @@
   "Errors": {
     "EMPTY_FOLDER_NAME": "The folder name can't be empty",
     "SIGN_UP_FAILED": "Sign Up failed",
+    "FILE_DELETION_FAILED": "File deletion failed",
     "EMPTY_FILE_NAME": "The file name can't be empty",
     "EMPTY_USER_NAME": "Username cannot be empty.",
     "EMPTY_PASSWORD": "Password cannot be empty.",
@@ -356,11 +365,18 @@
     "DIRECTORY_NOT_FOUND": "The directory was not found",
     "DIRECTORY_NAME_ALREADY_EXISTS": "The folder name already exists"
   },
+  "Success": {
+    "rolDeleted": "Rol deleted"
+  },
   "Messages": {
     "FILE_UPDATED": "The file has been updated successfully",
     "FILE_DELETED": "The file has been deleted successfully",
     "DIRECTORY_UPDATED": "The folder has been updated successfully",
     "DIRECTORY_NAME_UPDATED": "The folder has been deleted successfully",
     "CONTENT_INSERTED": "The content has been inserted successfully"
+  },
+  "Pages": {
+    "pageNotFound": "The page you are looking for does not exist.",
+    "404": "404 - Page not found"
   }
 }

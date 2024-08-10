@@ -9,6 +9,7 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
+import i18n from "../../../i18n/i18n";
 import type { RenderFieldProps } from "./types";
 
 export enum typeField {
@@ -434,7 +435,9 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   </option>
                 ))}
                 {allowAdditions && (
-                  <option value="addOption">➕ Add Option</option> // Special add option
+                  <option value="addOption">
+                    ➕ {i18n.t("General.addOption")}
+                  </option> // Special add option
                 )}
               </select>
             </div>

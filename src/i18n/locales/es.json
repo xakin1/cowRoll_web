@@ -37,6 +37,9 @@
     "Sheet": {
       "General": {
         "sheetName": "Nombre de la hoja",
+        "checkBoxColors": "Colores del checkbox",
+        "activeColor": "Color activo:",
+        "inactiveColor": "Color desmarcado:",
         "folderName": "Nombre de la carpeta",
         "changeMode": "Cambiar modo",
         "submit": "Enviar",
@@ -126,10 +129,16 @@
   },
   "General": {
     "accept": "Aceptar",
+    "back": "Atrás",
+    "addOption": "Añadir opción",
     "alreadyAccount": "¿Ya tienes una cuenta?",
+    "enterPlayerName": "Introduce el nombre del jugador",
+    "playerName": "Nombre del jugador",
     "add": "Añadir",
     "upload": "Subir",
     "cancel": "Cancelar",
+    "confirm": "Confirmar",
+
     "roles": "Roles",
     "nameChanged": "Se ha cambiado el nombre correctamente",
     "codes": "Códigos",
@@ -318,6 +327,8 @@
   "Errors": {
     "EMPTY_FOLDER_NAME": "El nombre de la carpeta no puede estar vacío",
     "SIGN_UP_FAILED": "Fallo al registrarse",
+    "FILE_DELETION_FAILED": "Fallo al borrar el fichero",
+
     "EMPTY_FILE_NAME": "El nombre del fichero no puede estar vacio",
     "FILE_NOT_FOUND": "No se ha encontrado el fichero",
     "FILE_NAME_ALREADY_EXISTS": "Ya existe un fichero con ese nombre",
@@ -336,11 +347,18 @@
     "LOWER_CASE": "La contraseña tiene que tener al menos una minuscula",
     "SPECIAL_CHARACTERES": "La contraseña tiene que contener al menos un caracter especial"
   },
+  "Success": {
+    "rolDeleted": "Rol eliminado"
+  },
   "Messages": {
     "FILE_UPDATED": "El fichero se ha actualizado correctamente",
     "FILE_DELETED": "El fichero se ha eliminado correctamente",
     "DIRECTORY_UPDATED": "La carpeta se ha actualizado correctamente",
     "DIRECTORY_NAME_UPDATED": "La carpeta se ha eliminado correctamente",
     "CONTENT_INSERTED": "El contenido ha sido guardado correctamente"
+  },
+  "Pages": {
+    "pageNotFound": "La página que estás buscando no existe.",
+    "404": "404 - Página no encontrada"
   }
 }

@@ -274,8 +274,8 @@ export const fetchFiles = async () => {
   return await response.json();
 };
 
-export function getPlayerSheets(directory: DirectoryProps): FileProps[] {
-  const playerSheets: FileProps[] = [];
+export function getPlayerSheets(directory: DirectoryProps): SheetProps[] {
+  const playerSheets: SheetProps[] = [];
 
   const processDirectory = (dir: DirectoryProps) => {
     dir.children.forEach((child) => {
