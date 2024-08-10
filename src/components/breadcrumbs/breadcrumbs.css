@@ -1,22 +1,29 @@
-.breadcrumb__path {
-  color: var(--text-color);
-  font-size: 24px;
-  max-width: 18.75rem;
-  line-height: 1.75rem;
-  margin: 0.125rem 0;
-  padding: 0.25rem 1rem;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: inline-block;
-  flex: 0 1 auto;
-  overflow: hidden;
-  position: relative;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-}
-
+/* Contenedor principal del breadcrumb */
 .breadcrumb {
-  margin: rem 0;
   display: flex;
   align-items: center;
+  margin: 10px 0;
+  padding: 5px 10px;
+  background: none;
+  border: none;
+}
+
+/* Estilo de la flecha 'Back' */
+.breadcrumb__back-arrow {
+  font-size: 18px;
+  color: var(--text-color); /* Color del texto de la flecha */
+  text-decoration: none; /* Sin subrayado */
+  font-weight: bold; /* Texto en negrita */
+  cursor: pointer;
+  transition: color 0.2s ease; /* Transición suave para el hover */
+}
+
+/* Estilo al pasar el cursor sobre la flecha */
+.breadcrumb__back-arrow:hover {
+  color: #067dfc; /* Color más oscuro en hover */
+}
+
+/* Ajuste de margen si se necesita */
+.breadcrumb__back-arrow:not(:last-child) {
+  margin-right: 10px; /* Espacio entre la flecha y el siguiente elemento, si lo hay */
 }

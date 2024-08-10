@@ -5,19 +5,22 @@ import type { Id } from "../../utils/types/ApiTypes";
 interface IdState {
   value: Id | null;
   currentPath: PathProps[];
+  rolName: string | null;
 }
 
 const initialState: IdState = {
   value: null,
   currentPath: [],
+  rolName: null,
 };
 
 const routeSlice = createSlice({
   name: "id",
   initialState,
   reducers: {
-    setId(state, action: PayloadAction<Id>) {
-      state.value = action.payload;
+    setRol(state, action: PayloadAction<{ id: Id; rolName: string }>) {
+      state.value = action.payload.id;
+      state.rolName = action.payload.rolName;
     },
     setCurrentPath: (state, action: PayloadAction<PathProps[]>) => {
       state.currentPath = action.payload;
@@ -25,5 +28,5 @@ const routeSlice = createSlice({
   },
 });
 
-export const { setId, setCurrentPath } = routeSlice.actions;
+export const { setRol, setCurrentPath } = routeSlice.actions;
 export default routeSlice.reducer;

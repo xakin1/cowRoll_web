@@ -7,7 +7,7 @@ import type { RootState } from "../redux/store";
 interface PathContextProps {
   currentPath: PathProps[];
   setCurrentPath: (path: PathProps[]) => void;
-  addToPath: (path: PathProps) => void;
+  addToPath: (path: PathProps, reset?: boolean) => void;
   removeLastFromPath: () => void;
 }
 
@@ -35,8 +35,12 @@ export const PathProvider: React.FC<PathProviderProps> = ({ children }) => {
   const dispatch = useDispatch();
 
   const setCurrentPath = (path: PathProps[]) => dispatch(setPath(path));
-  const addToPath = ({ name, route }: PathProps) => {
-    dispatch(setPath([...currentPath, { name, route }]));
+  const addToPath = ({ name, route }: PathProps, reset = false) => {
+    if (reset) {
+      dispatch(setPath([{ name, route }]));
+    } else {
+      dispatch(setPath([...currentPath, { name, route }]));
+    }
   };
   const removeLastFromPath = () => {
     if (currentPath.length > 0) {

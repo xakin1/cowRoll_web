@@ -11,7 +11,7 @@ const PageField: React.FC<DraggableFieldProps> = ({
   value,
   label,
   style,
-  options = "",
+  options = [],
   allowAdditions = false,
   editable = true,
   setSelectedElement,

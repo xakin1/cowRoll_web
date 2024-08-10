@@ -137,9 +137,12 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
     };
 
     useEffect(() => {
+      setSelectedValue(value);
+    }, [value]);
+
+    useEffect(() => {
       if (options) {
-        const initialOptions = options.split(";").map((opt) => opt.trim());
-        setSelectOptions(initialOptions);
+        setSelectOptions(options);
       }
     }, [options]);
 
@@ -387,8 +390,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
             ></div>
           );
         case typeField.selectable:
-          const optionsArray = selectOptions;
-
           return (
             <div
               ref={targetRef as React.RefObject<HTMLDivElement>}
@@ -411,7 +412,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   } else {
                     setSelectedValue(value);
                   }
-                  console.log(value);
                   onChange && onChange(id, { value: value });
                 }}
                 style={{
@@ -428,7 +428,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                 onFocus={() => setSelectOpen(true)}
                 onBlur={() => setSelectOpen(false)}
               >
-                {optionsArray.map((option, index) => (
+                {selectOptions.map((option, index) => (
                   <option key={index} value={option}>
                     {option}
                   </option>

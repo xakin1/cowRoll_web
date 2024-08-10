@@ -38,7 +38,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
 }) => {
   const [width, setWidth] = useState<string>("");
   const [nameVar, setNameVar] = useState<string>("");
-  const [options, setOptions] = useState<string>("");
+  const [options, setOptions] = useState<any[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [isItalic, setIsItalic] = useState<boolean>(false);
   const [isBold, setIsBold] = useState<boolean>(false);
@@ -94,7 +94,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     ) {
       setWidth(getSizeValue(selectedElement.style?.width));
       setNameVar(selectedElement.name);
-      setOptions(selectedElement.options || "");
+      setOptions(selectedElement.options || []);
       setTags(selectedElement.tags || []);
       setFontSize(selectedElement.style?.fontSize || "12");
       setHeight(getSizeValue(selectedElement.style?.height));
@@ -134,7 +134,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         setXPosition(parseInt(translateMatch[1], 10).toString());
         setYPosition(parseInt(translateMatch[2], 10).toString());
       }
-      console.log(selectedElement);
       setActiveCheckboxColor(selectedElement.style?.activeColor || "#2196F3");
       setInactiveCheckboxColor(
         selectedElement.style?.inactiveColor || "#FFFFFF"
@@ -153,7 +152,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     const { name, value } = e.target;
     switch (name) {
       case "width":
-        console.log(name, value);
         setWidth(value);
         onUpdateStyle(name, `${value}px`);
         break;
@@ -290,34 +288,35 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = event.target;
-
-    switch (name) {
-      case "name":
-        setNameVar(value);
-        break;
-      case "options":
-        setOptions(value);
-        break;
-      case "allowAdditions":
-        if (type === "checkbox") {
-          const isChecked: boolean = (event.target as HTMLInputElement).checked;
-          setAllowAdditions(isChecked);
-          if (selectedElement) {
+    if (selectedElement) {
+      switch (name) {
+        case "name":
+          setNameVar(value);
+          onUpdateField({
+            ...selectedElement,
+            [name]: value,
+          });
+          break;
+        case "options":
+          const newOptions = value.split(";");
+          setOptions(newOptions);
+          onUpdateField({
+            ...selectedElement,
+            [name]: newOptions,
+          });
+          break;
+        case "allowAdditions":
+          if (type === "checkbox") {
+            const isChecked: boolean = (event.target as HTMLInputElement)
+              .checked;
+            setAllowAdditions(isChecked);
             onUpdateField({
               ...selectedElement,
               allowAdditions: isChecked,
             });
           }
-        }
-        break;
-    }
-
-    if (selectedElement && name !== "allowAdditions") {
-      console.log(selectedElement);
-      onUpdateField({
-        ...selectedElement,
-        [name]: value,
-      });
+          break;
+      }
     }
   };
 

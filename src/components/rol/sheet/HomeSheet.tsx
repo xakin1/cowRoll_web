@@ -26,7 +26,6 @@ import {
 import { useCurrentPath } from "../../PathProvider";
 import { toastStyle } from "../../Route";
 import Loading from "../../loading/Loading";
-import PhotoCard from "../../photoCard/PhotoCard";
 import PhotoCardList from "../../photoCard/PhotoCardList";
 import FolderForm from "./components/FolderForm";
 import SheetForm from "./components/sheetForm";
@@ -34,6 +33,7 @@ import "./styles.css";
 
 export function HomeSheet() {
   const rolId = useSelector((state: RootState) => state.route.value);
+  const rolName = useSelector((state: RootState) => state.route.rolName);
   const [sheets, setSheets] = useState<DirectorySystemProps[]>([]);
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
   const [isSubDirectory, setIsSubDirectory] = useState<boolean>(false);
@@ -44,7 +44,8 @@ export function HomeSheet() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { addToPath, currentPath, removeLastFromPath } = useCurrentPath();
+  const { addToPath, setCurrentPath, currentPath, removeLastFromPath } =
+    useCurrentPath();
 
   const fetchDocuments = async () => {
     const response = await getFiles();
@@ -74,8 +75,10 @@ export function HomeSheet() {
       setDirectoryHistory((prevHistory) => prevHistory.slice(0, -1));
       setSheets(previousDirectory.children);
       setSheetsDirectory(previousDirectory);
+      removeLastFromPath();
     } else {
       setIsSubDirectory(false);
+      addToPath({ name: rolName!, route: `/app/rol` }, true);
       navigate("/app/rol/");
     }
   };
@@ -93,6 +96,10 @@ export function HomeSheet() {
       setIsSubDirectory(true);
       setSheets(sheet.children);
       setSheetsDirectory(sheet);
+      addToPath({
+        name: sheet.name,
+        route: currentPath[currentPath.length - 1].route,
+      });
     }
   };
 
@@ -172,11 +179,6 @@ export function HomeSheet() {
 
   return (
     <div className="container-photoCards">
-      <PhotoCard
-        handleDoubleClick={handleClick}
-        name={"back"}
-        image={"/back-arrow.svg"}
-      />
       <PhotoCardList
         elements={sheets.filter(
           (sheet) => !(isSheetsProps(sheet) && sheet.player === true)

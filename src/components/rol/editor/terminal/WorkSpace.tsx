@@ -22,9 +22,10 @@ interface WorkSpaceProps {
   className?: string;
   directoryId?: Id;
   blocklyRef?: any;
+  handleExecuteCode?: (...args: any[]) => void;
 }
 const WorkSpace = forwardRef<BlocklyRefProps, WorkSpaceProps>(
-  ({ style, className, directoryId }, ref) => {
+  ({ style, className, directoryId, handleExecuteCode }, ref) => {
     const file = useAppSelector(
       (state: RootState) => state.directorySystem.selectedFile
     );
@@ -97,14 +98,16 @@ const WorkSpace = forwardRef<BlocklyRefProps, WorkSpaceProps>(
     const { error } = useAppSelector((state: RootState) => state.code);
 
     const handleExecuteClick = async () => {
-      if (file?.content) {
-        const response = await executeCode(file.content);
-        console.log(response);
-        if (response) {
-          console.log(response);
-          dispatch(addOutput(response));
-        } else {
-          dispatch(addOutput({ message: "" }));
+      if (handleExecuteCode) {
+        handleExecuteCode();
+      } else {
+        if (file?.content) {
+          const response = await executeCode(file.content);
+          if (response) {
+            dispatch(addOutput(response));
+          } else {
+            dispatch(addOutput({ message: "" }));
+          }
         }
       }
     };

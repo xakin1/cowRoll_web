@@ -15,7 +15,6 @@ const ViewSheet: React.FC<ViewSheetProps> = ({ sheet }) => {
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
 
   const handleFieldChange = (fieldId: string, changes: Partial<Field>) => {
-    console.log(changes);
     const newSheets = sheets.map((sheetFields, index) =>
       index === currentSheetIndex
         ? sheetFields.map((field) =>
@@ -53,11 +52,7 @@ const ViewSheet: React.FC<ViewSheetProps> = ({ sheet }) => {
 
   const saveFields = async (sheetsUpdated: Field[][]) => {
     const sheetsJSON = JSON.stringify(sheetsUpdated);
-    sheetsUpdated.map((sheet) =>
-      sheet.map((field) => {
-        if (field.name == "characterName") console.log(field);
-      })
-    );
+
     if (sheetsJSON && sheetsJSON !== "{}" && sheetsJSON !== "[]") {
       const fileProps: EditSheetProps = {
         ...sheet!,

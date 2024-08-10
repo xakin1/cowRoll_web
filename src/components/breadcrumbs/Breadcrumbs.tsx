@@ -1,56 +1,30 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useCurrentPath } from "../PathProvider";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./breadcrumbs.css";
-const Breadcrumbs: React.FC = () => {
-  const { currentPath, setCurrentPath } = useCurrentPath();
-  const navigate = useNavigate();
 
-  const handleNavigation = (index: number) => {
-    if (currentPath[index].route) {
-      navigate(currentPath[index].route);
-      setCurrentPath(currentPath.slice(0, index + 1));
-    }
+const Breadcrumbs: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleBackNavigation = () => {
+    navigate(-1); // Navegar hacia atrás en el historial
   };
 
-  const maxPartsToShow = 4;
-  const partsToShow =
-    currentPath.length > maxPartsToShow
-      ? ["...", ...currentPath.slice(-maxPartsToShow)]
-      : currentPath;
+  // Verifica si la ruta actual es '/app'
+  const isRootPath = location.pathname === "/app";
 
   return (
-    <div className="breadcrumb">
-      <span
-        className="breadcrumb__path"
-        onClick={() => {
-          setCurrentPath([]);
-          navigate("/app");
-        }}
-      >
-        Root
-      </span>
-      {partsToShow.map((part, index) => (
-        <span key={index}>
-          {" > "}
-          {typeof part === "string" ? (
-            <span>{part}</span>
-          ) : (
-            <span
-              className="breadcrumb__path"
-              onClick={() =>
-                handleNavigation(
-                  index - (partsToShow.length > maxPartsToShow ? 1 : 0)
-                )
-              }
-              style={{ cursor: "pointer" }}
-            >
-              {part.name}
-            </span>
-          )}
+    !isRootPath && (
+      <div className="breadcrumb">
+        <span
+          className="breadcrumb__back-arrow"
+          onClick={handleBackNavigation}
+          style={{ cursor: "pointer" }}
+        >
+          ← Back
         </span>
-      ))}
-    </div>
+      </div>
+    )
   );
 };
 

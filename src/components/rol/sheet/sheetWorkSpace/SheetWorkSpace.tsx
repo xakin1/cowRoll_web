@@ -31,6 +31,7 @@ export const SheetWorkSpace: React.FC = () => {
   const {
     sheets,
     currentSheetIndex,
+    handleExecuteCode,
     updateFieldStyle,
     setSheet,
     loadFields,
@@ -90,6 +91,7 @@ export const SheetWorkSpace: React.FC = () => {
               ref={blocklyRef}
               directoryId={sheetId}
               className="codeWorkSpace"
+              handleExecuteCode={handleExecuteCode}
             />
           </div>
         )}

@@ -51,7 +51,7 @@ export interface Field {
   label: string;
   style: { [key: string]: any };
   editable?: boolean;
-  options?: string;
+  options?: any[];
   allowAdditions?: boolean;
   onChange?: (...args: any[]) => void;
   setIsContextMenuVisible?: (...args: any[]) => void;

@@ -119,15 +119,12 @@ export async function signUp(username: string, password: string) {
     }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to sign up.");
-  }
-
   const data = await response.json();
-
-  // Usar localStorage solo si las cookies no están habilitadas
-  if (!cookiesEnabled() && data.message) {
-    localStorage.setItem("jwtToken", data.token);
+  if (data && !("error" in data)) {
+    // Usar localStorage solo si las cookies no están habilitadas
+    if (!cookiesEnabled() && data.message) {
+      localStorage.setItem("jwtToken", data.token);
+    }
   }
 
   return data;
@@ -144,15 +141,12 @@ export async function login(username: string, password: string) {
     }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to sign up.");
-  }
-
   const data = await response.json();
 
-  // Usar localStorage solo si las cookies no están habilitadas
-  if (!cookiesEnabled() && data.message) {
-    localStorage.setItem("jwtToken", data.token);
+  if (data && !("error" in data)) {
+    if (!cookiesEnabled() && data.message) {
+      localStorage.setItem("jwtToken", data.token);
+    }
   }
 
   return data;

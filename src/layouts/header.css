@@ -91,3 +91,10 @@ body {
   width: 24px;
   height: 24px;
 }
+.logout-button {
+  background: none;
+  border: none;
+}
+.logout-button:hover {
+  cursor: pointer;
+}

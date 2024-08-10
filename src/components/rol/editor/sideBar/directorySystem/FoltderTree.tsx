@@ -44,7 +44,6 @@ const FolderTree: React.FC<SideBarProps> = ({ directoryId }) => {
     const idFolder = directoryId ? directoryId : id;
     if (idFolder) {
       const rol = findNodeById(directorySystem!, idFolder);
-      console.log(rol);
       if (rol) setRol(rol);
     }
   };

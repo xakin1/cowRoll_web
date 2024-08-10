@@ -1,12 +1,6 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  Navigate,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import {
   selectFile,
@@ -16,7 +10,8 @@ import { persistor } from "../redux/store";
 import { getFiles } from "../services/codeApi";
 
 import type { ToastOptions } from "react-toastify";
-import { PathProvider } from "./PathProvider";
+import NotFound from "./NotFound"; // Importa el componente NotFound
+import PrivateRoute from "./PrivateRoute"; // Importa el componente PrivateRoute
 import PathSelectable from "./breadcrumbs/Breadcrumbs";
 import Loading from "./loading/Loading";
 import { MainPage } from "./mainPage";
@@ -59,28 +54,37 @@ const AppRoute: React.FC = () => {
   return (
     <PersistGate loading={null} persistor={persistor}>
       <Router>
-        <PathProvider>
-          <Suspense fallback={<Loading />}>
-            <PathSelectable />
-            <Routes>
-              <Route path="/app" element={<MainPage />} />
-              <Route path="/app/rol" element={<Rol />} />
-              <Route path="/app/rol/play" element={<Chat />} />
-              <Route path="/app/rol/sheet" element={<HomeSheet />} />
-              <Route path="/app/rol/sheet/:sheetId" element={<Sheet />} />
-              <Route path="/app/rol/editor" element={<WorkSpace />} />
-              <Route path="/app/*" element={<AppRouteHandler />} />
-            </Routes>
-          </Suspense>
-        </PathProvider>
+        <Routes>
+          <Route
+            path="/app/*"
+            element={
+              <PrivateRoute>
+                <AppLayout />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Router>
     </PersistGate>
   );
 };
 
-const AppRouteHandler = () => {
-  const location = useLocation();
-  return <Navigate to={location.pathname.replace("/app", "")} />;
+const AppLayout: React.FC = () => {
+  return (
+    <>
+      <PathSelectable />
+      <Routes>
+        <Route path="" element={<MainPage />} />
+        <Route path="rol" element={<Rol />} />
+        <Route path="rol/play" element={<Chat />} />
+        <Route path="rol/sheet" element={<HomeSheet />} />
+        <Route path="rol/sheet/:sheetId" element={<Sheet />} />
+        <Route path="rol/editor" element={<WorkSpace />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
 };
 
 export default AppRoute;

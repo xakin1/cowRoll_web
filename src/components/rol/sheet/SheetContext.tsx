@@ -7,18 +7,23 @@ import React, {
   type ReactNode,
   type RefObject,
 } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 import { useAppSelector } from "../../../hooks/customHooks";
 import i18n from "../../../i18n/i18n";
+import { addOutput } from "../../../redux/slice/codeSlice";
 import type { RootState } from "../../../redux/store";
-import { editFile } from "../../../services/codeApi";
+import { editFile, executeCode } from "../../../services/codeApi";
 import {
   type EditSheetProps,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
 import { toastStyle } from "../../Route";
-import type { BlocklyRefProps } from "../editor/blockyEditor/BlocklyEditor";
+import {
+  sufixSelectable,
+  type BlocklyRefProps,
+} from "../editor/blockyEditor/BlocklyEditor";
 import { typeField } from "./RenderFields";
 import type { Field, FieldWithoutId, Id } from "./types";
 
@@ -42,6 +47,7 @@ interface SheetContextProps {
   removeSheet: (index: number) => void;
   nextSheet: () => void;
   previousSheet: () => void;
+  handleExecuteCode: () => void;
   goToSheet: (page: number) => void;
   setBlocklyRef: (ref: RefObject<BlocklyRefProps>) => void;
 }
@@ -62,6 +68,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     useState<boolean>(false);
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
   const blocklyRef = useRef<BlocklyRefProps | null>(null);
+  const dispatch = useDispatch();
 
   const file = useAppSelector(
     (state: RootState) => state.directorySystem.selectedFile
@@ -86,24 +93,130 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
     }
   };
 
+  const handleExecuteCode = () => {
+    if (!file || !file.content) return;
+
+    const fields = sheets[currentSheetIndex];
+    const parameterValues: { [key: string]: any } = {};
+
+    // Recopilar nombres y valores de los campos
+    fields.forEach((field) => {
+      if (field.type === typeField.selectable) {
+        parameterValues[field.name] = field.options;
+      } else {
+        parameterValues[field.name] = field.value;
+      }
+    });
+
+    // Extraer los nombres de los parámetros de la función main
+    const codeVariables = extractMainParameters(file.content);
+
+    // Verificar si hay variables faltantes
+    const missingVariables = codeVariables.filter(
+      (varName) => !(varName in parameterValues)
+    );
+    if (missingVariables.length > 0) {
+      // Mostrar modal para pedir valores de variables faltantes
+      const missingValues = prompt(
+        `Please enter values for missing variables (${missingVariables.join(", ")}), separated by commas:`
+      );
+
+      if (missingValues) {
+        const valuesArray = missingValues
+          .split(",")
+          .map((value) => value.trim());
+        missingVariables.forEach((varName, index) => {
+          parameterValues[varName] = valuesArray[index];
+        });
+      } else {
+        return; // Si el usuario no ingresa los valores, salir de la función
+      }
+    }
+
+    // Generar los parámetros en orden y descartar los innecesarios
+    const generateOrderedValues = (
+      codeVariables: string[],
+      parameterValues: { [key: string]: any }
+    ) => {
+      return codeVariables
+        .map((name) => {
+          const value = parameterValues[name];
+
+          if (value === undefined || value === "") {
+            return '""';
+          } else if (Array.isArray(value)) {
+            return JSON.stringify(value);
+          } else {
+            return value;
+          }
+        })
+        .join(",");
+    };
+    const orderedValues = generateOrderedValues(codeVariables, parameterValues);
+
+    // Generar la llamada a main con los parámetros
+    const mainCall = `\nmain(${orderedValues})`;
+
+    // Concatenar la llamada a main al contenido del archivo
+    const finalCode = `${file.content}\n\n${mainCall}`;
+
+    // Ejecutar el código (puedes modificar esta parte según tus necesidades)
+    executeAndHandleCode(finalCode);
+  };
+
+  const extractMainParameters = (code: string): string[] => {
+    const mainFunctionRegex = /function\s+main\s*\(([^)]*)\)/;
+    const match = mainFunctionRegex.exec(code);
+    if (match) {
+      const params = match[1].trim(); // Elimina cualquier espacio en blanco
+      return params ? params.split(",").map((param) => param.trim()) : []; // Verifica si params no está vacío
+    }
+    return [];
+  };
+
+  const executeAndHandleCode = async (code: string) => {
+    try {
+      const response = await executeCode(code);
+      if (response) {
+        dispatch(addOutput(response));
+      } else {
+        dispatch(addOutput({ message: "" }));
+      }
+    } catch (error) {
+      console.error("Error executing code:", error);
+    }
+  };
+
   const output = useAppSelector((state) => state.code.output);
   useEffect(() => {
     setSheets((prevSheets) => {
       const newSheets = [...prevSheets];
+
       newSheets[currentSheetIndex] = newSheets[currentSheetIndex].map(
         (field) => {
           if (output.hasOwnProperty(field.name)) {
-            return {
-              ...field,
-              value: output[field.name as string],
-            };
+            if (field.type === typeField.selectable) {
+              const optionsKey = field.name;
+              const valueKey = field.name + sufixSelectable;
+              const indexValue = output[valueKey];
+              return {
+                ...field,
+                options: output[optionsKey] || "",
+                value: output[optionsKey][indexValue] || "",
+              };
+            } else {
+              return {
+                ...field,
+                value: output[field.name as string],
+              };
+            }
           }
           return field;
         }
       );
       return newSheets;
     });
-  }, [output]);
+  }, [output, currentSheetIndex, setSheets]);
 
   const setBlocklyRef = (ref: RefObject<BlocklyRefProps>) => {
     blocklyRef.current = ref.current;
@@ -216,7 +329,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         (field) => field.id === updatedField.id
       );
 
-      console.log(newSheets[currentSheetIndex][fieldIndex]);
       if (fieldIndex !== -1) {
         const existingField = newSheets[currentSheetIndex][fieldIndex];
 
@@ -284,7 +396,6 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
 
   const loadFields = () => {
     if (sheet && sheet.content) {
-      console.log(currentSheetIndex);
       setSheets(JSON.parse(sheet.content));
       updateBlocklyVariables(JSON.parse(sheet.content)[currentSheetIndex]);
     }
@@ -409,7 +520,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
       sheet &&
       sheet.name.endsWith(".pdf") &&
       sheet.pdf &&
-      JSON.parse(sheet.content || "").length === 0
+      (sheet.content || "").length === 0
     ) {
       renderPDFPages(sheet.pdf)
         .then((pdfSheets) => {
@@ -448,6 +559,7 @@ export const SheetProvider: React.FC<SheetProviderProps> = ({ children }) => {
         sheet,
         currentSheetIndex,
         mode,
+        handleExecuteCode,
         setIsContextMenuVisible,
         setSheet,
         changeMode,

@@ -27,7 +27,7 @@ const i18n = getI18N({currentLocale})
       border-radius: 10px;
       box-shadow: 0 0 5px var(--border-color);
       width: 320px;
-      height: 320px;
+      height: 340px;
 
       text-align: center;
       border: 1px solid var(--border-color);
@@ -62,12 +62,10 @@ const i18n = getI18N({currentLocale})
       font-size: 16px;
     }
 
- 
-
     .error {
       color: red;
       font-size: 0.9em;
-      margin-top: -5px;
+      margin-top: 10px;
     }
 
     html, body {
@@ -79,7 +77,7 @@ const i18n = getI18N({currentLocale})
   </style>
 </head>
 <body>
-  <main class="container"  id="login-container">
+  <main class="container" id="login-container">
     <h2>{i18n.t("General.logIn")}</h2>
     <form id="signin-form" action="javascript:void(0);" method="post">
       <input type="text" id="username" name="username" placeholder={i18n.t("General.username")} required>
@@ -89,28 +87,40 @@ const i18n = getI18N({currentLocale})
     <div class="register-link">
       {i18n.t("General.noAccount")} <a id="register-link" href="/signUp">{i18n.t("General.register")}</a>
     </div>
+    <!-- Contenedor para el mensaje de error -->
+    <div id="error-message" class="error"></div>
   </main>
 
   <script>
-    import { login } from "../../services/codeApi";
+    import i18n from "../../i18n/i18n";
+import { login } from "../../services/codeApi";
 
     document.getElementById('signin-form')!.addEventListener('submit', async function(event) {
-
+        event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
       const usernameInput = document.getElementById('username') as HTMLInputElement;
       const passwordInput = document.getElementById('password') as HTMLInputElement;
+      const errorMessageElement = document.getElementById('error-message') as HTMLDivElement;
 
+      // Limpiar mensaje de error antes de intentar nuevamente
+      if (errorMessageElement) {
+        errorMessageElement.textContent = '';
+      }
 
       if (usernameInput && passwordInput) {
         const username = usernameInput.value;
         const password = passwordInput.value;
 
         try {
-          await login(username, password);
+          const response = await login(username, password);
+          if (response && response.error) {
+          errorMessageElement.textContent = i18n.t("Errors."+response.error);
+          return; // Salir de la función si hay un error
+        }
+
           window.location.href = '/app'
         } catch (error) {
           console.error("Error during sign up:", error);
-          //TODO: TRADUCIR ESTO
-          alert("Failed to sign up. Please try again.");
+          
         }
       }
     });

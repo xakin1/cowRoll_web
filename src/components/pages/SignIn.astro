@@ -30,7 +30,7 @@ const i18n = getI18N({currentLocale})
       border-radius: 10px;
       box-shadow: 0 0 5px var(--border-color);
       width: 320px;
-      height: 320px;
+      height: 340px;
 
       text-align: center;
       border: 1px solid var(--border-color);
@@ -65,11 +65,16 @@ const i18n = getI18N({currentLocale})
       font-size: 16px;
     }
 
-  
     .error {
       color: red;
       font-size: 0.9em;
       margin-top: -5px;
+    }
+
+    .general-error {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 10px;
     }
 
     html, body {
@@ -90,6 +95,11 @@ const i18n = getI18N({currentLocale})
       <div id="password-error" class="error"></div>
       <button type="submit">{i18n.t("General.sigIn")}</button>
     </form>
+    <div class="register-link">
+      {i18n.t("General.alreadyAccount")} <a id="register-link" href="/">{i18n.t("General.logIn")}</a>
+    </div>
+    <!-- Contenedor para el mensaje de error general -->
+    <div id="general-error" class="general-error"></div>
   </main>
 
   <script>
@@ -99,13 +109,15 @@ import { signUp } from "../../services/codeApi";
 
     const i18n = getI18N({ currentLocale: getLang() });   
     document.getElementById('signin-form')!.addEventListener('submit', async function(event) {
- 
+      event.preventDefault(); // Evitar el comportamiento predeterminado del formulario
+
       const usernameInput = document.getElementById('username') as HTMLInputElement;
       const passwordInput = document.getElementById('password') as HTMLInputElement;
       const usernameErrorDiv = document.getElementById('username-error');
       const passwordErrorDiv = document.getElementById('password-error');
+      const generalErrorDiv = document.getElementById('general-error');
 
-      if (usernameInput && passwordInput && usernameErrorDiv && passwordErrorDiv) {
+      if (usernameInput && passwordInput && usernameErrorDiv && passwordErrorDiv && generalErrorDiv) {
         const username = usernameInput.value;
         const password = passwordInput.value;
 
@@ -114,19 +126,24 @@ import { signUp } from "../../services/codeApi";
 
         usernameErrorDiv.innerText = usernameError || '';
         passwordErrorDiv.innerText = passwordError || '';
+        generalErrorDiv.innerText = ''; // Limpiar mensaje de error general
 
         if (usernameError || passwordError) {
-          event.preventDefault();
-          return;
+          return; // Detener el envío si hay errores de validación
         }
 
         try {
-          await signUp(username, password);
-          window.location.href = '/app'
+          const result = await signUp(username, password);
+          if(result && "error" in result){
+            generalErrorDiv.innerText = result.error
+          }else{
+            window.location.href = '/app';
+
+          }
+          
         } catch (error) {
           console.error("Error during sign up:", error);
-          //TODO: TRADUCIR ESTO
-          alert("Failed to sign up. Please try again.");
+          generalErrorDiv.innerText = i18n.t("Errors.signUpFailed"); // Mostrar error general
         }
       }
     });

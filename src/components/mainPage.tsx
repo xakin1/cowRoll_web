@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import i18n from "../i18n/i18n";
 import { setDirectorySystem } from "../redux/slice/DirectorySystemSlice";
-import { setId } from "../redux/slice/routeSlice";
+import { setRol } from "../redux/slice/routeSlice";
 import { deleteFile, getFiles } from "../services/codeApi";
 import {
   isDirectory,
@@ -60,7 +60,7 @@ export function MainPage() {
   const handleClick = (rol: RolProps) => {
     const route = `/app/rol`;
     addToPath({ name: rol.name, route: route });
-    dispatch(setId(rol.id));
+    dispatch(setRol({ id: rol.id, rolName: rol.name }));
     navigate(route);
   };
 

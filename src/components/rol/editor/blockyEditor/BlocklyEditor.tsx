@@ -64,6 +64,7 @@ function sanitizeVariableName(name: string) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+export const sufixSelectable = "_selected_value";
 
 const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
   ({ style }, ref) => {
@@ -157,9 +158,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
     useImperativeHandle(ref, () => ({
       updateVariables(fields: Field[]) {
         const workspace = Blockly.getMainWorkspace();
-        const sufixSelectable = "_selected_value";
         if (!workspace) {
-          console.error("No workspace found.");
           return;
         }
 
@@ -175,38 +174,52 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           allTags
         );
 
-        const existingSetBlocks = getExistingBlocks(workspace, "variables_set");
         const existingMapBlocks = getExistingBlocks(workspace, "map");
+        const existingProcedures = getExistingBlocks(
+          workspace,
+          "procedures_defnoreturn"
+        );
 
         let lastSetBlock: Blockly.Block | null = null;
 
-        allVariableNames.forEach((variableName) => {
-          const field = fields.find((field) => field.name === variableName);
+        // allVariableNames.forEach((variableName) => {
+        //   const field = fields.find((field) => field.name === variableName);
 
-          if (field) {
-            const initialValue = determineInitialValue(field);
-            createVariableIfNeeded(
-              workspace,
-              currentVariableNames,
-              variableName,
-              sufixSelectable,
-              field
-            );
+        //   if (field) {
+        //     const initialValue = determineInitialValue(field);
+        //     createVariableIfNeeded(
+        //       workspace,
+        //       currentVariableNames,
+        //       variableName,
+        //       sufixSelectable,
+        //       field
+        //     );
 
-            if (!existingSetBlocks.has(variableName)) {
-              lastSetBlock = createSetBlockForVariable(
-                workspace,
-                field,
-                variableName,
-                initialValue,
-                lastSetBlock,
-                sufixSelectable
-              );
-            }
-          }
-        });
+        //     if (!existingSetBlocks.has(variableName)) {
+        //       lastSetBlock = createSetBlockForVariable(
+        //         workspace,
+        //         field,
+        //         variableName,
+        //         initialValue,
+        //         lastSetBlock,
+        //         sufixSelectable
+        //       );
+        //     }
+        //   }
+        // });
+        lastSetBlock = createMainFunction(
+          allVariableNames,
+          workspace,
+          existingProcedures
+        );
 
-        deleteUnusedVariables(workspace, currentVariables, fields, allTags);
+        deleteUnusedVariables(
+          workspace,
+          currentVariables,
+          fields,
+          allTags,
+          sufixSelectable
+        );
         createMapBlockIfNotExists(
           workspace,
           existingMapBlocks,
@@ -380,16 +393,6 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
       }
     };
 
-    return (
-      <>
-        <div style={style} className="parent-container">
-          <div ref={blocklyDiv} className="blocklyDiv"></div>
-          <button className="generator-button" onClick={generateCode}>
-            {i18n.t("Blocky.GENERATE_CODE")}
-          </button>
-        </div>
-      </>
-    );
     function extractAllTags(fields: Field[]): Set<string> {
       const allTags = new Set<string>();
       fields.forEach((field) => {
@@ -433,277 +436,97 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
       return existingBlocks;
     }
 
-    function determineInitialValue(field: Field): any {
-      if (field.type === typeField.selectable) {
-        const options = field.options?.split(";") || [];
-        return field.value || options[0];
-      } else if (field.type === typeField.checkbox) {
-        return false;
-      } else {
-        return field.value ?? "";
-      }
-    }
-
-    function createVariableIfNeeded(
-      workspace: any,
-      currentVariableNames: string[],
-      variableName: string,
-      sufixSelectable: string,
-      field: Field
+    function createMainFunction(
+      allVariableNames: Set<string>,
+      workspace: Blockly.Workspace,
+      existingProcedures: Set<string>
     ) {
-      if (!currentVariableNames.includes(variableName)) {
-        workspace.createVariable(variableName, null, variableName);
-      }
+      if (existingProcedures.size === 0) {
+        // Convertir el Set a un array
+        const parameterNames = Array.from(allVariableNames);
 
-      if (field.type === typeField.selectable) {
-        workspace.createVariable(
-          variableName + sufixSelectable,
-          null,
-          variableName + sufixSelectable
+        const procedureBlock = workspace.newBlock("procedures_defnoreturn");
+        procedureBlock.setFieldValue("main", "NAME");
+
+        const mutationContainer = Blockly.utils.xml.textToDom(
+          "<mutation></mutation>"
         );
+
+        parameterNames.forEach((name) => {
+          const sanitizedName = sanitizeVariableName(name);
+          const argNode = document.createElement("arg");
+          argNode.setAttribute("name", sanitizedName);
+          mutationContainer.appendChild(argNode);
+          workspace.createVariable(sanitizedName, null, sanitizedName);
+        });
+
+        procedureBlock.domToMutation &&
+          procedureBlock.domToMutation(mutationContainer);
+
+        procedureBlock.initSvg();
+        procedureBlock.render();
+        procedureBlock.moveBy(10, 10);
+        return procedureBlock;
       }
-    }
-
-    function createSetBlockForVariable(
-      workspace: any,
-      field: Field,
-      variableName: string,
-      initialValue: any,
-      lastSetBlock: Blockly.Block | null,
-      sufixSelectable: string
-    ): Blockly.Block | null {
-      const variable = workspace.getVariable(variableName);
-      if (!variable) {
-        console.error(`Variable ${variableName} not found.`);
-        return lastSetBlock;
-      }
-
-      const setBlock = workspace.newBlock("variables_set");
-      if (!setBlock) {
-        return lastSetBlock;
-      }
-
-      setBlock.initSvg();
-      setBlock.setDeletable(false);
-      setBlock.setEditable(false);
-      setBlock.getField("VAR")?.setValue(variableName);
-
-      let valueBlock: Blockly.Block | null = null;
-      if (field.type === typeField.selectable) {
-        valueBlock = createArrayBlockForSelectable(workspace, field);
-        connectSetBlock(setBlock, valueBlock, lastSetBlock);
-        lastSetBlock = createSetSelectedValueBlock(
-          workspace,
-          field,
-          variableName,
-          sufixSelectable,
-          lastSetBlock
-        );
-      } else {
-        valueBlock = createValueBlock(workspace, initialValue);
-        connectSetBlock(setBlock, valueBlock, lastSetBlock);
-      }
-
-      if (!workspace.getAllVariables().includes(variableName)) {
-        positionBlockVertically(workspace, setBlock);
-      }
-
-      return setBlock;
-    }
-
-    function createArrayBlockForSelectable(
-      workspace: any,
-      field: Field
-    ): Blockly.Block | null {
-      const valueBlock = workspace.newBlock("array");
-      if (!valueBlock) {
-        return null;
-      }
-
-      valueBlock.initSvg();
-      const options = field.options?.split(";") || [];
-      let previousBlock: Blockly.Block | null = null;
-
-      options.forEach((item) => {
-        const textBlock = workspace.newBlock("text");
-        if (!textBlock) {
-          return;
-        }
-
-        textBlock.initSvg();
-        textBlock.setFieldValue(item, "TEXT");
-
-        const arrayElementBlock = workspace.newBlock("array_element");
-        if (!arrayElementBlock) {
-          return;
-        }
-
-        arrayElementBlock.initSvg();
-        arrayElementBlock
-          .getInput("VALUE")
-          .connection.connect(textBlock.outputConnection);
-
-        if (previousBlock && previousBlock.nextConnection) {
-          previousBlock.nextConnection.connect(
-            arrayElementBlock.previousConnection
-          );
-        } else {
-          valueBlock
-            .getInput("ELEMENTS")
-            .connection.connect(arrayElementBlock.previousConnection);
-        }
-
-        previousBlock = arrayElementBlock;
-      });
-
-      return valueBlock;
-    }
-
-    function connectSetBlock(
-      setBlock: Blockly.Block,
-      valueBlock: Blockly.Block | null,
-      lastSetBlock: Blockly.Block | null
-    ) {
-      if (valueBlock && valueBlock.outputConnection) {
-        const connection = setBlock.getInput("VALUE")?.connection;
-        if (connection) {
-          connection.connect(valueBlock.outputConnection);
-        }
-
-        setBlock.render();
-        valueBlock.render();
-      }
-
-      if (lastSetBlock && setBlock.previousConnection) {
-        const previousConnection = lastSetBlock.nextConnection;
-        if (previousConnection) {
-          previousConnection.connect(setBlock.previousConnection);
-        }
-      }
-    }
-
-    function createSetSelectedValueBlock(
-      workspace: any,
-      field: Field,
-      variableName: string,
-      sufixSelectable: string,
-      lastSetBlock: Blockly.Block | null
-    ): Blockly.Block | null {
-      const SetSelectedValue = workspace.newBlock("variables_set");
-      if (!SetSelectedValue) {
-        return lastSetBlock;
-      }
-
-      SetSelectedValue.initSvg();
-      SetSelectedValue.setDeletable(false);
-      SetSelectedValue.setEditable(false);
-      SetSelectedValue.getField("VAR")?.setValue(
-        variableName + sufixSelectable
-      );
-
-      const indexBlock = createIndexBlock(workspace, field, variableName);
-      const connection = SetSelectedValue.getInput("VALUE")?.connection;
-      if (connection && indexBlock) {
-        connection.connect(indexBlock.outputConnection!);
-      }
-
-      SetSelectedValue.render();
-      indexBlock?.render();
-
-      const previousConnection = lastSetBlock?.nextConnection;
-      if (previousConnection) {
-        previousConnection.connect(SetSelectedValue.previousConnection!);
-      }
-
-      return SetSelectedValue;
-    }
-
-    function createIndexBlock(
-      workspace: any,
-      field: Field,
-      variableName: string
-    ): Blockly.Block | null {
-      const index = workspace.newBlock("array_get");
-      if (!index) {
-        return null;
-      }
-
-      index.initSvg();
-      index.getField("ARRAY")?.setValue(variableName);
-
-      const numberBlock = workspace.newBlock("math_number");
-      if (!numberBlock) {
-        return null;
-      }
-
-      numberBlock.initSvg();
-      const options = field.options?.split(";") || [];
-      let selectedIndex = options.indexOf(field.value || options[0]);
-      if (selectedIndex === -1) {
-        selectedIndex = 0;
-      }
-      numberBlock.setFieldValue(String(selectedIndex), "NUM");
-
-      const indexConnection = index.getInput("INDEX")?.connection;
-      if (indexConnection) {
-        indexConnection.connect(numberBlock.outputConnection);
-      }
-
-      return index;
-    }
-
-    function createValueBlock(
-      workspace: any,
-      initialValue: any
-    ): Blockly.Block | null {
-      if (typeof initialValue === "number") {
-        const numberBlock = workspace.newBlock("math_number");
-        if (numberBlock) {
-          numberBlock.initSvg();
-          numberBlock.setFieldValue(String(initialValue), "NUM");
-          return numberBlock;
-        }
-      } else if (typeof initialValue === "string") {
-        const textBlock = workspace.newBlock("text");
-        if (textBlock) {
-          textBlock.initSvg();
-          textBlock.setFieldValue(initialValue, "TEXT");
-          return textBlock;
-        }
-      } else if (typeof initialValue === "boolean") {
-        const booleanBlock = workspace.newBlock("logic_boolean");
-        if (booleanBlock) {
-          booleanBlock.initSvg();
-          booleanBlock.setFieldValue(initialValue ? "TRUE" : "FALSE", "BOOL");
-          return booleanBlock;
-        }
-      }
-
       return null;
-    }
-
-    function positionBlockVertically(workspace: any, setBlock: Blockly.Block) {
-      const topBlocks = workspace.getTopBlocks(true);
-      const topBlockCount = topBlocks.length;
-      if (!setBlock.getParent()) {
-        setBlock.moveBy(20, topBlockCount * 50);
-      }
     }
 
     function deleteUnusedVariables(
       workspace: any,
       currentVariables: any[],
       fields: Field[],
-      allTags: Set<string>
+      allTags: Set<string>,
+      sufixSelectable: string
     ) {
+      const code = cowRollGenerator.workspaceToCode(workspace);
+      dispatch(updateSelectedFileContent(code));
+      const usedVariables = new Set<string>();
+
+      // Extraer variables usadas en el código
+      const variableRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+      let match;
+      while ((match = variableRegex.exec(code)) !== null) {
+        usedVariables.add(match[1]);
+      }
+
+      // Extraer variables utilizadas en las definiciones de funciones
+      const functions: Blockly.Block[] = workspace
+        .getAllBlocks()
+        .filter(
+          (block: Blockly.Block) =>
+            block.type === "procedures_defnoreturn" ||
+            block.type === "procedures_defreturn"
+        );
+      const functionVariables = new Set<string>();
+
+      functions.forEach((funcBlock) => {
+        const funcVariables = funcBlock.getVars();
+        funcVariables.forEach((variable) => functionVariables.add(variable));
+      });
+
       currentVariables.forEach((variable) => {
         const variableName = variable.name;
-        const isFieldVariable = fields.some(
-          (field) => field.name === variableName
-        );
+
+        const isFieldVariable = fields.some((field) => {
+          return (
+            field.name === variableName ||
+            (field.type === typeField.selectable &&
+              field.name + sufixSelectable === variableName)
+          );
+        });
+
         const isTagVariable = allTags.has(variableName);
 
-        if (!isFieldVariable && !isTagVariable) {
+        const isUsedInCode = usedVariables.has(variableName);
+
+        const isFunctionVariable = functionVariables.has(variableName);
+
+        if (
+          !isFieldVariable &&
+          !isTagVariable &&
+          !isUsedInCode &&
+          !isFunctionVariable
+        ) {
           workspace.deleteVariableById(variable.getId());
         }
       });
@@ -725,10 +548,8 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           mapBlock.setEditable(false);
 
           fields.forEach((field) => {
-            // Add original field to the map
             addFieldToMapBlock(workspace, mapBlock, field.name);
 
-            // If the field is selectable, add the suffixed field
             if (field.type === typeField.selectable) {
               addFieldToMapBlock(
                 workspace,
@@ -745,12 +566,11 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
             .getInput("VALUE")
             .connection.connect(mapBlock.outputConnection);
 
-          if (lastSetBlock) {
-            const previousConnection = lastSetBlock.nextConnection;
-            if (previousConnection) {
-              previousConnection.connect(returnBlock.previousConnection);
-            }
-          }
+          lastSetBlock &&
+            lastSetBlock
+              ?.getInput("STACK")
+              ?.connection?.connect(returnBlock.previousConnection);
+
           if (!mapBlock.getParent()) {
             mapBlock.moveBy(
               20,
@@ -790,6 +610,17 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
         }
       }
     }
+
+    return (
+      <>
+        <div style={style} className="parent-container">
+          <div ref={blocklyDiv} className="blocklyDiv"></div>
+          <button className="generator-button" onClick={generateCode}>
+            {i18n.t("Blocky.GENERATE_CODE")}
+          </button>
+        </div>
+      </>
+    );
   }
 );
 

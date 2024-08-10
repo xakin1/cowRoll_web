@@ -8,11 +8,11 @@ const Order = {
   ORDER_VAR: 11, // For 'VAR'
   ORDER_CALL: 10, // For 'name(arguments)'
   ORDER_LIST: 10, // For 'list' and 'map'
-  ORDER_UNARY_MINUS: 8, // For 'uminus'
-  ORDER_UNARY_NOT: 8, // For 'uninot'
-  ORDER_EXPONENTIATION: 7, // For '^'
-  ORDER_MULTIPLICATION: 6, // For '*', '/', '//', '%'
-  ORDER_ADDITION: 5, // For '+', '-'
+  ORDER_ADDITION: 9, // For '+', '-'
+  ORDER_EXPONENTIATION: 8, // For '^'
+  ORDER_MULTIPLICATION: 7, // For '*', '/', '//', '%'
+  ORDER_UNARY_NOT: 6, // For 'uninot'
+  ORDER_UNARY_MINUS: 6, // For 'uminus'
   ORDER_INCREMENT: 4, // For '++', '--'
   ORDER_RELATIONAL: 3, // For '<', '>', '<:', '>:'
   ORDER_EQUALITY: 2, // For '==', '!='
@@ -51,7 +51,7 @@ cowRollGenerator.forBlock["rand_with_range"] = function (block) {
   const order = Order.ORDER_ATOMIC;
   const from = cowRollGenerator.valueToCode(block, "A", order) || 0;
   const to = cowRollGenerator.valueToCode(block, "B", order) || 0;
-  const code = `rand(${from},${to})`;
+  const code = `rand_between(${from},${to})`;
   return [code, Order.ORDER_NONE];
 };
 
@@ -65,7 +65,6 @@ cowRollGenerator.forBlock["rand"] = function (block) {
 cowRollGenerator.forBlock["math_custom_arithmetic"] = function (block) {
   const operator = block.getFieldValue("OP");
   let op;
-
   switch (operator) {
     case "ADD":
       op = "+";
@@ -318,6 +317,7 @@ function getOrderForOperator(operator: string) {
       return Order.ORDER_ADDITION;
     case "*":
     case "/":
+    case "//":
     case "%":
       return Order.ORDER_MULTIPLICATION;
     case "^":

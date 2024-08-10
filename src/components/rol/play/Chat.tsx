@@ -360,7 +360,6 @@ const Chat = () => {
 
       // Insertar la llamada a la función en la última línea del script
       script += `\n${functionCall}`;
-      console.log(script);
       try {
         const result = await executeCode(script);
         const processedRemainingInput =
@@ -452,9 +451,9 @@ const Chat = () => {
     }
   };
 
-  const handleDeleteCharacter = (roleName: string) => {
+  const handleDeleteCharacter = (rolName: string) => {
     setShowDeleteConfirmation(true);
-    setSelectedRoleForDeletion(roleName);
+    setSelectedRoleForDeletion(rolName);
   };
 
   const confirmDeleteCharacter = async () => {
