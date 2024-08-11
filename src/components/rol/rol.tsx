@@ -4,11 +4,9 @@ import { useNavigate } from "react-router-dom";
 import i18n from "../../i18n/i18n";
 import type { RootState } from "../../redux/store";
 import "../../styles/global.css";
-import { useCurrentPath } from "../PathProvider";
 import "./rol.css";
 const LoadData = () => {
   const id = useSelector((state: RootState) => state.route.value);
-  const { addToPath } = useCurrentPath();
   const handleNavigation = (path: string) => {
     navigate(`${path}?id=${id}`);
   };
@@ -17,15 +15,11 @@ const LoadData = () => {
   return (
     <main className="container_rol">
       <section className="section_rol">
-        <h3>Edit</h3>
+        <h3>{i18n.t("General.edit")}</h3>
         <div className="container_rol__edition sibling-fade">
           <a
             onClick={() => {
               const route = "/app/rol/sheet";
-              addToPath({
-                name: i18n.t("Rol.General.sheet"),
-                route: route,
-              });
 
               handleNavigation(route);
             }}
@@ -62,7 +56,6 @@ const LoadData = () => {
             className="container_rol__edition__options"
             onClick={() => {
               const route = "/app/rol/editor";
-              addToPath({ name: i18n.t("General.codes"), route: route });
 
               handleNavigation(route);
             }}
@@ -92,7 +85,6 @@ const LoadData = () => {
           className="container_rol__edition__options"
           onClick={() => {
             const route = "/app/rol/play";
-            addToPath({ name: i18n.t("Rol.General.play"), route: route });
 
             handleNavigation(route);
           }}

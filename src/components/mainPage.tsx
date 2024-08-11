@@ -13,7 +13,6 @@ import {
   type Id,
   type RolProps,
 } from "../utils/types/ApiTypes";
-import { useCurrentPath } from "./PathProvider";
 import { toastStyle } from "./Route";
 import Loading from "./loading/Loading";
 import PhotoCardList from "./photoCard/PhotoCardList";
@@ -23,7 +22,6 @@ export function MainPage() {
   const [roles, setRoles] = useState<RolProps[]>([]);
   const [rolesDirectory, setRolesDirectory] = useState<DirectoryProps>();
   const [loading, setLoading] = useState<boolean>(true);
-  const { addToPath } = useCurrentPath();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -59,7 +57,6 @@ export function MainPage() {
 
   const handleClick = (rol: RolProps) => {
     const route = `/app/rol`;
-    addToPath({ name: rol.name, route: route });
     dispatch(setRol({ id: rol.id, rolName: rol.name }));
     navigate(route);
   };

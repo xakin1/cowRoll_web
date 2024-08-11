@@ -98,3 +98,13 @@ body {
 .logout-button:hover {
   cursor: pointer;
 }
+
+.logout-button,
+.logout-icon {
+  background-color: transparent;
+  border: none; /* Remove any borders */
+  padding: 0; /* Remove any padding if not necessary */
+}
+.logout-icon {
+  stroke: var(--text-color) !important;
+}

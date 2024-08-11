@@ -33,6 +33,7 @@ import { darkTheme } from "./themes/darkTheme";
 
 interface BlocklyEditorProps {
   style?: React.CSSProperties;
+  setLoading: (loading: boolean) => void;
 }
 
 //Parece ser que la función render sí existe aunque ts diga lo contrario
@@ -70,7 +71,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
   ({ style }, ref) => {
     const dispatch = useDispatch();
     const file = useAppSelector(
-      (state: RootState) => state.directorySystem.selectedFile
+      (state: RootState) => state.directorySystem?.selectedFile
     );
     const blocklyDiv = useRef(null);
     const backpackContentRef = useRef<string[]>([]); // useRef to store backpack contents
@@ -156,16 +157,13 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
   `;
 
     useImperativeHandle(ref, () => ({
-      updateVariables(fields: Field[]) {
+      async updateVariables(fields: Field[]) {
         const workspace = Blockly.getMainWorkspace();
         if (!workspace) {
           return;
         }
 
         const currentVariables = workspace.getAllVariables();
-        const currentVariableNames = currentVariables.map(
-          (variable) => variable.name
-        );
 
         const allTags = extractAllTags(fields);
         const allVariableNames = extractAllVariableNames(
@@ -228,7 +226,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
           sufixSelectable
         );
       },
-      renameVariable(oldName: string, newName: string) {
+      async renameVariable(oldName: string, newName: string) {
         const workspace = Blockly.getMainWorkspace();
         const variable = workspace.getVariable(oldName);
 
@@ -374,7 +372,7 @@ const BlocklyEditor = forwardRef<BlocklyRefProps, BlocklyEditorProps>(
       };
     }, [blocklyTheme, toolboxXml, file]);
 
-    const generateCode = () => {
+    const generateCode = async () => {
       const workspace = Blockly.getMainWorkspace();
       const code = cowRollGenerator.workspaceToCode(workspace);
       dispatch(updateSelectedFileContent(code));

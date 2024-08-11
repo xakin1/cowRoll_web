@@ -4,11 +4,11 @@ import {
   type DirectoryProps,
 } from "../../utils/types/ApiTypes";
 
-interface DirectorySystem {
+export interface DirectorySystemState {
   directorySystem?: DirectoryProps;
   selectedFile?: CodeProps;
 }
-const initialState: DirectorySystem = {
+const initialState: DirectorySystemState = {
   directorySystem: undefined,
   selectedFile: undefined,
 };

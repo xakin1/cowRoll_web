@@ -1,7 +1,7 @@
 // src/redux/chatSlice.ts
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-interface Message {
+export interface Message {
   user: string;
   text: string;
   time: string;

@@ -224,6 +224,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
           );
         case typeField.checkbox:
           const { top, left, ...restOfStyle } = style;
+          console.log(style);
           return (
             <label
               ref={targetRef as React.RefObject<HTMLLabelElement>}
@@ -262,7 +263,7 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
                   height: "20px",
                   border: "1px solid #999",
                   backgroundColor: isChecked
-                    ? restOfStyle.active || "#2196F3"
+                    ? restOfStyle.activeColor || "#2196F3"
                     : restOfStyle.inactiveColor || "#FFF",
                   transition: "background-color 0.3s",
                   cursor: "pointer",

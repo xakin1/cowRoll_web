@@ -5,6 +5,7 @@ import directorySystemReducer from "./slice/DirectorySystemSlice";
 import chatReducer from "./slice/chatSlice";
 import codeReducer from "./slice/codeSlice";
 import routeReducer from "./slice/routeSlice";
+
 const rootReducer = combineReducers({
   code: codeReducer,
   directorySystem: directorySystemReducer,
@@ -15,7 +16,9 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
+  whitelist: ["chat", "route"], // Solo se persisten los reducers chat y route
 };
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

@@ -27,7 +27,11 @@ export const codeSlice = createSlice({
       if (action.payload) {
         if ("message" in action.payload) {
           state.output = action.payload.message;
+          state.error.error = "";
+          state.error.errorCode = "";
+          state.error.line = undefined;
         } else {
+          state.output = {};
           state.error.error = action.payload.error?.error || "";
           state.error.errorCode = action.payload.error?.errorCode || "";
           state.error.line = action.payload.error?.line || undefined;

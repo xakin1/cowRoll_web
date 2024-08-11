@@ -23,7 +23,6 @@ import {
   type Id,
   type SheetProps,
 } from "../../../utils/types/ApiTypes";
-import { useCurrentPath } from "../../PathProvider";
 import { toastStyle } from "../../Route";
 import Loading from "../../loading/Loading";
 import PhotoCardList from "../../photoCard/PhotoCardList";
@@ -32,8 +31,8 @@ import SheetForm from "./components/sheetForm";
 import "./styles.css";
 
 export function HomeSheet() {
-  const rolId = useSelector((state: RootState) => state.route.value);
-  const rolName = useSelector((state: RootState) => state.route.rolName);
+  const rolId = useSelector((state: RootState) => state.route?.value);
+  const rolName = useSelector((state: RootState) => state.route?.rolName);
   const [sheets, setSheets] = useState<DirectorySystemProps[]>([]);
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
   const [isSubDirectory, setIsSubDirectory] = useState<boolean>(false);
@@ -44,8 +43,6 @@ export function HomeSheet() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { addToPath, setCurrentPath, currentPath, removeLastFromPath } =
-    useCurrentPath();
 
   const fetchDocuments = async () => {
     const response = await getFiles();
@@ -75,10 +72,8 @@ export function HomeSheet() {
       setDirectoryHistory((prevHistory) => prevHistory.slice(0, -1));
       setSheets(previousDirectory.children);
       setSheetsDirectory(previousDirectory);
-      removeLastFromPath();
     } else {
       setIsSubDirectory(false);
-      addToPath({ name: rolName!, route: `/app/rol` }, true);
       navigate("/app/rol/");
     }
   };
@@ -86,20 +81,13 @@ export function HomeSheet() {
   const handleDoubleClick = (sheet: DirectorySystemProps) => {
     if (isSheetsProps(sheet)) {
       const route = `/app/rol/sheet/${sheet.id}`;
-      addToPath({
-        name: sheet.name,
-        route: route,
-      });
+
       navigate(route);
     } else if (isDirectory(sheet)) {
       setDirectoryHistory((prevHistory) => [...prevHistory, sheetsDirectory!]);
       setIsSubDirectory(true);
       setSheets(sheet.children);
       setSheetsDirectory(sheet);
-      addToPath({
-        name: sheet.name,
-        route: currentPath[currentPath.length - 1].route,
-      });
     }
   };
 
@@ -159,20 +147,14 @@ export function HomeSheet() {
       } as SheetProps);
       if (response) {
         if ("message" in response) {
-          toast.success(i18n.t("Rol.Sheet.Success.uploaded"), {
-            position: "top-right",
-          });
+          toast.success(i18n.t("Rol.Sheet.Success.uploaded"), toastStyle);
           fetchDocuments();
         } else {
-          toast.error(i18n.t("Rol.Sheet.Error.uploaded"), {
-            position: "top-right",
-          });
+          toast.error(i18n.t("Rol.Sheet.Error.uploaded"), toastStyle);
         }
       }
     } catch (error) {
-      toast.error(i18n.t("Rol.Sheet.Error.uploaded"), {
-        position: "top-right",
-      });
+      toast.error(i18n.t("Rol.Sheet.Error.uploaded"), toastStyle);
       console.error("Upload error:", error);
     }
   };
@@ -191,7 +173,7 @@ export function HomeSheet() {
           <SheetForm
             onElementAdded={handleElementAdded}
             onElementUpdated={handleElementtUpdated}
-            rolId={rolId}
+            rolId={rolId!}
             directoryId={sheetsDirectory?.id!}
           />
         }
@@ -199,7 +181,7 @@ export function HomeSheet() {
           <FolderForm
             onElementAdded={handleElementAdded}
             onElementUpdated={handleElementtUpdated}
-            rolId={rolId}
+            rolId={rolId!}
             directoryId={sheetsDirectory?.id!}
           />
         }

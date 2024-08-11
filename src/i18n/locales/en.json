@@ -89,11 +89,13 @@
       "Success": {
         "created": "The sheet '{0}' has been created successfully",
         "updated": "The sheet '{0}' has been updated successfully",
+        "uploaded": "the file has been uploaded successfully",
         "deleted": "Sheet has been successfully removed"
       },
       "Error": {
         "NAME_REQUIRED": "Name is required.",
         "ROL_ID_NOT_FOUND": "Rol id not found",
+        "uploaded": "File already exists",
         "deleted": "Error deleting sheet",
         "created": "Error creating sheet"
       }
@@ -122,8 +124,17 @@
       "multipleDelete": "Are you sure you want to delete the following {0} files?"
     }
   },
+  "Chat": {
+    "General": {
+      "commandNotFound": "Command not found: {0}",
+      "noScripts": "No scripts available."
+    }
+  },
   "General": {
     "accept": "Accept",
+    "edit": "Edit",
+    "chat": "Chat",
+    "enterParameters": "Enter Parameters",
     "back": "Back",
     "addOption": "Add Option",
     "enterPlayerName": "Enter player name",

@@ -92,13 +92,15 @@
       "Success": {
         "created": "A folla '{0}' creouse correctamente",
         "updated": "A folla '{0}' aztualizouse correctamente",
-        "deleted": "A folla se eliminou correctamente"
+        "deleted": "A folla se eliminou correctamente",
+        "uploaded": "O arquivo subiuse correctamente"
       },
       "Error": {
         "NAME_REQUIRED": "O nome é obligatorio.",
         "ROL_ID_NOT_FOUND": "Non se atopou o id do rol",
         "deleted": "Error ao eliminaren a folla",
-        "created": "Error ao crearen a folla"
+        "created": "Error ao crearen a folla",
+        "uploaded": "O arquivo xa existe"
       }
     }
   },
@@ -125,8 +127,18 @@
       "multipleDelete": "Desexa eliminar os seguintes {0} arquivos?"
     }
   },
+  "Chat": {
+    "General": {
+      "commandNotFound": "Non se atopou o comando: {0}",
+      "noScripts": "Non hai comportamentos dispoñibles"
+    }
+  },
   "General": {
     "accept": "Aceptar",
+    "edit": "Editar",
+    "chat": "Chat",
+
+    "enterParameters": "Introduce parámetros",
     "addOption": "Engadir opción",
     "back": "Atrás",
     "alreadyAccount": "Xa tes unha conta?",

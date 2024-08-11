@@ -9,6 +9,15 @@ export function getLangFromUrl(url: URL) {
 }
 
 export function getLang() {
+  if (typeof window === "undefined") {
+    const deviceLocale = navigator.language;
+    const deviceLang = deviceLocale.split("-")[0];
+    if (deviceLang in ui) {
+      return deviceLang as keyof typeof ui;
+    }
+
+    return defaultLang;
+  }
   // Crear un objeto URL a partir de window.location.href
   const url = new URL(window.location.href);
 

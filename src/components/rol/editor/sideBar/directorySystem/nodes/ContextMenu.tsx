@@ -122,19 +122,19 @@ export function ContextMenu({
     >
       {singleItem &&
         (singleItem.type === FileSystemEnum.Directory ||
-          (singleItem.type === FileSystemEnum.Sheet && items.length === 1 && (
-            <li
-              onClick={() =>
-                handleOpenModal({
-                  label: i18n.t("ContextualMenu.Modal.inputFileName"),
-                  showInput: true,
-                  action: handleInsertFile,
-                })
-              }
-            >
-              {i18n.t("ContextualMenu.newFile")}
-            </li>
-          )))}
+          (singleItem.type === FileSystemEnum.Sheet && items.length === 1)) && (
+          <li
+            onClick={() =>
+              handleOpenModal({
+                label: i18n.t("ContextualMenu.Modal.inputFileName"),
+                showInput: true,
+                action: handleInsertFile,
+              })
+            }
+          >
+            {i18n.t("ContextualMenu.newFile")}
+          </li>
+        )}
       {singleItem &&
         singleItem.type === FileSystemEnum.Directory &&
         items.length === 1 && (

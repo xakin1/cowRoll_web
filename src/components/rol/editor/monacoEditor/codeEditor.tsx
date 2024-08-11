@@ -21,7 +21,11 @@ import defineCowRollLanguage from "./languages/cowRoll/language";
 import defineDarkTheme from "./languages/cowRoll/themes/dark";
 import defineLightTheme from "./languages/cowRoll/themes/light";
 
-const CodeEditor = (file: CodeProps) => {
+interface CodeEditorProps {
+  file: CodeProps;
+  setLoading: (loading: boolean) => void;
+}
+const CodeEditor: React.FC<CodeEditorProps> = ({ file, setLoading }) => {
   const [theme, setTheme] = useState(
     window.localStorage.getItem("theme") || "dark"
   );

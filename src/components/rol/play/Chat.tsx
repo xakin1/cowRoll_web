@@ -4,7 +4,7 @@ import { Divider, IconButton, Tab, Tabs } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import i18n from "../../../i18n/i18n";
-import { addMessage } from "../../../redux/slice/chatSlice";
+import { type Message } from "../../../redux/slice/chatSlice";
 import type { RootState } from "../../../redux/store";
 import {
   createFile,
@@ -34,15 +34,37 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import InsertDriveFileRoundedIcon from "@mui/icons-material/InsertDriveFileRounded";
 import ReactMarkdown from "react-markdown";
+import type { Field } from "../sheet/types";
+import { handleExecuteSheetCode } from "../sheet/utilPage";
 import "./chat.css";
 
+export const enum source {
+  script = "Script",
+  player = "Player",
+  system = "System",
+}
+interface scriptBodyType {
+  content: string;
+  source: source;
+  player?: string;
+}
+
+interface playerScriptsType {
+  [scriptName: string]: scriptBodyType;
+}
+
+interface scriptType {
+  [playerName: string]: playerScriptsType;
+}
 const Chat = () => {
   const dispatch = useDispatch();
-  const messages = useSelector((state: RootState) => state.chat.messages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [role, setRole] = useState("GM");
-  const [scripts, setScripts] = useState<{ [key: string]: string }[]>([]);
+  const [result, setResult] = useState<{ [key: string]: any }>({});
+  const [scripts, setScripts] = useState<playerScriptsType[]>([]);
+  const [playerScripts, setPlayerScripts] = useState<scriptType[]>([]);
   const [selectedFile, setSelectedFile] = useState<FileProps>();
   const [roles, setRoles] = useState<string[]>(["GM"]);
   const [playerSheets, setPlayerSheets] = useState<Map<string, FileProps>>(
@@ -56,6 +78,8 @@ const Chat = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     useState<boolean>(false);
+  const [sheets, setSheets] = useState<Field[][]>([[]]);
+  const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
   const [selectedRoleForDeletion, setSelectedRoleForDeletion] = useState<
     string | null
   >(null);
@@ -65,12 +89,13 @@ const Chat = () => {
   const handleClose = () => setShowModal(false);
   const handleOpen = () => setShowModal(true);
 
-  const rolId = useSelector((state: RootState) => state.route.value);
+  const rolId = useSelector((state: RootState) => state.route?.value);
 
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
   const [parentDirectory, setParentDirectory] = useState<DirectoryProps | null>(
     null
   );
+
   const [loading, setLoading] = useState<boolean>(true);
   const fetchDocuments = async () => {
     const response = await getFiles();
@@ -95,7 +120,12 @@ const Chat = () => {
                 // Ensure content is not undefined
                 setScripts((prevScripts) => [
                   ...prevScripts,
-                  { [child.name]: child.content ?? "" },
+                  {
+                    [child.name]: {
+                      content: child.content ?? "",
+                      source: source.script,
+                    },
+                  },
                 ]);
               }
             }
@@ -111,10 +141,36 @@ const Chat = () => {
         if (!sheet.codes) return;
         sheet.codes.map((code) => {
           if (code.content && code.content != "")
-            setScripts((prevScripts) => [
-              ...prevScripts,
-              { [code.name]: code.content ?? "" },
-            ]);
+            setPlayerScripts((prevScripts: scriptType[]) => {
+              const updatedScripts: scriptType[] = [...prevScripts]; // Explicitly type as an array of scriptType
+
+              //tenemos ver si existe ya el usuario
+              const playerIndex = updatedScripts.findIndex(
+                (script) => script[sheet.name]
+              );
+
+              if (playerIndex === -1) {
+                // si no existe creamos la entra
+                updatedScripts.push({
+                  [sheet.name]: {
+                    [code.name]: {
+                      content: code.content ?? "",
+                      source: source.player,
+                      player: sheet.name,
+                    },
+                  },
+                });
+              } else {
+                // y si existe pues la actualizamos
+                updatedScripts[playerIndex][sheet.name][code.name] = {
+                  content: code.content ?? "",
+                  source: source.player,
+                  player: sheet.name,
+                };
+              }
+
+              return updatedScripts; // Return the updated array
+            });
         });
       });
 
@@ -138,9 +194,11 @@ const Chat = () => {
       let processedInput = await processInput(input.trim());
 
       const timestamp = new Date().toLocaleTimeString();
-      dispatch(
-        addMessage({ text: processedInput, user: role, time: timestamp })
-      );
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: processedInput, user: role, time: timestamp },
+      ]);
       setMessageHistory((prev) => [...prev, input.trim()]);
       setHistoryIndex(-1);
       setInput("");
@@ -150,7 +208,10 @@ const Chat = () => {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
   }, [messages]);
 
@@ -267,11 +328,23 @@ const Chat = () => {
     }
   };
 
+  const getScriptesFromRole = (): playerScriptsType => {
+    const roleScripts = playerScripts.find((script) => script[role]);
+    if (roleScripts && roleScripts[role]) {
+      return roleScripts[role];
+    }
+    return {};
+  };
+
   const processHelpCommand = (): string => {
-    const scriptNames = scripts.map((script) => Object.keys(script)).flat();
+    const scriptPlayer = getScriptesFromRole();
+    const allScripts = scripts.concat(scriptPlayer);
+
+    const scriptNames = allScripts.map((script) => Object.keys(script)).flat();
+
     scriptNames.push("roll", "sum");
     if (scriptNames.length === 0) {
-      return "No scripts available.";
+      return i18n.t("Chat.General.noScripts");
     }
 
     const scriptList = scriptNames.map((name) => `- **/${name}**`).join("\n");
@@ -330,23 +403,15 @@ const Chat = () => {
     );
   };
 
-  const processScriptCommand = async (
-    cmd: string,
-    input: string
-  ): Promise<string> => {
-    const scriptObject = scripts.find((script) => script[cmd]);
-    if (!scriptObject) {
-      return `Command not found: ${cmd}`;
-    }
-    let script = scriptObject[cmd];
-
+  //Estos no dependen de nadie, asi que simplemente ejecutamos la última función
+  const executeScript = async (script: scriptBodyType, input: string) => {
     // Identificar la última función en el script
     const functionRegex =
       /function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(.*?\)\s*do\s*([\s\S]*?)\send/g;
     let match;
     let lastFunctionName = null;
 
-    while ((match = functionRegex.exec(script)) !== null) {
+    while ((match = functionRegex.exec(script.content)) !== null) {
       lastFunctionName = match[1];
     }
 
@@ -356,11 +421,11 @@ const Chat = () => {
         `function\\s+${lastFunctionName}\\s*\\(([^)]*)\\)`,
         "g"
       );
-      const argsMatch = argsRegex.exec(script);
+      const argsMatch = argsRegex.exec(script.content);
       const numArgs = argsMatch ? argsMatch[1].split(",").length : 0;
 
       // Dividir el input para obtener los argumentos y el resto del input
-      const inputParts = input.split(" ");
+      const inputParts = input.split(/\s+/);
       const args = inputParts.slice(0, numArgs);
       const remainingInput = inputParts.slice(numArgs).join(" ");
 
@@ -368,15 +433,16 @@ const Chat = () => {
       const functionCall = `${lastFunctionName}(${args.join(", ")})`;
 
       // Insertar la llamada a la función en la última línea del script
-      script += `\n${functionCall}`;
+      const finalScript = script.content + `\n${functionCall}`;
       try {
-        const result = await executeCode(script);
+        const result = await executeCode(finalScript);
         const processedRemainingInput =
           await processCommandRecursively(remainingInput);
         if (result) {
           if ("message" in result)
             return `${result.message} ${processedRemainingInput}`;
-          else return `${result?.error} ${processedRemainingInput}`;
+          else
+            return `${result?.error.errorCode || ""} ${processedRemainingInput}`;
         }
         return `${processedRemainingInput}`;
       } catch (error) {
@@ -390,9 +456,13 @@ const Chat = () => {
     } else {
       // Si no hay funciones, simplemente ejecutar el código
       try {
-        const result = await executeCode(script);
+        const result = await executeCode(script.content);
         const processedRemainingInput = await processCommandRecursively(input);
-        return `Result: ${result} ${processedRemainingInput}`;
+        if (result && "message" in result) {
+          return `Result: ${result.message} ${processedRemainingInput}`;
+        } else {
+          return `Result: ${result?.error.errorCode || ""} ${processedRemainingInput}`;
+        }
       } catch (error) {
         console.error("Error executing script:", error);
         if (error instanceof Error) {
@@ -401,6 +471,45 @@ const Chat = () => {
           return "Unknown error executing script.";
         }
       }
+    }
+  };
+  //Estos dependen de la hoja y tienen un main donde se le pasa los atributos
+  const executePlayerScript = async (
+    script: scriptBodyType,
+    input: string
+  ): Promise<string> => {
+    const finalCode: string = handleExecuteSheetCode(
+      script.content,
+      sheets[currentSheetIndex]
+    );
+    const result = await executeCode(finalCode);
+    const processedRemainingInput = await processCommandRecursively(input);
+    if (result && "message" in result) {
+      setResult(result.message);
+      return `${processedRemainingInput}`;
+    }
+    return processedRemainingInput;
+  };
+
+  const processScriptCommand = async (
+    cmd: string,
+    input: string
+  ): Promise<string> => {
+    const playerScripts = getScriptesFromRole();
+    const allScripts = scripts.concat(playerScripts);
+
+    const scriptObject = allScripts.find((script) => script[cmd]);
+    if (!scriptObject) {
+      return i18n.t("Chat.General.commandNotFound", cmd);
+    }
+    let script = scriptObject[cmd];
+
+    if (script.source == source.script) {
+      console.log("a");
+
+      return executeScript(script, input);
+    } else {
+      return executePlayerScript(script, input);
     }
   };
 
@@ -436,8 +545,11 @@ const Chat = () => {
       const response = await createFile(newSheet);
       if (response && "message" in response) {
         restOfFile.codes?.map((code) => {
-          console.log(code.name);
-          createFile({ ...code, directoryId: response.message });
+          createFile({
+            ...code,
+            content: code.content,
+            directoryId: response.message,
+          });
         });
         setRoles([...roles, newSheet.name]);
         setPlayerSheets(
@@ -452,11 +564,36 @@ const Chat = () => {
         );
         restOfFile.codes?.forEach((code) => {
           if (code.content && code.content !== "") {
-            console.log(code.name);
-            setScripts((prevScripts) => [
-              ...prevScripts,
-              { [code.name]: code.content ?? "" },
-            ]);
+            setPlayerScripts((prevScripts: scriptType[]) => {
+              const updatedScripts: scriptType[] = [...prevScripts]; // Explicitly type as an array of scriptType
+
+              // Find the index of the player (if they exist) in the array
+              const playerIndex = updatedScripts.findIndex(
+                (script) => script[newSheet.name]
+              );
+
+              if (playerIndex === -1) {
+                // If this player's entry does not exist, create it and push to the array
+                updatedScripts.push({
+                  [newSheet.name]: {
+                    [code.name]: {
+                      content: code.content ?? "",
+                      source: source.player,
+                      player: newSheet.name,
+                    },
+                  },
+                });
+              } else {
+                // If player exists, update their script
+                updatedScripts[playerIndex][newSheet.name][code.name] = {
+                  content: code.content ?? "",
+                  source: source.player,
+                  player: newSheet.name,
+                };
+              }
+
+              return updatedScripts; // Return the updated array
+            });
           }
         });
       } else {
@@ -516,16 +653,42 @@ const Chat = () => {
 
   const handleRoleChange = (newRole: string) => {
     setRole(newRole);
-    setScripts([]);
+    setPlayerScripts([]);
     if (newRole !== "GM") {
       const sheet = playerSheets.get(newRole);
       if (sheet && isSheetsProps(sheet)) {
         setSelectedFile(sheet);
-        sheet.codes?.map((child) => {
-          setScripts((prevScripts) => [
-            ...prevScripts,
-            { [child.name]: child.content ?? "" },
-          ]);
+        sheet.codes?.map((code) => {
+          setPlayerScripts((prevScripts: scriptType[]) => {
+            const updatedScripts: scriptType[] = [...prevScripts]; // Explicitly type as an array of scriptType
+
+            // Find the index of the player (if they exist) in the array
+            const playerIndex = updatedScripts.findIndex(
+              (script) => script[sheet.name]
+            );
+
+            if (playerIndex === -1) {
+              // If this player's entry does not exist, create it and push to the array
+              updatedScripts.push({
+                [sheet.name]: {
+                  [code.name]: {
+                    content: code.content ?? "",
+                    source: source.player,
+                    player: sheet.name,
+                  },
+                },
+              });
+            } else {
+              // If player exists, update their script
+              updatedScripts[playerIndex][sheet.name][code.name] = {
+                content: code.content ?? "",
+                source: source.player,
+                player: sheet.name,
+              };
+            }
+
+            return updatedScripts; // Return the updated array
+          });
         });
       }
     } else {
@@ -535,6 +698,14 @@ const Chat = () => {
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
+  };
+
+  const handleSheetsChange = (updatedSheets: Field[][]) => {
+    setSheets(updatedSheets);
+  };
+
+  const handleCurrentSheetIndexChange = (index: number) => {
+    setCurrentSheetIndex(index);
   };
 
   return (
@@ -547,13 +718,19 @@ const Chat = () => {
               onChange={handleTabChange}
               aria-label="chat tabs"
             >
-              <Tab label="Chat" />
-              <Tab label={i18n.t("General.addPlayer")} />
+              <Tab
+                label={i18n.t("General.chat")}
+                sx={{ color: "var(--text-color)" }}
+              />
+              <Tab
+                label={i18n.t("General.addPlayer")}
+                sx={{ color: "var(--text-color)" }}
+              />
             </Tabs>
             {activeTab === 0 && (
               <>
                 <div className="chat-container__body">
-                  {messages.map((message, index) => (
+                  {(messages || []).map((message, index) => (
                     <div className="chat-container__body__message" key={index}>
                       <div>
                         <strong>{message.user}:</strong>{" "}
@@ -608,6 +785,7 @@ const Chat = () => {
                           {role}
                           <IconButton
                             onClick={() => handleDeleteCharacter(role)}
+                            sx={{ color: "var(--text-color)" }} // Aplica el color al IconButton
                           >
                             <DeleteIcon></DeleteIcon>
                           </IconButton>
@@ -620,7 +798,12 @@ const Chat = () => {
           </div>
         </div>
         {selectedFile && isSheetsProps(selectedFile) && (
-          <ViewSheet sheet={selectedFile}></ViewSheet>
+          <ViewSheet
+            sheet={selectedFile}
+            result={result}
+            onSheetsChange={handleSheetsChange}
+            onCurrentSheetIndexChange={handleCurrentSheetIndexChange}
+          ></ViewSheet>
         )}
       </div>
 

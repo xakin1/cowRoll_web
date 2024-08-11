@@ -161,3 +161,7 @@
 .roles-div {
   margin-top: 1rem;
 }
+
+.button-addPlayer {
+  color: var(--text-color);
+}

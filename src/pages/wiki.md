@@ -1,0 +1,5 @@
+---
+import SigInComponent from '../components/pages/SignIn.astro';
+
+---
+	<SigInComponent/>
