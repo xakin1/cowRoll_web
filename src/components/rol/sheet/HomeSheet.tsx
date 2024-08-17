@@ -32,15 +32,10 @@ import "./styles.css";
 
 export function HomeSheet() {
   const rolId = useSelector((state: RootState) => state.route?.value);
-  const rolName = useSelector((state: RootState) => state.route?.rolName);
   const [sheets, setSheets] = useState<DirectorySystemProps[]>([]);
   const [sheetsDirectory, setSheetsDirectory] = useState<DirectoryProps>();
-  const [isSubDirectory, setIsSubDirectory] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [directoryHistory, setDirectoryHistory] = useState<DirectoryProps[]>(
-    []
-  );
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,26 +61,12 @@ export function HomeSheet() {
     return <Loading />;
   }
 
-  const handleClick = () => {
-    if (directoryHistory.length > 0) {
-      const previousDirectory = directoryHistory[directoryHistory.length - 1];
-      setDirectoryHistory((prevHistory) => prevHistory.slice(0, -1));
-      setSheets(previousDirectory.children);
-      setSheetsDirectory(previousDirectory);
-    } else {
-      setIsSubDirectory(false);
-      navigate("/app/rol/");
-    }
-  };
-
   const handleDoubleClick = (sheet: DirectorySystemProps) => {
     if (isSheetsProps(sheet)) {
       const route = `/app/rol/sheet/${sheet.id}`;
 
       navigate(route);
     } else if (isDirectory(sheet)) {
-      setDirectoryHistory((prevHistory) => [...prevHistory, sheetsDirectory!]);
-      setIsSubDirectory(true);
       setSheets(sheet.children);
       setSheetsDirectory(sheet);
     }
@@ -131,7 +112,6 @@ export function HomeSheet() {
   };
 
   const handleFileChange = async (file: File) => {
-    setSelectedFile(file);
     const base64File = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);

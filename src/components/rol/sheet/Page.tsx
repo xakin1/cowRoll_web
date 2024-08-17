@@ -29,7 +29,6 @@ const Page: React.FC<FieldContainerProps> = ({
 }) => {
   const {
     sheets,
-    sheet,
     isContextMenuVisible,
     setIsContextMenuVisible,
     saveFields,

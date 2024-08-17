@@ -64,7 +64,6 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   const [inactiveCheckboxColor, setInactiveCheckboxColor] =
     useState<string>("#FFFFFF");
   const [allowAdditions, setAllowAdditions] = useState<boolean>(true);
-  const [customCSS, setCustomCSS] = useState<string>("");
 
   const { updateFieldStyle } = useContext(SheetContext)!;
   const previousElementRef = useRef<Field | null>(null);
@@ -209,7 +208,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         break;
       case "customCSS":
         if (selectedElement) {
-          setCustomCSS(value);
+          // setCustomCSS(value);
           applyCustomCSS(value);
         }
         break;

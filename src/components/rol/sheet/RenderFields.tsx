@@ -114,7 +114,6 @@ const RenderField = forwardRef<HTMLElement, RenderFieldProps>(
       onSelect,
       style,
       onChange,
-      onClick,
       setIsContextMenuVisible,
       editable = true,
     },

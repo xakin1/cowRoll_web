@@ -75,7 +75,6 @@ const Chat = () => {
     useState<boolean>(false);
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] =
     useState<boolean>(false);
   const [sheets, setSheets] = useState<Field[][]>([[]]);
@@ -96,7 +95,6 @@ const Chat = () => {
     null
   );
 
-  const [loading, setLoading] = useState<boolean>(true);
   const fetchDocuments = async () => {
     const response = await getFiles();
     setScripts([]);
@@ -182,7 +180,6 @@ const Chat = () => {
       setRoles(["GM", ...playerRoles]);
       setPlayerSheets(playerSheetsMap);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -202,7 +199,6 @@ const Chat = () => {
       setMessageHistory((prev) => [...prev, input.trim()]);
       setHistoryIndex(-1);
       setInput("");
-      setIsEditing(false); // Deactivate editing after sending the message
     }
   };
 
@@ -216,8 +212,6 @@ const Chat = () => {
   }, [messages]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    setIsEditing(true); // Activate editing when pressing any key
-
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSend();

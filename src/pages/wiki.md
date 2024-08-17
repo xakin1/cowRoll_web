@@ -1,5 +1,8 @@
 ---
-import SigInComponent from '../components/pages/SignIn.astro';
-
+title: "Páxina da wiki"
+description: "Aínda non ten descripción"
 ---
-	<SigInComponent/>
+
+# Páxina da wiki
+
+Este contido aínda non está dispoñíbel

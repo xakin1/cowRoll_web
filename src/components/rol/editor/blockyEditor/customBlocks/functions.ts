@@ -13,29 +13,33 @@ Blockly.Blocks["procedures_callnoreturn_as_return"] = {
     this.setHelpUrl("");
     this.procName_ = "";
   },
-  getProcedureCall: function () {
+  getProcedureCall: function (): string {
     return this.procName_;
   },
-  renameProcedure: function (oldName, newName) {
+  renameProcedure: function (oldName: string, newName: string): void {
     if (Blockly.Names.equals(oldName, this.procName_)) {
       this.procName_ = newName;
       this.setFieldValue(newName, "NAME");
     }
   },
-  setProcedureParameters_: function (paramNames, paramIds) {
+  setProcedureParameters_: function (
+    paramNames: string[],
+    _paramIds: any
+  ): void {
     // Remove all inputs.
     for (let i = 0; this.getInput("ARG" + i); i++) {
       this.removeInput("ARG" + i);
     }
     // Rebuild the inputs.
     for (let i = 0; i < paramNames.length; i++) {
-      const input = this.appendValueInput("ARG" + i)
-        .setAlign(Blockly.ALIGN_RIGHT)
+      this.appendValueInput("ARG" + i)
+        .setAlign("RIGHT")
         .appendField(paramNames[i]);
     }
-    this.arguments_ = [].concat(paramNames);
+    this.arguments_ = [...paramNames];
   },
-  mutationToDom: function () {
+
+  mutationToDom: function (): Element {
     const container = document.createElement("mutation");
     container.setAttribute("name", this.procName_);
     for (let i = 0; i < this.arguments_.length; i++) {
@@ -45,23 +49,27 @@ Blockly.Blocks["procedures_callnoreturn_as_return"] = {
     }
     return container;
   },
-  domToMutation: function (xmlElement) {
-    const name = xmlElement.getAttribute("name");
+  domToMutation: function (xmlElement: Element): void {
+    const name = xmlElement.getAttribute("name") || "";
     this.procName_ = name;
     this.setFieldValue(name, "NAME");
-    const args = [];
-    for (let i = 0, childNode; (childNode = xmlElement.childNodes[i]); i++) {
+    const args: string[] = [];
+    for (
+      let i = 0, childNode;
+      (childNode = xmlElement.childNodes[i] as Element);
+      i++
+    ) {
       if (childNode.nodeName === "arg") {
-        args.push(childNode.getAttribute("name"));
+        args.push(childNode.getAttribute("name") || "");
       }
     }
     this.setProcedureParameters_(args, null);
   },
-  getVars: function () {
+  getVars: function (): string[] {
     return this.arguments_;
   },
-  customContextMenu: function (options) {
-    const option = { enabled: true };
+  customContextMenu: function (options: any[]): void {
+    const option: any = { enabled: true };
     const name = this.getProcedureCall();
     option.text = "Set as return value: " + name;
     const xmlMutation = Blockly.utils.xml.createElement("mutation");

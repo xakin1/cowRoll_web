@@ -32,7 +32,6 @@ export const setupEditorCommands = (
 
         // Si solo hay una línea seleccionada, usar '#' para comentar
         if (startLine === endLine) {
-          const startColumn = model.getLineFirstNonWhitespaceColumn(startLine);
           const textInsert = model
             .getLineContent(startLine)
             .trim()

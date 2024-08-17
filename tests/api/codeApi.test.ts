@@ -5,7 +5,6 @@ describe("test Api", () => {
   beforeAll(async () => {
     await resetBd();
   });
-  let fileId = -1;
   it("runCodde /code", async () => {
     const code = "1 +1";
     const response = await executeCode(code);

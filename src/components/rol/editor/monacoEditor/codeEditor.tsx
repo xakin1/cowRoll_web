@@ -25,7 +25,7 @@ interface CodeEditorProps {
   file: CodeProps;
   setLoading: (loading: boolean) => void;
 }
-const CodeEditor: React.FC<CodeEditorProps> = ({ file, setLoading }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ file }) => {
   const [theme, setTheme] = useState(
     window.localStorage.getItem("theme") || "dark"
   );
@@ -133,7 +133,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ file, setLoading }) => {
   return (
     <Editor
       defaultLanguage="cowRoll"
-      onChange={(value, event) => {
+      onChange={(value, _event) => {
         dispatch(
           selectFile({
             ...file,

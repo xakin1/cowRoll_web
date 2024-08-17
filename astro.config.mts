@@ -1,6 +1,8 @@
 import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 
+import node from "@astrojs/node";
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
@@ -9,10 +11,13 @@ export default defineConfig({
     defaultLocale: "gl",
     locales: ["es", "en", "gl"],
     routing: {
-      prefixDefaultLocale: false,
-    },
+      prefixDefaultLocale: false
+    }
   },
   devToolbar: {
-    enabled: false,
+    enabled: false
   },
+  adapter: node({
+    mode: "standalone"
+  })
 });
